@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>GrammarBuddy Quiz</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
@@ -29,7 +32,6 @@
         };
     </script>
     <style>
-        /* Keep existing base styles if needed, but new animations are in style.css */
         html, body {
             height: 100%;
             margin: 0;
@@ -151,23 +153,16 @@
     </div>
 
     <script>
-        // --- Proximity Spotlight Effect ---
-        document.addEventListener('mousemove', e => {
-            // Update CSS variables with mouse coordinates
-            document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
-            document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
-        });
-
-        // --- State Variables ---
-        let allQuizData = []; // Caches the questions.json data
+        // State Variables
+        let allQuizData = [];
         let currentQuestions = [];
         let currentQuestionIndex = 0;
-        let userAnswers = {}; // Uses questionId as key
+        let userAnswers = {};
         let currentLevel = '';
         let finalScore = 0;
         let username = '';
 
-        // --- Main Functions ---
+        // Main Functions
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
             const level = document.getElementById('levelSelect').value;
@@ -217,7 +212,6 @@
                 for (let key in optionsMap) {
                     const option = optionsMap[key];
                     const label = document.createElement('label');
-                    // Added interactive-element class
                     label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element';
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');

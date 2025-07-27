@@ -29,14 +29,13 @@ Getting started is simple:
 
 ## Technologies Used
 
-This project is built with a modern, lightweight tech stack that operates without a traditional backend server.
-
-* **HTML5**: For the core structure and content of the application.
-* **CSS3**: For custom styling and animations.
-* **JavaScript (ES6+)**: For all the client-side logic, including fetching data, managing quiz state, and calculating scores.
-* **Tailwind CSS**: A utility-first CSS framework used for rapid and responsive UI design.
-* **Google Sheets**: Acts as a simple, live "database" for quiz questions, accessible via a published CSV link.
-
+This project is built with a modern, lightweight tech stack that demonstrates a full-stack serverless architecture.
+- **HTML5:** For the core structure and content of the application.
+- **CSS3:** For custom styling and animations.
+- JavaScript (ES6+): For all the client-side logic, including asynchronous data fetching (fetch API), managing quiz state, and DOM manipulation.
+- **Tailwind CSS:** A utility-first CSS framework used for rapid and responsive UI design.
+- **Google Sheets:** Acts as a simple, live "database" for quiz questions (via CSV) and a write-to destination for user scores.
+- **Google Apps Script:** Serves as a secure, serverless backend (REST API) to handle POST requests from the website and write score data to the private Google Sheet.
 
 ## Credits
 

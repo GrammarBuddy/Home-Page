@@ -73,7 +73,7 @@
         </div>
 
         <div id="loadingSection" class="hidden text-center py-12">
-            <p class="text-lg font-semibold mb-4">Loading your quiz...</p>
+            <p class="text-lg font-semibold mb-4">Fetching live questions...</p>
             <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
                 <span class="loader"></span><span class="loader"></span><span class="loader"></span>
             </div>
@@ -118,13 +118,26 @@
 
     <script>
         // State Variables
-        let allQuizData = [];
+        let allQuizData = []; // This will now cache the questions from the Google Sheet
         let currentQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = {};
         let finalScore = 0;
+        
+        // --- NEW: Function to parse CSV data from Google Sheets ---
+        function parseCSV(csvText) {
+            const rows = csvText.trim().split(/\r?\n/);
+            const headers = rows[0].split(',');
+            return rows.slice(1).map(rowText => {
+                const values = rowText.split(',');
+                return headers.reduce((obj, header, i) => {
+                    obj[header] = values[i];
+                    return obj;
+                }, {});
+            });
+        }
 
-        // Main Functions
+        // --- Main Functions ---
         async function startQuiz() {
             const username = document.getElementById('usernameInput').value.trim();
             const level = document.getElementById('levelSelect').value;
@@ -132,31 +145,39 @@
             if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { alert("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
             if (!level) { alert("GrammarBuddy says: Please select a level."); return; }
             
-            // Save username to localStorage
             localStorage.setItem('grammarBuddyUsername', username);
 
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
             try {
+                // Fetch data from the live Google Sheet only if it's not already cached
                 if (allQuizData.length === 0) {
-                    const response = await fetch('questions.json');
-                    if (!response.ok) throw new Error('Network response was not ok.');
-                    allQuizData = await response.json();
+                    // This is YOUR live Google Sheet URL now
+                    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U7NK6M65kZNnINzA10Pxb2-uA2AVG2J0KigQDjFsJHP60VethYK8DEWGwb4N8gdE6oG2omLlKxmu/pub?output=csv';
+
+                    const response = await fetch(sheetUrl);
+                    if (!response.ok) throw new Error('Network response was not ok. Check the Sheet URL.');
+                    const csvText = await response.text();
+                    allQuizData = parseCSV(csvText); // Parse the CSV data into usable objects
                 }
+
                 const filtered = allQuizData.filter(q => q.Level === level);
                 const shuffled = filtered.sort(() => 0.5 - Math.random());
                 currentQuestions = shuffled.slice(0, 10);
-                if (currentQuestions.length === 0) { alert(`Sorry, no questions found for the '${level}' level. Please select another level.`); resetAll(); return; }
+
+                if (currentQuestions.length === 0) { alert(`Sorry, no questions found for the '${level}' level in the Google Sheet.`); resetAll(); return; }
+                
                 currentQuestionIndex = 0;
                 userAnswers = {};
                 toggleSection('loadingSection', false);
                 toggleSection('quizSection', true);
                 showQuestion();
                 updateProgressBar();
+
             } catch (error) {
                 console.error("Failed to load quiz questions:", error);
-                alert("An error occurred: " + error.message);
+                alert("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
                 resetAll();
             }
         }
@@ -282,7 +303,6 @@
             if (result.score >= (result.total * 0.8)) { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); }
         }
         
-        // --- UI and Utility Functions ---
         function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
         function updateProgressBar(progress = (currentQuestions.length > 0 ? (currentQuestionIndex / currentQuestions.length) : 0) * 100) { document.getElementById('progressBar').style.width = `${progress}%`; }
         function cancelQuiz() { if (confirm("GrammarBuddy says: Are you sure you want to cancel the quiz?")) { resetAll(); } }
@@ -300,15 +320,9 @@
             document.getElementById('themeToggler').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
         }
 
-        // --- Initialization on Page Load ---
         document.addEventListener("DOMContentLoaded", () => {
-            // Load saved username
             const savedUsername = localStorage.getItem('grammarBuddyUsername');
-            if (savedUsername) {
-                document.getElementById('usernameInput').value = savedUsername;
-            }
-
-            // Set color scheme
+            if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (isDarkMode) { document.documentElement.classList.add('dark'); } 
             else { document.documentElement.classList.remove('dark'); }

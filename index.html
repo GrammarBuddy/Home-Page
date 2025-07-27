@@ -199,21 +199,34 @@
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
-            google.script.run
-                .withSuccessHandler(response => {
-                    allQuestions = JSON.parse(response);
-                    currentQuestionIndex = 0;
-                    userAnswers = {};
-                    toggleSection('loadingSection', false);
-                    toggleSection('quizSection', true);
-                    showQuestion();
-                    updateProgressBar();
+            // Fetch quiz questions from the Apps Script API endpoint
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'getQuestions',
+                    level: level
                 })
-                .withFailureHandler(error => {
-                    alert("An error occurred: " + error.message);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
                     resetAll();
-                })
-                .getQuizQuestions(level);
+                    return;
+                }
+                allQuestions = data;
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                toggleSection('loadingSection', false);
+                toggleSection('quizSection', true);
+                showQuestion();
+                updateProgressBar();
+            })
+            .catch(error => {
+                alert("An error occurred: " + error.message);
+                resetAll();
+            });
         }
 
         function toggleSection(id, show) {
@@ -315,41 +328,44 @@
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
 
-            google.script.run
-                .withSuccessHandler(response => {
-                    const result = JSON.parse(response);
-                    if (result.error) {
-                        alert(result.error);
-                        resetAll();
-                        return;
-                    }
-                    finalScore = result.score;
-                    displayResults(result);
-                    updateProgressBar((result.score / result.total) * 100);
-                    toggleSection('scoringSection', false);
-                    toggleSection('resultSection', true);
-                    saveScore();
+            // Submit answers to the Apps Script API endpoint
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'submitQuiz',
+                    userAnswers: userAnswers
                 })
-                .withFailureHandler(error => {
-                    alert("An error occurred during submission: " + error.message);
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.error) {
+                    alert(result.error);
                     resetAll();
-                })
-                .submitQuiz(JSON.stringify(userAnswers));
+                    return;
+                }
+                finalScore = result.score;
+                displayResults(result);
+                updateProgressBar((result.score / result.total) * 100);
+                toggleSection('scoringSection', false);
+                toggleSection('resultSection', true);
+                saveScore();
+            })
+            .catch(error => {
+                alert("An error occurred during submission: " + error.message);
+                resetAll();
+            });
         }
 
-        // ====================================================================================================
-        // UPDATED saveScore function to work with the GitHub Pages version of the app
-        // ====================================================================================================
         function saveScore() {
             const saveStatusElement = document.getElementById('saveStatus');
             saveStatusElement.textContent = "Saving your score...";
 
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    action: 'saveScore',
                     username: username,
                     level: currentLevel,
                     score: finalScore

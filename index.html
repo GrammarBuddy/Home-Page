@@ -151,21 +151,19 @@
             toggleSection('loadingSection', true);
 
             try {
-                // Fetch data from the live Google Sheet only if it's not already cached
                 if (allQuizData.length === 0) {
-                    // This is YOUR live Google Sheet URL now
                     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U7NK6M65kZNnINzA10Pxb2-uA2AVG2J0KigQDjFsJHP60VethYK8DEWGwb4N8gdE6oG2omLlKxmu/pub?output=csv';
-
                     const response = await fetch(sheetUrl);
                     if (!response.ok) throw new Error('Network response was not ok. Check the Sheet URL.');
                     const csvText = await response.text();
-                    allQuizData = parseCSV(csvText); // Parse the CSV data into usable objects
+                    allQuizData = parseCSV(csvText);
                 }
 
                 const filtered = allQuizData.filter(q => q.Level === level);
                 const shuffled = filtered.sort(() => 0.5 - Math.random());
                 currentQuestions = shuffled.slice(0, 10);
 
+                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${level}'. A full quiz could not be created.`); }
                 if (currentQuestions.length === 0) { alert(`Sorry, no questions found for the '${level}' level in the Google Sheet.`); resetAll(); return; }
                 
                 currentQuestionIndex = 0;
@@ -239,11 +237,13 @@
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             if (!userAnswers[qid]) { alert("GrammarBuddy says: Please select an option."); return; }
-            if (currentQuestionIndex < currentQuestions.length - 1) {
+            // On the last question, update progress to 100 before submitting
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                updateProgressBar(100);
+                submitQuiz();
+            } else {
                 currentQuestionIndex++;
                 showQuestion();
-            } else {
-                submitQuiz();
             }
         }
 
@@ -304,7 +304,11 @@
         }
         
         function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
-        function updateProgressBar(progress = (currentQuestions.length > 0 ? (currentQuestionIndex / currentQuestions.length) : 0) * 100) { document.getElementById('progressBar').style.width = `${progress}%`; }
+        function updateProgressBar(progress) {
+            // If progress is not explicitly provided, calculate it based on the current question
+            const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
         function cancelQuiz() { if (confirm("GrammarBuddy says: Are you sure you want to cancel the quiz?")) { resetAll(); } }
         function restartQuiz() { resetAll(); }
         function resetAll() {

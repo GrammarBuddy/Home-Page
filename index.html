@@ -4,44 +4,79 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>GrammarBuddy Quiz</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <!-- Link to the stylesheet -->
-    <link rel="stylesheet" href="style.css">
-
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        primary: { DEFAULT: '#2563eb', light: '#93c5fd', dark: '#1e40af' },
-                        secondary: { DEFAULT: '#10b981' },
+                        primary: {
+                            DEFAULT: '#2563eb', // A consistent blue
+                            light: '#93c5fd', // Lighter shade for light mode
+                            dark: '#1e40af',  // Darker shade for dark mode
+                        },
+                        secondary: {
+                            DEFAULT: '#10b981', // A consistent green for success
+                        },
                     },
                 },
             },
         };
     </script>
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
-        .loader { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; background-color: currentColor; animation: bounce 0.6s infinite alternate; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .loader {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: currentColor;
+            animation: bounce 0.6s infinite alternate;
+        }
         .loader:nth-child(2) { animation-delay: 0.2s; }
         .loader:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
-        .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        @keyframes bounce {
+            from { transform: translateY(0); opacity: 0.3; }
+            to { transform: translateY(-0.6rem); opacity: 1; }
+        }
+        .disabled-button {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .question-transition-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .question-transition-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        .question-transition-exit {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .question-transition-exit-active {
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
-    <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
+    <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6 shadow rounded-lg min-h-screen">
 
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
-            <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">
+            <button onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded">
                 Light/Dark
             </button>
         </div>
@@ -55,8 +90,10 @@
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
             </h1>
             <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
-            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
-            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            
+            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600" pattern="[a-zA-Z0-9]{1,10}">
+            
+            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600">
                 <option value="">-- Select Level --</option>
                 <option>Pre-KG</option>
                 <option>Kindergarten</option>
@@ -69,28 +106,34 @@
                 <option>Post Graduation</option>
                 <option>PhD</option>
             </select>
-            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
+            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full">
                 Start Quiz
             </button>
         </div>
 
         <div id="loadingSection" class="hidden text-center py-12">
-            <p class="text-lg font-semibold mb-4">Fetching live questions...</p>
+            <p class="text-lg font-semibold mb-4">Loading your quiz...</p>
             <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
-                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
+                <span class="loader"></span>
+                <span class="loader"></span>
+                <span class="loader"></span>
             </div>
         </div>
 
         <div id="quizSection" class="hidden">
             <div id="questionContentWrapper" class="transition-all duration-300 ease-in-out">
                 <div id="questionText" class="text-lg font-semibold mb-4"></div>
-                <div id="options" class="space-y-3 mb-4"></div>
+                <div id="options" class="space-y-2 mb-4"></div>
             </div>
             <div class="flex justify-between items-center mt-6">
-                <button onclick="cancelQuiz()" class="text-sm text-red-500 underline">Cancel</button>
+                <a href="#" onclick="cancelQuiz()" class="text-sm text-red-500 underline">Cancel</a>
                 <div class="space-x-2">
-                    <button id="prevButton" onclick="prevQuestion()" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-3 py-2 rounded disabled-button interactive-element">Previous</button>
-                    <button id="nextButton" onclick="nextQuestion()" class="bg-primary text-white px-4 py-2 rounded interactive-element">Next</button>
+                    <button id="prevButton" onclick="prevQuestion()" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-3 py-2 rounded disabled-button">
+                        Previous
+                    </button>
+                    <button id="nextButton" onclick="nextQuestion()" class="bg-primary text-white px-4 py-2 rounded">
+                        Next
+                    </button>
                 </div>
             </div>
         </div>
@@ -98,7 +141,9 @@
         <div id="scoringSection" class="hidden text-center py-12">
             <p class="text-lg font-semibold mb-4">Calculating your score...</p>
             <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
-                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
+                <span class="loader"></span>
+                <span class="loader"></span>
+                <span class="loader"></span>
             </div>
         </div>
 
@@ -111,122 +156,113 @@
             <div id="explanations" class="space-y-4 text-sm"></div>
             <div class="text-center mt-6">
                 <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
-                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
+                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded">
                     Take Another Quiz
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-            &copy; GrammarBuddy | All Rights Reserved
-        </p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
-            Designed & Developed by Varun K | Co-Developed by Yuvika V
-        </p>
-    </footer>
-
-
     <script>
-        // State Variables
-        let allQuizData = []; // This will now cache the questions from the Google Sheet
-        let currentQuestions = [];
+        // ====================================================================================================
+        // IMPORTANT: THIS URL IS FOR YOUR GITHUB PAGES DEPLOYMENT
+        // IT IS THE API ENDPOINT FOR YOUR APPS SCRIPT WEB APP
+        // ====================================================================================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMQFuhAS29kROxlGm9ZqyXarBai5loLtbQ1x5Z3hH1hDwRN6vAe20qWaCTzH_VtdU/exec'; 
+
+        let allQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = {};
+        let currentLevel = '';
         let finalScore = 0;
-        
-        // Function to parse CSV data from Google Sheets
-        function parseCSV(csvText) {
-            const rows = csvText.trim().split(/\r?\n/);
-            const headers = rows[0].split(',');
-            return rows.slice(1).map(rowText => {
-                const values = rowText.split(',');
-                return headers.reduce((obj, header, i) => {
-                    obj[header] = values[i];
-                    return obj;
-                }, {});
-            });
-        }
+        let username = '';
 
-        // Main Functions
-        async function startQuiz() {
-            const username = document.getElementById('usernameInput').value.trim();
+        function startQuiz() {
+            username = document.getElementById('usernameInput').value.trim();
             const level = document.getElementById('levelSelect').value;
-            if (!username) { alert("GrammarBuddy says: Please enter a username."); return; }
-            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { alert("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
-            if (!level) { alert("GrammarBuddy says: Please select a level."); return; }
-            
-            localStorage.setItem('grammarBuddyUsername', username);
 
+            if (!username) {
+                alert("GrammarBuddy says: Please enter a username.");
+                return;
+            }
+            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) {
+                alert("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters.");
+                return;
+            }
+            if (!level) {
+                alert("GrammarBuddy says: Please select a level.");
+                return;
+            }
+
+            currentLevel = level;
+            
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
-            try {
-                if (allQuizData.length === 0) {
-                    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U7NK6M65kZNnINzA10Pxb2-uA2AVG2J0KigQDjFsJHP60VethYK8DEWGwb4N8gdE6oG2omLlKxmu/pub?output=csv';
-                    const response = await fetch(sheetUrl);
-                    if (!response.ok) throw new Error('Network response was not ok. Check the Sheet URL.');
-                    const csvText = await response.text();
-                    allQuizData = parseCSV(csvText);
-                }
+            google.script.run
+                .withSuccessHandler(response => {
+                    allQuestions = JSON.parse(response);
+                    currentQuestionIndex = 0;
+                    userAnswers = {};
+                    toggleSection('loadingSection', false);
+                    toggleSection('quizSection', true);
+                    showQuestion();
+                    updateProgressBar();
+                })
+                .withFailureHandler(error => {
+                    alert("An error occurred: " + error.message);
+                    resetAll();
+                })
+                .getQuizQuestions(level);
+        }
 
-                const filtered = allQuizData.filter(q => q.Level === level);
-                const shuffled = filtered.sort(() => 0.5 - Math.random());
-                currentQuestions = shuffled.slice(0, 10);
-
-                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${level}'. A full quiz could not be created.`); }
-                if (currentQuestions.length === 0) { alert(`Sorry, no questions found for the '${level}' level in the Google Sheet.`); resetAll(); return; }
-                
-                currentQuestionIndex = 0;
-                userAnswers = {};
-                toggleSection('loadingSection', false);
-                toggleSection('quizSection', true);
-                showQuestion();
-                updateProgressBar();
-
-            } catch (error) {
-                console.error("Failed to load quiz questions:", error);
-                alert("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
-                resetAll();
-            }
+        function toggleSection(id, show) {
+            document.getElementById(id).classList.toggle('hidden', !show);
         }
 
         function showQuestion() {
             const questionContentWrapper = document.getElementById('questionContentWrapper');
-            const q = currentQuestions[currentQuestionIndex];
+            const q = allQuestions[currentQuestionIndex];
             
-            questionContentWrapper.style.opacity = 0;
+            questionContentWrapper.classList.remove('question-transition-enter-active');
+            questionContentWrapper.classList.add('question-transition-exit-active');
 
             setTimeout(() => {
-                document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
+                document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${q.questionText}`;
                 const optionsDiv = document.getElementById('options');
                 optionsDiv.innerHTML = '';
-                const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
-                
-                for (let key in optionsMap) {
-                    const option = optionsMap[key];
+                for (let key in q.options) {
+                    const option = q.options[key];
                     const label = document.createElement('label');
-                    label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element';
+                    label.className = 'block border rounded px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800';
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');
-                    input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
+                    input.type = 'radio';
+                    input.name = 'option';
+                    input.value = key;
+                    input.className = 'mr-2 hidden';
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(`${key}: ${option}`));
                     optionsDiv.appendChild(label);
                 }
-                const qid = currentQuestions[currentQuestionIndex].Question_ID;
+                const qid = allQuestions[currentQuestionIndex].questionId;
                 if (userAnswers[qid]) {
-                    const selectedLabel = optionsDiv.querySelector(`input[value="${userAnswers[qid]}"]`).parentElement;
-                    if (selectedLabel) selectedLabel.classList.add('selected-option');
+                    const selectedKey = userAnswers[qid];
+                    const selectedInput = optionsDiv.querySelector(`input[value="${selectedKey}"]`);
+                    if (selectedInput) {
+                        selectedInput.checked = true;
+                        selectedInput.parentElement.classList.add('bg-primary-light', 'dark:bg-primary-dark');
+                    }
                 }
-                questionContentWrapper.style.opacity = 1;
-            }, 150);
+
+                questionContentWrapper.classList.remove('question-transition-exit-active');
+                questionContentWrapper.classList.add('question-transition-enter-active');
+
+            }, 300);
 
             document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
             const nextButton = document.getElementById('nextButton');
-            if (currentQuestionIndex === currentQuestions.length - 1) {
+            if (currentQuestionIndex === allQuestions.length - 1) {
                 nextButton.textContent = 'Submit & See Results';
                 nextButton.classList.remove('bg-primary');
                 nextButton.classList.add('bg-secondary');
@@ -239,18 +275,24 @@
         }
 
         function selectOption(key) {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
+            const qid = allQuestions[currentQuestionIndex].questionId;
             userAnswers[qid] = key;
             const optionsDiv = document.getElementById('options');
-            optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
+            optionsDiv.querySelectorAll('label').forEach(label => {
+                label.classList.remove('bg-primary-light', 'dark:bg-primary-dark');
+            });
             const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`).parentElement;
-            selectedLabel.classList.add('selected-option');
+            selectedLabel.classList.add('bg-primary-light', 'dark:bg-primary-dark');
         }
 
         function nextQuestion() {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            if (!userAnswers[qid]) { alert("GrammarBuddy says: Please select an option."); return; }
-            if (currentQuestionIndex < currentQuestions.length - 1) {
+            const qid = allQuestions[currentQuestionIndex].questionId;
+            if (!userAnswers[qid]) {
+                alert("GrammarBuddy says: Please select an option.");
+                return;
+            }
+
+            if (currentQuestionIndex < allQuestions.length - 1) {
                 currentQuestionIndex++;
                 showQuestion();
             } else {
@@ -265,83 +307,142 @@
             }
         }
 
+        function updateProgressBar(progress = (currentQuestionIndex / allQuestions.length) * 100) {
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
         function submitQuiz() {
-            updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
-            let score = 0;
-            const detailedResults = [];
-            currentQuestions.forEach(q => {
-                const userAnswer = userAnswers[q.Question_ID];
-                const isCorrect = userAnswer === q.Correct_Answer;
-                if (isCorrect) score++;
-                detailedResults.push({
-                    questionId: q.Question_ID, questionText: q.Question_Text,
-                    userAnswer: userAnswer, correctAnswer: q.Correct_Answer,
-                    explanation: q.Explanation, isCorrect: isCorrect
-                });
-            });
-            finalScore = score;
-            const resultPayload = { score: score, total: currentQuestions.length, results: detailedResults };
-            setTimeout(() => {
-                displayResults(resultPayload);
-                toggleSection('scoringSection', false);
-                toggleSection('resultSection', true);
-                document.getElementById('saveStatus').textContent = "Score saving is not available in this web version.";
-            }, 1000);
+
+            google.script.run
+                .withSuccessHandler(response => {
+                    const result = JSON.parse(response);
+                    if (result.error) {
+                        alert(result.error);
+                        resetAll();
+                        return;
+                    }
+                    finalScore = result.score;
+                    displayResults(result);
+                    updateProgressBar((result.score / result.total) * 100);
+                    toggleSection('scoringSection', false);
+                    toggleSection('resultSection', true);
+                    saveScore();
+                })
+                .withFailureHandler(error => {
+                    alert("An error occurred during submission: " + error.message);
+                    resetAll();
+                })
+                .submitQuiz(JSON.stringify(userAnswers));
         }
 
+        // ====================================================================================================
+        // UPDATED saveScore function to work with the GitHub Pages version of the app
+        // ====================================================================================================
+        function saveScore() {
+            const saveStatusElement = document.getElementById('saveStatus');
+            saveStatusElement.textContent = "Saving your score...";
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    level: currentLevel,
+                    score: finalScore
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    saveStatusElement.textContent = data.message;
+                } else {
+                    saveStatusElement.textContent = `Error: ${data.message}`;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                saveStatusElement.textContent = `Error saving score: ${error.message}`;
+            });
+        }
+        
         function displayResults(result) {
             document.getElementById('scoreDisplay').textContent = `Score: ${result.score}/${result.total}`;
-            const rankLabel = document.getElementById('rankLabel');
-            const scoreRatio = result.score / result.total;
-            if (scoreRatio === 1) rankLabel.textContent = "🏆 Outstanding!";
-            else if (scoreRatio >= 0.8) rankLabel.textContent = "🎉 Great job!";
-            else if (scoreRatio >= 0.5) rankLabel.textContent = "👍 Keep practicing!";
-            else rankLabel.textContent = "📚 Don’t give up. Try again!";
+            document.getElementById('rankLabel').textContent =
+                result.score === result.total ? "🏆 Outstanding!" :
+                result.score >= (result.total * 0.8) ? "🎉 Great job!" :
+                result.score >= (result.total * 0.5) ? "👍 Keep practicing!" : "📚 Don’t give up. Try again!";
             
             const explanationsDiv = document.getElementById('explanations');
             explanationsDiv.innerHTML = '';
             result.results.forEach((r, i) => {
                 const icon = r.isCorrect ? '✅' : '❌';
-                const panelColor = r.isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
-                const questionInList = currentQuestions.find(q => q.Question_ID === r.questionId);
-                const optionsMap = { A: questionInList.Option_A, B: questionInList.Option_B, C: questionInList.Option_C, D: questionInList.Option_D };
+                const panelColor = r.isCorrect ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900';
+                
+                const questionInList = allQuestions.find(q => q.questionId === r.questionId);
+                
                 const card = document.createElement('div');
-                card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
-                card.innerHTML = `<p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${r.questionText}</p><p><strong>Your Answer:</strong> ${r.userAnswer ? `${r.userAnswer} (${optionsMap[r.userAnswer]})` : 'Not answered'}</p><p><strong>Correct Answer:</strong> ${r.correctAnswer} (${optionsMap[r.correctAnswer]})</p><p class="mt-2"><strong>Explanation:</strong> <span class="italic">${r.explanation}</span></p>`;
+                card.className = `border rounded ${panelColor} p-3`;
+                card.innerHTML = `
+                    <p class="font-semibold flex items-center mb-2">
+                        ${icon} ${i + 1}. ${r.questionText}
+                    </p>
+                    <p><strong>Your Answer:</strong> ${r.userAnswer || 'Not answered'} (${questionInList.options[r.userAnswer] || 'No response'})</p>
+                    <p><strong>Correct Answer:</strong> ${r.correctAnswer} (${questionInList.options[r.correctAnswer]})</p>
+                    <p class="mt-2"><strong>Explanation:</strong> <span class="italic">${r.explanation}</span></p>
+                `;
                 explanationsDiv.appendChild(card);
             });
-            if (result.score >= (result.total * 0.8)) { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); }
+
+            if (result.score >= (result.total * 0.8)) {
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.6 }
+                });
+            }
         }
-        
-        function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
-        function updateProgressBar(progress) {
-            const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
-            document.getElementById('progressBar').style.width = `${percentage}%`;
+
+        function cancelQuiz() {
+            if (confirm("GrammarBuddy says: Are you sure you want to cancel the quiz?")) {
+                resetAll();
+            }
         }
-        function cancelQuiz() { if (confirm("GrammarBuddy says: Are you sure you want to cancel the quiz?")) { resetAll(); } }
-        function restartQuiz() { resetAll(); }
+
+        function restartQuiz() {
+            resetAll();
+        }
+
         function resetAll() {
-            toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
+            toggleSection('quizSection', false);
+            toggleSection('resultSection', false);
+            toggleSection('scoringSection', false);
+            toggleSection('welcomeSection', true);
             document.getElementById('levelSelect').selectedIndex = 0;
-            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
+            allQuestions = [];
+            userAnswers = {};
+            currentQuestionIndex = 0;
             updateProgressBar(0);
         }
+
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDarkMode = html.classList.contains('dark');
-            document.getElementById('themeToggler').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+            html.classList.toggle('light');
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            const savedUsername = localStorage.getItem('grammarBuddyUsername');
-            if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (isDarkMode) { document.documentElement.classList.add('dark'); } 
-            else { document.documentElement.classList.remove('dark'); }
-            document.getElementById('themeToggler').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+            }
         });
     </script>
 </body>

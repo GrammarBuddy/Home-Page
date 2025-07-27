@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>GrammarBuddy Quiz</title>
     
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
+    <!-- Link to the stylesheet -->
     <link rel="stylesheet" href="style.css">
 
     <script>
@@ -116,6 +118,17 @@
         </div>
     </div>
 
+    <!-- ===== UPDATED FOOTER ===== -->
+    <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            &copy; GrammarBuddy . All Rights Reserved
+        </p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
+            Developed & Designed by Varun K | Co-Developed by Yuvika V
+        </p>
+    </footer>
+
+
     <script>
         // State Variables
         let allQuizData = []; // This will now cache the questions from the Google Sheet
@@ -124,7 +137,7 @@
         let userAnswers = {};
         let finalScore = 0;
         
-        // --- NEW: Function to parse CSV data from Google Sheets ---
+        // Function to parse CSV data from Google Sheets
         function parseCSV(csvText) {
             const rows = csvText.trim().split(/\r?\n/);
             const headers = rows[0].split(',');
@@ -137,7 +150,7 @@
             });
         }
 
-        // --- Main Functions ---
+        // Main Functions
         async function startQuiz() {
             const username = document.getElementById('usernameInput').value.trim();
             const level = document.getElementById('levelSelect').value;
@@ -237,13 +250,11 @@
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             if (!userAnswers[qid]) { alert("GrammarBuddy says: Please select an option."); return; }
-            // On the last question, update progress to 100 before submitting
-            if (currentQuestionIndex === currentQuestions.length - 1) {
-                updateProgressBar(100);
-                submitQuiz();
-            } else {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
                 showQuestion();
+            } else {
+                submitQuiz();
             }
         }
 
@@ -255,6 +266,7 @@
         }
 
         function submitQuiz() {
+            updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
             let score = 0;
@@ -305,7 +317,6 @@
         
         function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
         function updateProgressBar(progress) {
-            // If progress is not explicitly provided, calculate it based on the current question
             const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
             document.getElementById('progressBar').style.width = `${percentage}%`;
         }

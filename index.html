@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>GrammarBuddy</title>
+    <title>GrammarBuddy Quiz</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,22 +30,62 @@
         .loader:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
         .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        /* --- Hamburger Menu Styles --- */
+        .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
+        .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; left: 0; width: 24px; height: 2px; background: #374151; transition: all 0.4s; }
+        .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-bottom { background: #f3f4f6; }
+        .hamburger-middle { transform: translateY(7px); }
+        .hamburger-bottom { transform: translateY(14px); }
+        .open { transform: rotate(90deg); }
+        .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
+        .open .hamburger-middle { display: none; }
+        .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
     </style>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
+    
+    <!-- ===== NEW: Mobile Menu Overlay ===== -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 flex-col items-center justify-center w-full h-screen bg-gray-900 text-white text-lg uppercase space-y-8 hidden">
+        <a href="https://grammarbuddy.github.io/homepage/" class="hover:text-primary-light transition-colors">Home</a>
+        <a href="https://sites.google.com/view/gbspellbee/home" class="hover:text-primary-light transition-colors">Spelling Bee</a>
+        <a href="https://sites.google.com/view/titatov3/home" class="hover:text-primary-light transition-colors">TaTiTo Code</a>
+        <a href="https://www.google.com" class="hover:text-primary-light transition-colors">Careers</a>
+        <a href="https://www.google.com" class="hover:text-primary-light transition-colors">About Us</a>
+    </div>
+
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-        <div class="flex justify-between items-center mb-4">
+        <!-- ===== UPDATED: Header with Navigation ===== -->
+        <header class="flex justify-between items-center mb-4">
             <h1 class="text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
-            <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">
-                Light/Dark
-            </button>
-        </div>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm">
+                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">Home</a>
+                <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">Spelling Bee</a>
+                <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">TaTiTo Code</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">Careers</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">About Us</a>
+            </nav>
+
+            <!-- Right Side Controls -->
+            <div class="flex items-center space-x-4">
+                <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Light/Dark</button>
+                <!-- Hamburger Button -->
+                <button id="menu-btn" class="md:hidden z-50 block hamburger focus:outline-none">
+                    <span class="hamburger-top"></span>
+                    <span class="hamburger-middle"></span>
+                    <span class="hamburger-bottom"></span>
+                </button>
+            </div>
+        </header>
 
         <div class="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded mb-4">
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
+        <!-- ... (rest of your quiz sections remain unchanged) ... -->
         <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
@@ -66,7 +106,7 @@
                 <option>PhD</option>
             </select>
             <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
-                Start Challenge
+                Start Quiz
             </button>
         </div>
 
@@ -116,7 +156,7 @@
 
     <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
         <p class="text-sm text-gray-500 dark:text-gray-400">&copy; GrammarBuddy . All Rights Reserved</p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Designed & Developed by Varun K | Co-Developed by Yuvika V</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Developed & Designed by Varun K | Co-Developed by Yuvika V</p>
     </footer>
 
 
@@ -130,7 +170,6 @@
         let username = '';
         let currentLevel = '';
         
-        // Function to parse CSV data from Google Sheets
         function parseCSV(csvText) {
             const rows = csvText.trim().split(/\r?\n/);
             const headers = rows[0].split(',');
@@ -143,7 +182,6 @@
             });
         }
 
-        // Main Functions
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
             currentLevel = document.getElementById('levelSelect').value;
@@ -252,28 +290,22 @@
             finalScore = score;
             setTimeout(() => {
                 displayResults();
-                saveScore(); // Call the save function
+                saveScore();
                 toggleSection('scoringSection', false);
                 toggleSection('resultSection', true);
             }, 1000);
         }
 
-        // --- Function to save the score ---
         async function saveScore() {
             const saveStatusElement = document.getElementById('saveStatus');
             saveStatusElement.textContent = "Saving your score...";
-
-            // This is your live Web App URL
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbyqVpoPwvsW7m1qbYS4jKm_Y33P-opc8q2zoghxQdFCXgh6dudJ6Su-1h5SC44Pd11d/exec';
-
             const payload = {
                 username: username,
                 level: currentLevel,
                 score: `${finalScore}/${currentQuestions.length}`
             };
-
             try {
-                // We use fetch to send the data. 'no-cors' mode is important here.
                 await fetch(webAppUrl, {
                     method: 'POST',
                     mode: 'no-cors', 
@@ -339,6 +371,16 @@
             if (isDarkMode) { document.documentElement.classList.add('dark'); } 
             else { document.documentElement.classList.remove('dark'); }
             document.getElementById('themeToggler').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+            
+            // --- NEW: Hamburger Menu Logic ---
+            const btn = document.getElementById('menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('open');
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
+                document.body.classList.toggle('overflow-hidden');
+            });
         });
     </script>
 </body>

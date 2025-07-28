@@ -37,7 +37,6 @@
         .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-bottom { background: #f3f4f6; }
         .hamburger-middle { transform: translateY(7px); }
         .hamburger-bottom { transform: translateY(14px); }
-        .open { transform: rotate(90deg); }
         .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
         .open .hamburger-middle { display: none; }
         .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
@@ -45,40 +44,38 @@
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
     
-    <!-- ===== NEW: Mobile Menu Overlay ===== -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 flex-col items-center justify-center w-full h-screen bg-gray-900 text-white text-lg uppercase space-y-8 hidden">
-        <a href="https://grammarbuddy.github.io/homepage/" class="hover:text-primary-light transition-colors">Home</a>
-        <a href="https://sites.google.com/view/gbspellbee/home" class="hover:text-primary-light transition-colors">Spelling Bee</a>
-        <a href="https://sites.google.com/view/titatov3/home" class="hover:text-primary-light transition-colors">TaTiTo Code</a>
-        <a href="https://www.google.com" class="hover:text-primary-light transition-colors">Careers</a>
-        <a href="https://www.google.com" class="hover:text-primary-light transition-colors">About Us</a>
+    <!-- ===== NEW: Slide-out Sidebar Menu ===== -->
+    <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-5">
+            <h2 class="text-2xl font-bold text-primary dark:text-primary-light mb-8">Navigation</h2>
+            <nav class="flex flex-col space-y-4">
+                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
+                <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
+                <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Careers</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">About Us</a>
+            </nav>
+        </div>
     </div>
+    <!-- Menu Backdrop -->
+    <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
 
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-        <!-- ===== UPDATED: Header with Navigation ===== -->
-        <header class="flex justify-between items-center mb-4">
-            <h1 class="text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+        <!-- ===== UPDATED: Header with new layout ===== -->
+        <header class="relative flex justify-between items-center mb-8">
+            <!-- Hamburger Button -->
+            <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
+                <span class="hamburger-top"></span>
+                <span class="hamburger-middle"></span>
+                <span class="hamburger-bottom"></span>
+            </button>
+            
+            <!-- Title in the center -->
+            <h1 class="text-3xl font-bold text-primary dark:text-primary-light absolute left-1/2 -translate-x-1/2">GrammarBuddy</h1>
 
-            <!-- Desktop Menu -->
-            <nav class="hidden md:flex items-center space-x-6 text-sm">
-                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">Home</a>
-                <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">Spelling Bee</a>
-                <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">TaTiTo Code</a>
-                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">Careers</a>
-                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors">About Us</a>
-            </nav>
-
-            <!-- Right Side Controls -->
-            <div class="flex items-center space-x-4">
-                <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Light/Dark</button>
-                <!-- Hamburger Button -->
-                <button id="menu-btn" class="md:hidden z-50 block hamburger focus:outline-none">
-                    <span class="hamburger-top"></span>
-                    <span class="hamburger-middle"></span>
-                    <span class="hamburger-bottom"></span>
-                </button>
-            </div>
+            <!-- Theme Toggler on the right -->
+            <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Light/Dark</button>
         </header>
 
         <div class="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded mb-4">
@@ -372,15 +369,20 @@
             else { document.documentElement.classList.remove('dark'); }
             document.getElementById('themeToggler').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
             
-            // --- NEW: Hamburger Menu Logic ---
-            const btn = document.getElementById('menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('open');
-                menu.classList.toggle('hidden');
-                menu.classList.toggle('flex');
+            // --- UPDATED: Sidebar Menu Logic ---
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+
+            const toggleMenu = () => {
+                menuBtn.classList.toggle('open');
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
                 document.body.classList.toggle('overflow-hidden');
-            });
+            };
+
+            menuBtn.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
         });
     </script>
 </body>

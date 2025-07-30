@@ -175,17 +175,40 @@
         let username = '';
         let currentLevel = '';
         
-        function parseCSV(csvText) {
-            const rows = csvText.trim().split(/\r?\n/);
-            const headers = rows[0].split(',');
-            return rows.slice(1).map(rowText => {
-                const values = rowText.split(',');
-                return headers.reduce((obj, header, i) => {
-                    obj[header] = values[i];
-                    return obj;
-                }, {});
+function parseCSV(csvText) {
+    const rows = csvText.trim().split(/\r?\n/);
+    const result = [];
+    const headers = [];
+    let isHeader = true;
+
+    // Regular expression to split CSV rows while respecting quoted fields
+    // This regex looks for commas that are NOT inside double quotes.
+    const csvSplitRegex = /,(?=(?:[^"]*"[^"]*")*[^"]*$)/;
+
+    rows.forEach(rowText => {
+        const values = rowText.split(csvSplitRegex).map(value => {
+            // Trim whitespace and remove outer quotes if present
+            value = value.trim();
+            if (value.startsWith('"') && value.endsWith('"')) {
+                // Remove outer quotes and unescape inner double quotes (e.g., "" becomes ")
+                value = value.substring(1, value.length - 1).replace(/""/g, '"');
+            }
+            return value;
+        });
+
+        if (isHeader) {
+            headers.push(...values);
+            isHeader = false;
+        } else {
+            const rowObject = {};
+            headers.forEach((header, i) => {
+                rowObject[header] = values[i] !== undefined ? values[i] : ''; // Handle missing values
             });
+            result.push(rowObject);
         }
+    });
+    return result;
+}
 
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();

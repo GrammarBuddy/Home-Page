@@ -175,69 +175,17 @@
         let username = '';
         let currentLevel = '';
         
-function parseCSV(csvText) {
-    const rows = csvText.trim().split(/\r?\n/);
-    if (rows.length === 0) return [];
-
-    const result = [];
-    const headers = [];
-
-    // Simple state machine for parsing fields, acknowledging quoted content
-    const parseRow = (rowString) => {
-        const values = [];
-        let inQuote = false;
-        let currentField = '';
-        for (let i = 0; i < rowString.length; i++) {
-            const char = rowString[i];
-            const nextChar = rowString[i + 1];
-
-            if (char === '"') {
-                if (inQuote && nextChar === '"') {
-                    // This is an escaped double quote within a quoted field
-                    currentField += '"';
-                    i++; // Skip the next character as it's part of the escape sequence
-                } else {
-                    // Toggle inQuote state
-                    inQuote = !inQuote;
-                }
-            } else if (char === ',' && !inQuote) {
-                // End of a field outside of quotes
-                values.push(currentField.trim());
-                currentField = '';
-            } else {
-                // Regular character
-                currentField += char;
-            }
+        function parseCSV(csvText) {
+            const rows = csvText.trim().split(/\r?\n/);
+            const headers = rows[0].split(',');
+            return rows.slice(1).map(rowText => {
+                const values = rowText.split(',');
+                return headers.reduce((obj, header, i) => {
+                    obj[header] = values[i];
+                    return obj;
+                }, {});
+            });
         }
-        // Add the last field
-        values.push(currentField.trim());
-        return values;
-    };
-
-    // Parse headers (first row)
-    const rawHeaders = parseRow(rows[0]);
-    rawHeaders.forEach(header => {
-        // Clean headers by removing any lingering outer quotes or whitespace
-        headers.push(header.replace(/^"|"$/g, '').trim());
-    });
-
-    // Parse data rows
-    for (let i = 1; i < rows.length; i++) {
-        const rowValues = parseRow(rows[i]);
-        const rowObject = {};
-        headers.forEach((header, index) => {
-            let value = rowValues[index] !== undefined ? rowValues[index] : '';
-            // Remove any *remaining* outer quotes that might have been missed
-            // (e.g., if a field was just "" but not a full string)
-            if (value.startsWith('"') && value.endsWith('"') && value.length > 1) {
-                 value = value.substring(1, value.length - 1);
-            }
-            rowObject[header] = value;
-        });
-        result.push(rowObject);
-    }
-    return result;
-}
 
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();

@@ -1,181 +1,522 @@
-// This function is still here for backward compatibility with the original web app URL,
-// which serves the HTML file from the Apps Script environment.
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-}
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GrammarBuddy</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-/**
- * This is the central API endpoint for all requests from the GitHub Pages web app.
- * It routes requests to the correct function based on the 'action' field in the payload.
- * @param {object} e The event object containing the POST data.
- * @returns {object} A JSON response with the result of the action.
- */
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const action = data.action;
-    let result;
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { DEFAULT: '#2563eb', light: '#93c5fd', dark: '#1e40af' },
+                        secondary: { DEFAULT: '#10b981' },
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Base styles for a smooth, responsive experience */
+        html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        .loader { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; background-color: currentColor; animation: bounce 0.6s infinite alternate; }
+        .loader:nth-child(2) { animation-delay: 0.2s; }
+        .loader:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
+        .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-    switch (action) {
-      case 'getQuestions':
-        result = getQuizQuestions(data.level);
-        break;
-      case 'submitQuiz':
-        result = submitQuiz(JSON.stringify(data.userAnswers));
-        break;
-      case 'saveScore':
-        // The saveScore action now correctly passes the email field.
-        result = saveUserData(data.username, data.level, data.score, data.email);
-        break;
-      default:
-        return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Invalid action' }))
-          .setMimeType(ContentService.MimeType.JSON);
-    }
+        /* --- Hamburger Menu Styles --- */
+        .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
+        .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; left: 0; width: 24px; height: 2px; background: #374151; transition: all 0.4s; }
+        .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-bottom { background: #f3f4f6; }
+        .hamburger-middle { transform: translateY(7px); }
+        .hamburger-bottom { transform: translateY(14px); }
+        .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
+        .open .hamburger-middle { display: none; }
+        .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
+        
+        /* New styling for the selected option in the quiz */
+        .selected-option { 
+            background-color: var(--primary-light, #93c5fd);
+            border-color: var(--primary, #2563eb);
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease-in-out;
+        }
+        .dark .selected-option {
+            background-color: #1e40af;
+            border-color: #93c5fd;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
+    
+    <!-- ===== Slide-out Sidebar Menu ===== -->
+    <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-5 pt-16"> <!-- Adjusted top padding -->
+            <nav class="flex flex-col space-y-4">
+                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
+                <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
+                <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Careers</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">About Us</a>
+            </nav>
+        </div>
+    </div>
+    <!-- Menu Backdrop -->
+    <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+    
+    <!-- ===== Cancel Confirmation Modal ===== -->
+    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
+            <p class="mb-6">GrammarBuddy says: Do you want to cancel the quiz? Your progress will be lost.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="confirmCancelBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg interactive-element hover:bg-red-600 transition-colors">Yes, cancel</button>
+                <button id="dismissCancelBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg interactive-element hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors">No, continue</button>
+            </div>
+        </div>
+    </div>
 
-    return ContentService.createTextOutput(JSON.stringify(result))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    Logger.log('Error in doPost: ' + err.message);
-    return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Server error: ' + err.message }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
 
-/**
- * Fetches a random set of 10 quiz questions for a specific level from the Google Sheet.
- * @param {string} level The selected quiz level.
- * @returns {Array<object>} An array of question objects.
- */
-function getQuizQuestions(level) {
-  // Your questions spreadsheet ID from the user's provided script
-  const sheetId = "1vPcimkpqRwKx1_JTAE66EEFUCaDQtyRErb-uyP4a054"; 
-  const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Questions");
-  if (!sheet) {
-    return { error: "Could not find the 'Questions' sheet. Please check your spreadsheet." };
-  }
-  const data = sheet.getDataRange().getValues();
+    <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-  const headers = data[0];
-  const rows = data.slice(1);
+        <!-- ===== UPDATED: Header with new layout ===== -->
+        <header class="relative flex justify-between items-center mb-8">
+            <!-- Left side: Hamburger -->
+            <div class="flex-1">
+                <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
+                    <span class="hamburger-top"></span>
+                    <span class="hamburger-middle"></span>
+                    <span class="hamburger-bottom"></span>
+                </button>
+            </div>
+            
+            <!-- Center: Title -->
+            <div class="flex-1 text-center">
+                   <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+                 <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
+            </div>
 
-  const filtered = rows.filter(row => row[headers.indexOf("Level")] === level);
-  const shuffled = filtered.sort(() => 0.5 - Math.random());
-  const questions = shuffled.slice(0, 10).map(row => {
-    return {
-      questionId: row[headers.indexOf("Question_ID")],
-      topic: row[headers.indexOf("Topic")],
-      questionText: row[headers.indexOf("Question_Text")],
-      options: {
-        A: row[headers.indexOf("Option_A")],
-        B: row[headers.indexOf("Option_B")],
-        C: row[headers.indexOf("Option_C")],
-        D: row[headers.indexOf("Option_D")]
-      },
-      correctAnswer: row[headers.indexOf("Correct_Answer")],
-      explanation: row[headers.indexOf("Explanation")]
-    };
-  });
-  return questions;
-}
+            <!-- Right side: Toggler -->
+            <div class="flex-1 text-right">
+                <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
+            </div>
+        </header>
 
-/**
- * Evaluates the user's submitted answers against the correct answers in the Google Sheet.
- * @param {string} userAnswersJson A JSON string of the user's answers.
- * @returns {object} An object containing the score, total questions, and detailed results.
- */
-function submitQuiz(userAnswersJson) {
-  try {
-    const userAnswers = JSON.parse(userAnswersJson);
-    const sheetId = "1vPcimkpqRwKx1_JTAE66EEFUCaDQtyRErb-uyP4a054";
-    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Questions");
-    if (!sheet) {
-      return { error: "Could not find the 'Questions' sheet. Please check your spreadsheet." };
-    }
-    const data = sheet.getDataRange().getValues();
-    const headers = data[0];
-    const rows = data.slice(1);
+        <div class="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded mb-4">
+            <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
+        </div>
 
-    let score = 0;
-    let total = Object.keys(userAnswers).length;
-    let results = [];
+        <div id="welcomeSection">
+            <h1 class="text-3xl font-bold text-center mb-4">
+                🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
+            </h1>
+            <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
+            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
+            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+                <option value="">-- Select Level --</option>
+                <option>Pre-KG</option>
+                <option>Kindergarten</option>
+                <option>Lower Primary (1&2)</option>
+                <option>Upper Primary (3-5)</option>
+                <option>Middle School (6-8)</option>
+                <option>Secondary (9&10)</option>
+                <option>Senior Secondary (11&12)</option>
+                <option>Graduation</option>
+                <option>Post Graduation</option>
+                <option>PhD</option>
+            </select>
+            <input type="email" id="emailInput" placeholder="Enter your email to save your score" class="w-full border rounded p-2 mb-1 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            <p id="emailError" class="text-red-500 text-sm mb-4 hidden">Please enter a valid email address.</p>
+            
+            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
+                Start Challenge
+            </button>
+        </div>
 
-    const questionsMap = new Map();
-    rows.forEach(row => {
-      const qid = row[headers.indexOf("Question_ID")];
-      questionsMap.set(qid, {
-        correctAnswer: row[headers.indexOf("Correct_Answer")],
-        questionText: row[headers.indexOf("Question_Text")],
-        explanation: row[headers.indexOf("Explanation")]
-      });
-    });
+        <div id="loadingSection" class="hidden text-center py-12">
+            <p class="text-lg font-semibold mb-4">Fetching live questions...</p>
+            <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
+                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
+            </div>
+        </div>
 
-    for (const qid in userAnswers) {
-      if (questionsMap.has(qid)) {
-        const questionData = questionsMap.get(qid);
-        const correct = questionData.correctAnswer;
-        const isCorrect = userAnswers[qid] === correct;
-        if (isCorrect) score++;
+        <div id="quizSection" class="hidden">
+            <div id="questionContentWrapper" class="transition-all duration-300 ease-in-out">
+                <div id="questionText" class="text-lg font-semibold mb-4"></div>
+                <div id="options" class="space-y-3 mb-4"></div>
+            </div>
+            <div class="flex justify-between items-center mt-6">
+                <button onclick="showCancelModal()" class="text-sm text-red-500 underline">Cancel</button>
+                <div class="space-x-2">
+                    <button id="prevButton" onclick="prevQuestion()" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-3 py-2 rounded disabled-button interactive-element">Previous</button>
+                    <button id="nextButton" onclick="nextQuestion()" class="bg-primary text-white px-4 py-2 rounded interactive-element">Next</button>
+                </div>
+            </div>
+        </div>
 
-        results.push({
-          questionId: qid,
-          questionText: questionData.questionText,
-          userAnswer: userAnswers[qid],
-          correctAnswer: correct,
-          explanation: questionData.explanation,
-          isCorrect: isCorrect
+        <div id="scoringSection" class="hidden text-center py-12">
+            <p class="text-lg font-semibold mb-4">Calculating your score...</p>
+            <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
+                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
+            </div>
+        </div>
+
+        <div id="resultSection" class="hidden">
+            <h2 class="text-2xl font-bold text-center mb-2">Your Results</h2>
+            <h3 id="userWelcome" class="text-xl font-semibold text-center mb-2"></h3>
+            <p id="levelDisplay" class="text-center text-sm mb-2 text-gray-600 dark:text-gray-400"></p>
+            <div class="text-center mb-2">
+                <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
+            </div>
+            <p id="rankLabel" class="text-center mb-4 text-lg font-medium text-gray-700 dark:text-gray-300"></p>
+            <div id="explanations" class="space-y-4 text-sm"></div>
+            <div class="text-center mt-6">
+                <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
+                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
+                    Take Another Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
+        <p class="text-sm text-gray-500 dark:text-gray-400">&copy; GrammarBuddy . All Rights Reserved</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Designed & Developed by Varun K | Co-Developed by Yuvika V</p>
+    </footer>
+
+
+    <script>
+        // === IMPORTANT: PASTE YOUR NEW WEB APP URL HERE ===
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxMQFuhAS29kROxlGm9ZqyXarBai5loLtbQ1x5Z3hH1hDwRN6vAe20qWaCTzH_VtdU/exec';
+
+        // State Variables
+        let allQuizData = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let finalScore = 0;
+        let username = '';
+        let currentLevel = '';
+        let email = '';
+        
+        /**
+         * Fetches a new set of questions from the Apps Script API.
+         * The CSV parsing logic is now handled on the server side.
+         */
+        async function fetchQuestionsFromApi(level) {
+            const payload = { action: 'getQuestions', level: level };
+            const response = await fetch(webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        async function startQuiz() {
+            username = document.getElementById('usernameInput').value.trim();
+            currentLevel = document.getElementById('levelSelect').value;
+            email = document.getElementById('emailInput').value.trim();
+
+            const emailError = document.getElementById('emailError');
+            emailError.classList.add('hidden');
+            
+            if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
+            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
+            if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
+            
+            if (!email) {
+                emailError.textContent = "Please enter your email address.";
+                emailError.classList.remove('hidden');
+                return;
+            }
+            if (!email.includes('@')) {
+                emailError.textContent = "Please enter a valid email address with an '@' symbol.";
+                emailError.classList.remove('hidden');
+                return;
+            }
+
+            localStorage.setItem('grammarBuddyUsername', username);
+            localStorage.setItem('grammarBuddyEmail', email);
+
+            toggleSection('welcomeSection', false);
+            toggleSection('loadingSection', true);
+
+            try {
+                // Fetch questions from the new Apps Script endpoint
+                const quizData = await fetchQuestionsFromApi(currentLevel);
+                
+                if (quizData.error) {
+                    showMessage("Error fetching questions: " + quizData.error);
+                    resetAll();
+                    return;
+                }
+
+                currentQuestions = quizData;
+
+                if (currentQuestions.length < 10) { 
+                    console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${currentLevel}'.`); 
+                }
+                if (currentQuestions.length === 0) { 
+                    showMessage(`Sorry, no questions found for the level '${currentLevel}'.`); 
+                    resetAll(); 
+                    return; 
+                }
+                
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                toggleSection('loadingSection', false);
+                toggleSection('quizSection', true);
+                showQuestion();
+                updateProgressBar();
+
+            } catch (error) {
+                console.error("Failed to load quiz questions:", error);
+                showMessage("An error occurred: " + error.message + "\nPlease make sure the Web App URL is correct.");
+                resetAll();
+            }
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${q.questionText}`;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            for (let key in q.options) {
+                const optionText = q.options[key];
+                if (optionText.trim() !== '') {
+                    const label = document.createElement('label');
+                    label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700';
+                    label.onclick = () => selectOption(key);
+                    const input = document.createElement('input');
+                    input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(`${key}: ${optionText}`));
+                    optionsDiv.appendChild(label);
+                }
+            }
+            
+            const qid = q.questionId;
+            if (userAnswers[qid]) {
+                const selectedLabel = optionsDiv.querySelector(`input[value="${userAnswers[qid]}"]`);
+                if (selectedLabel) {
+                    selectedLabel.parentElement.classList.add('selected-option');
+                }
+            }
+            document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
+            const nextButton = document.getElementById('nextButton');
+            nextButton.textContent = (currentQuestionIndex === currentQuestions.length - 1) ? 'Submit & See Results' : 'Next';
+            nextButton.classList.toggle('bg-secondary', currentQuestionIndex === currentQuestions.length - 1);
+            nextButton.classList.toggle('bg-primary', currentQuestionIndex !== currentQuestions.length - 1);
+            updateProgressBar();
+        }
+
+        function selectOption(key) {
+            const qid = currentQuestions[currentQuestionIndex].questionId;
+            userAnswers[qid] = key;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
+            const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
+            if (selectedLabel) {
+                selectedLabel.parentElement.classList.add('selected-option');
+            }
+        }
+
+        function nextQuestion() {
+            const qid = currentQuestions[currentQuestionIndex].questionId;
+            if (!userAnswers[qid]) { showMessage("GrammarBuddy says: Please select an option."); return; }
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        // This function now handles both scoring and sending the data to the API.
+        async function submitQuiz() {
+            updateProgressBar(100);
+            toggleSection('quizSection', false);
+            toggleSection('scoringSection', true);
+            
+            const payload = { action: 'submitQuiz', userAnswers: userAnswers };
+            
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.error) {
+                    showMessage("Error submitting quiz: " + result.error);
+                    toggleSection('scoringSection', false);
+                    toggleSection('resultSection', true); // Show results with an error message
+                    return;
+                }
+
+                finalScore = result.score;
+                const totalQuestions = result.total;
+
+                setTimeout(async () => {
+                    displayResults(result.results, finalScore, totalQuestions);
+                    await saveScore(finalScore, totalQuestions); // Await score saving
+                    toggleSection('scoringSection', false);
+                    toggleSection('resultSection', true);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                showMessage("An error occurred during quiz submission. Please try again.");
+                toggleSection('scoringSection', false);
+                toggleSection('welcomeSection', true);
+            }
+        }
+
+        async function saveScore(score, total) {
+            const saveStatusElement = document.getElementById('saveStatus');
+            saveStatusElement.textContent = "Saving your score...";
+            
+            const payload = {
+                action: 'saveScore',
+                username: username,
+                level: currentLevel,
+                email: email,
+                score: `${score}/${total}`
+            };
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    saveStatusElement.textContent = result.message;
+                } else {
+                    saveStatusElement.textContent = `Error: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Error saving score:', error);
+                saveStatusElement.textContent = "Error saving score.";
+            }
+        }
+
+        function displayResults(results, score, total) {
+            document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
+            document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}/${total}`;
+            const rankLabel = document.getElementById('rankLabel');
+            const scoreRatio = score / total;
+            if (scoreRatio === 1) rankLabel.textContent = "🏆 Outstanding!";
+            else if (scoreRatio >= 0.8) rankLabel.textContent = "🎉 Great job!";
+            else if (scoreRatio >= 0.5) rankLabel.textContent = "👍 Keep practicing!";
+            else rankLabel.textContent = "📚 Don’t give up. Try again!";
+            
+            const explanationsDiv = document.getElementById('explanations');
+            explanationsDiv.innerHTML = '';
+            results.forEach((q, i) => {
+                const isCorrect = q.isCorrect;
+                const icon = isCorrect ? '✅' : '❌';
+                const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
+                
+                const card = document.createElement('div');
+                card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
+                card.innerHTML = `<p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.questionText}</p><p><strong>Your Answer:</strong> ${q.userAnswer ? q.userAnswer : 'Not answered'}</p><p><strong>Correct Answer:</strong> ${q.correctAnswer}</p><p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.explanation}</span></p>`;
+                explanationsDiv.appendChild(card);
+            });
+            if (scoreRatio >= 0.8) { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); }
+        }
+        
+        function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
+        function updateProgressBar(progress) {
+            const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+        
+        // --- Custom Modal Logic ---
+        function showMessage(message) {
+            alert(message); // Using a simple alert for this example
+        }
+
+        function showCancelModal() {
+            document.getElementById('cancelModal').classList.remove('hidden');
+        }
+
+        function hideCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
+        }
+
+        function cancelQuiz() {
+            hideCancelModal();
+            resetAll();
+        }
+
+        function restartQuiz() { resetAll(); }
+        
+        function resetAll() {
+            toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
+            document.getElementById('levelSelect').selectedIndex = 0;
+            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
+            updateProgressBar(0);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDarkMode = html.classList.contains('dark');
+            document.getElementById('themeToggler').textContent = isDarkMode ? 'Light' : 'Dark';
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedUsername = localStorage.getItem('grammarBuddyUsername');
+            if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
+
+            const savedEmail = localStorage.getItem('grammarBuddyEmail');
+            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
+
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDarkMode) { document.documentElement.classList.add('dark'); } 
+            else { document.documentElement.classList.remove('dark'); }
+            document.getElementById('themeToggler').textContent = isDarkMode ? 'Light' : 'Dark';
+            
+            // --- Sidebar Menu Logic ---
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+            const cancelBtn = document.getElementById('confirmCancelBtn');
+            const dismissBtn = document.getElementById('dismissCancelBtn');
+
+            const toggleMenu = () => {
+                menuBtn.classList.toggle('open');
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden');
+            };
+
+            menuBtn.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
+            
+            cancelBtn.addEventListener('click', cancelQuiz);
+            dismissBtn.addEventListener('click', hideCancelModal);
         });
-      }
-    }
-
-    return {
-      score: score,
-      total: total,
-      results: results
-    };
-
-  } catch (e) {
-    Logger.log(e.message);
-    return {
-      error: "An error occurred while submitting the quiz. Please try again."
-    };
-  }
-}
-
-/**
- * Saves the user's quiz data (username, level, score, email) to the specified spreadsheet.
- * The order of the fields is critical to match the spreadsheet columns.
- * @param {string} username The user's name.
- * @param {string} level The quiz level.
- * @param {string} score The user's final score (e.g., "10/10").
- * @param {string} email The user's email address.
- * @returns {object} An object indicating success or failure.
- */
-function saveUserData(username, level, score, email) {
-  try {
-    const spreadsheetId = "152CT6x9AdiVCS0K40rYjA0qvjTSo1WfV25JJnHNjXAg";
-    const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName("UserInfoSheet");
-    if (!sheet) {
-      return { success: false, message: "Could not find the 'UserInfoSheet' sheet. Please check your spreadsheet." };
-    }
-
-    const lastRow = sheet.getLastRow();
-
-    if (lastRow > 1) {
-      const existingUsernames = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
-      if (existingUsernames.includes(username)) {
-        return { success: false, message: "Username already exists. Please choose a different one." };
-      }
-    }
-
-    // This is the corrected line to append the row with the correct field order
-    // to match the spreadsheet columns: Timestamp, Username, Level, Email, Score.
-    sheet.appendRow([new Date(), username, level, email, score]);
-
-    return { success: true, message: "Your score has been saved!" };
-
-  } catch (e) {
-    Logger.log("Error in saveUserData: " + e.message);
-    return { success: false, message: "An error occurred while saving your score. Please try again." };
-  }
-}
+    </script>
+</body>
+</html>

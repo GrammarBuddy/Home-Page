@@ -171,6 +171,8 @@
             <h2 class="text-2xl font-bold text-center mb-4">Your Results</h2>
             <!-- New element to display the username -->
             <h3 id="userWelcome" class="text-xl font-semibold text-center mb-4"></h3>
+            <!-- NEW: Display selected level -->
+            <p id="levelDisplay" class="text-center text-sm mb-4 text-gray-600 dark:text-gray-400"></p>
             <div class="text-center mb-4">
                 <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
             </div>
@@ -378,6 +380,9 @@
         function displayResults() {
             // New line to display the username on the results page
             document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
+
+            // NEW: Display the selected level on the results page
+            document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
 
             document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
             const rankLabel = document.getElementById('rankLabel');

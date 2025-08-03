@@ -202,7 +202,7 @@
         let currentLevel = '';
         
         /**
-         * @description Parses a CSV string, correctly handling commas inside double quotes.
+         * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
          * @param {string} csvText - The raw CSV text from the Google Sheet.
          * @returns {Array<Object>} An array of objects representing the quiz questions.
          */
@@ -210,33 +210,14 @@
             const rows = csvText.trim().split(/\r?\n/);
             const headers = rows[0].split(',').map(header => header.trim());
             
-            return rows.slice(1).map(rowText => {
-                const values = [];
-                let inQuote = false;
-                let currentField = '';
+            // Regex to split by comma, but not commas inside double quotes
+            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
-                for (let i = 0; i < rowText.length; i++) {
-                    const char = rowText[i];
-                    
-                    if (char === '"') {
-                        if (inQuote && rowText[i + 1] === '"') {
-                            // Handle escaped double quote ""
-                            currentField += '"';
-                            i++;
-                        } else {
-                            // Toggle the inQuote state
-                            inQuote = !inQuote;
-                        }
-                    } else if (char === ',' && !inQuote) {
-                        // End of a field
-                        values.push(currentField.trim());
-                        currentField = '';
-                    } else {
-                        currentField += char;
-                    }
-                }
-                // Push the last field
-                values.push(currentField.trim());
+            return rows.slice(1).map(rowText => {
+                const values = rowText.split(regex).map(field => {
+                    // Remove leading/trailing whitespace and surrounding quotes
+                    return field.trim().replace(/^"|"$/g, '');
+                });
 
                 return headers.reduce((obj, header, i) => {
                     obj[header] = values[i] || '';

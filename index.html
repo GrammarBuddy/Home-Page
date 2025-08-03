@@ -8,7 +8,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link rel="stylesheet" href="style.css">
 
     <script>
         tailwind.config = {
@@ -24,6 +23,7 @@
         };
     </script>
     <style>
+        /* Base styles for a smooth, responsive experience */
         html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
         .loader { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; background-color: currentColor; animation: bounce 0.6s infinite alternate; }
         .loader:nth-child(2) { animation-delay: 0.2s; }
@@ -40,6 +40,19 @@
         .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
         .open .hamburger-middle { display: none; }
         .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
+        
+        /* New styling for the selected option in the quiz */
+        .selected-option { 
+            background-color: var(--primary-light, #93c5fd);
+            border-color: var(--primary, #2563eb);
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease-in-out;
+        }
+        .dark .selected-option {
+            background-color: #1e40af;
+            border-color: #93c5fd;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
@@ -58,6 +71,19 @@
     </div>
     <!-- Menu Backdrop -->
     <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+    
+    <!-- ===== Cancel Confirmation Modal ===== -->
+    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
+            <p class="mb-6">GrammarBuddy says: Do you want to cancel the quiz? Your progress will be lost.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="confirmCancelBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg interactive-element hover:bg-red-600 transition-colors">Yes, cancel</button>
+                <button id="dismissCancelBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg interactive-element hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors">No, continue</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
@@ -74,8 +100,8 @@
             
             <!-- Center: Title -->
             <div class="flex-1 text-center">
-                 <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
-                <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
+                   <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+                 <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
             </div>
 
             <!-- Right side: Toggler -->
@@ -126,7 +152,7 @@
                 <div id="options" class="space-y-3 mb-4"></div>
             </div>
             <div class="flex justify-between items-center mt-6">
-                <button onclick="cancelQuiz()" class="text-sm text-red-500 underline">Cancel</button>
+                <button onclick="showCancelModal()" class="text-sm text-red-500 underline">Cancel</button>
                 <div class="space-x-2">
                     <button id="prevButton" onclick="prevQuestion()" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-3 py-2 rounded disabled-button interactive-element">Previous</button>
                     <button id="nextButton" onclick="nextQuestion()" class="bg-primary text-white px-4 py-2 rounded interactive-element">Next</button>
@@ -175,13 +201,45 @@
         let username = '';
         let currentLevel = '';
         
+        /**
+         * @description Parses a CSV string, correctly handling commas inside double quotes.
+         * @param {string} csvText - The raw CSV text from the Google Sheet.
+         * @returns {Array<Object>} An array of objects representing the quiz questions.
+         */
         function parseCSV(csvText) {
             const rows = csvText.trim().split(/\r?\n/);
-            const headers = rows[0].split(',');
+            const headers = rows[0].split(',').map(header => header.trim());
+            
             return rows.slice(1).map(rowText => {
-                const values = rowText.split(',');
+                const values = [];
+                let inQuote = false;
+                let currentField = '';
+
+                for (let i = 0; i < rowText.length; i++) {
+                    const char = rowText[i];
+                    
+                    if (char === '"') {
+                        if (inQuote && rowText[i + 1] === '"') {
+                            // Handle escaped double quote ""
+                            currentField += '"';
+                            i++;
+                        } else {
+                            // Toggle the inQuote state
+                            inQuote = !inQuote;
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        // End of a field
+                        values.push(currentField.trim());
+                        currentField = '';
+                    } else {
+                        currentField += char;
+                    }
+                }
+                // Push the last field
+                values.push(currentField.trim());
+
                 return headers.reduce((obj, header, i) => {
-                    obj[header] = values[i];
+                    obj[header] = values[i] || '';
                     return obj;
                 }, {});
             });
@@ -190,9 +248,10 @@
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
             currentLevel = document.getElementById('levelSelect').value;
-            if (!username) { alert("GrammarBuddy says: Please enter a username."); return; }
-            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { alert("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
-            if (!currentLevel) { alert("GrammarBuddy says: Please select a level."); return; }
+            // Replaced alert with a custom function to show a message box
+            if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
+            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
+            if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
             
             localStorage.setItem('grammarBuddyUsername', username);
             toggleSection('welcomeSection', false);
@@ -212,7 +271,7 @@
                 currentQuestions = shuffled.slice(0, 10);
 
                 if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${currentLevel}'.`); }
-                if (currentQuestions.length === 0) { alert(`Sorry, no questions found for the level '${currentLevel}' in the Google Sheet.`); resetAll(); return; }
+                if (currentQuestions.length === 0) { showMessage(`Sorry, no questions found for the level '${currentLevel}' in the Google Sheet.`); resetAll(); return; }
                 
                 currentQuestionIndex = 0;
                 userAnswers = {};
@@ -223,7 +282,7 @@
 
             } catch (error) {
                 console.error("Failed to load quiz questions:", error);
-                alert("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
+                showMessage("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
                 resetAll();
             }
         }
@@ -234,20 +293,28 @@
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
             const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
+            
+            // Loop through options, only display if the option value is not an empty string
             for (let key in optionsMap) {
-                const label = document.createElement('label');
-                label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element';
-                label.onclick = () => selectOption(key);
-                const input = document.createElement('input');
-                input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(`${key}: ${optionsMap[key]}`));
-                optionsDiv.appendChild(label);
+                const optionText = optionsMap[key];
+                if (optionText.trim() !== '') {
+                    const label = document.createElement('label');
+                    label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700';
+                    label.onclick = () => selectOption(key);
+                    const input = document.createElement('input');
+                    input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(`${key}: ${optionText}`));
+                    optionsDiv.appendChild(label);
+                }
             }
+            
             const qid = q.Question_ID;
             if (userAnswers[qid]) {
-                const selectedLabel = optionsDiv.querySelector(`input[value="${userAnswers[qid]}"]`).parentElement;
-                if (selectedLabel) selectedLabel.classList.add('selected-option');
+                const selectedLabel = optionsDiv.querySelector(`input[value="${userAnswers[qid]}"]`);
+                if (selectedLabel) {
+                    selectedLabel.parentElement.classList.add('selected-option');
+                }
             }
             document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
             const nextButton = document.getElementById('nextButton');
@@ -262,13 +329,16 @@
             userAnswers[qid] = key;
             const optionsDiv = document.getElementById('options');
             optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
-            const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`).parentElement;
-            selectedLabel.classList.add('selected-option');
+            const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
+            if (selectedLabel) {
+                selectedLabel.parentElement.classList.add('selected-option');
+            }
         }
 
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            if (!userAnswers[qid]) { alert("GrammarBuddy says: Please select an option."); return; }
+            // Replaced alert with a custom function to show a message box
+            if (!userAnswers[qid]) { showMessage("GrammarBuddy says: Please select an option."); return; }
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
                 showQuestion();
@@ -313,7 +383,7 @@
             try {
                 await fetch(webAppUrl, {
                     method: 'POST',
-                    mode: 'no-cors', 
+                    mode: 'no-cors',  
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
@@ -357,14 +427,36 @@
             const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
             document.getElementById('progressBar').style.width = `${percentage}%`;
         }
-        function cancelQuiz() { if (confirm("GrammarBuddy says: Are you sure you want to cancel the quiz?")) { resetAll(); } }
+        
+        // --- Custom Modal Logic ---
+        function showMessage(message) {
+            // You can implement a custom message box here if you want to replace alerts.
+            // For now, let's keep the alert for simplicity
+            alert(message);
+        }
+
+        function showCancelModal() {
+            document.getElementById('cancelModal').classList.remove('hidden');
+        }
+
+        function hideCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
+        }
+
+        function cancelQuiz() {
+            hideCancelModal();
+            resetAll();
+        }
+
         function restartQuiz() { resetAll(); }
+        
         function resetAll() {
             toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
             document.getElementById('levelSelect').selectedIndex = 0;
             currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
             updateProgressBar(0);
         }
+
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
@@ -384,6 +476,8 @@
             const menuBtn = document.getElementById('menu-btn');
             const sidebar = document.getElementById('sidebar-menu');
             const backdrop = document.getElementById('menu-backdrop');
+            const cancelBtn = document.getElementById('confirmCancelBtn');
+            const dismissBtn = document.getElementById('dismissCancelBtn');
 
             const toggleMenu = () => {
                 menuBtn.classList.toggle('open');
@@ -394,6 +488,9 @@
 
             menuBtn.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
+            
+            cancelBtn.addEventListener('click', cancelQuiz);
+            dismissBtn.addEventListener('click', hideCancelModal);
         });
     </script>
 </body>

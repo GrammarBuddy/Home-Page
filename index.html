@@ -114,7 +114,6 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
-        <!-- ... (rest of your quiz sections remain unchanged) ... -->
         <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
@@ -134,8 +133,6 @@
                 <option>Post Graduation</option>
                 <option>PhD</option>
             </select>
-
-            <!-- NEW: Email input field and error message -->
             <input type="email" id="emailInput" placeholder="Enter your email to save your score" class="w-full border rounded p-2 mb-1 dark:bg-gray-800 dark:border-gray-600 interactive-element">
             <p id="emailError" class="text-red-500 text-sm mb-4 hidden">Please enter a valid email address.</p>
             
@@ -197,6 +194,9 @@
 
 
     <script>
+        // === IMPORTANT: PASTE YOUR NEW WEB APP URL HERE ===
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
+
         // State Variables
         let allQuizData = [];
         let currentQuestions = [];
@@ -205,47 +205,34 @@
         let finalScore = 0;
         let username = '';
         let currentLevel = '';
+        let email = '';
         
         /**
-         * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
-         * @param {string} csvText - The raw CSV text from the Google Sheet.
-         * @returns {Array<Object>} An array of objects representing the quiz questions.
+         * Fetches a new set of questions from the Apps Script API.
+         * The CSV parsing logic is now handled on the server side.
          */
-        function parseCSV(csvText) {
-            const rows = csvText.trim().split(/\r?\n/);
-            const headers = rows[0].split(',').map(header => header.trim());
-            
-            // Regex to split by comma, but not commas inside double quotes
-            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-
-            return rows.slice(1).map(rowText => {
-                const values = rowText.split(regex).map(field => {
-                    // Remove leading/trailing whitespace and surrounding quotes
-                    return field.trim().replace(/^"|"$/g, '');
-                });
-
-                return headers.reduce((obj, header, i) => {
-                    obj[header] = values[i] || '';
-                    return obj;
-                }, {});
+        async function fetchQuestionsFromApi(level) {
+            const payload = { action: 'getQuestions', level: level };
+            const response = await fetch(webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
+            return response.json();
         }
 
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
             currentLevel = document.getElementById('levelSelect').value;
-            const email = document.getElementById('emailInput').value.trim(); // NEW: Get email value
+            email = document.getElementById('emailInput').value.trim();
 
-            // Reset email error message
             const emailError = document.getElementById('emailError');
             emailError.classList.add('hidden');
             
-            // Replaced alert with a custom function to show a message box
             if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
             if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
             if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
             
-            // NEW: Email validation
             if (!email) {
                 emailError.textContent = "Please enter your email address.";
                 emailError.classList.remove('hidden');
@@ -258,26 +245,31 @@
             }
 
             localStorage.setItem('grammarBuddyUsername', username);
-            localStorage.setItem('grammarBuddyEmail', email); // NEW: Save email to local storage
+            localStorage.setItem('grammarBuddyEmail', email);
 
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
             try {
-                if (allQuizData.length === 0) {
-                    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U7NK6M65kZNnINzA10Pxb2-uA2AVG2J0KigQDjFsJHP60VethYK8DEWGwb4N8gdE6oG2omLlKxmu/pub?output=csv';
-                    const response = await fetch(sheetUrl);
-                    if (!response.ok) throw new Error('Network response was not ok. Check the Sheet URL.');
-                    const csvText = await response.text();
-                    allQuizData = parseCSV(csvText);
+                // Fetch questions from the new Apps Script endpoint
+                const quizData = await fetchQuestionsFromApi(currentLevel);
+                
+                if (quizData.error) {
+                    showMessage("Error fetching questions: " + quizData.error);
+                    resetAll();
+                    return;
                 }
 
-                const filtered = allQuizData.filter(q => q.Level === currentLevel);
-                const shuffled = filtered.sort(() => 0.5 - Math.random());
-                currentQuestions = shuffled.slice(0, 10);
+                currentQuestions = quizData;
 
-                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${currentLevel}'.`); }
-                if (currentQuestions.length === 0) { showMessage(`Sorry, no questions found for the level '${currentLevel}' in the Google Sheet.`); resetAll(); return; }
+                if (currentQuestions.length < 10) { 
+                    console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${currentLevel}'.`); 
+                }
+                if (currentQuestions.length === 0) { 
+                    showMessage(`Sorry, no questions found for the level '${currentLevel}'.`); 
+                    resetAll(); 
+                    return; 
+                }
                 
                 currentQuestionIndex = 0;
                 userAnswers = {};
@@ -288,21 +280,19 @@
 
             } catch (error) {
                 console.error("Failed to load quiz questions:", error);
-                showMessage("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
+                showMessage("An error occurred: " + error.message + "\nPlease make sure the Web App URL is correct.");
                 resetAll();
             }
         }
 
         function showQuestion() {
             const q = currentQuestions[currentQuestionIndex];
-            document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
+            document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${q.questionText}`;
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
-            const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
             
-            // Loop through options, only display if the option value is not an empty string
-            for (let key in optionsMap) {
-                const optionText = optionsMap[key];
+            for (let key in q.options) {
+                const optionText = q.options[key];
                 if (optionText.trim() !== '') {
                     const label = document.createElement('label');
                     label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700';
@@ -315,7 +305,7 @@
                 }
             }
             
-            const qid = q.Question_ID;
+            const qid = q.questionId;
             if (userAnswers[qid]) {
                 const selectedLabel = optionsDiv.querySelector(`input[value="${userAnswers[qid]}"]`);
                 if (selectedLabel) {
@@ -331,7 +321,7 @@
         }
 
         function selectOption(key) {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
+            const qid = currentQuestions[currentQuestionIndex].questionId;
             userAnswers[qid] = key;
             const optionsDiv = document.getElementById('options');
             optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
@@ -342,8 +332,7 @@
         }
 
         function nextQuestion() {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            // Replaced alert with a custom function to show a message box
+            const qid = currentQuestions[currentQuestionIndex].questionId;
             if (!userAnswers[qid]) { showMessage("GrammarBuddy says: Please select an option."); return; }
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
@@ -360,60 +349,82 @@
             }
         }
 
-        function submitQuiz() {
+        // This function now handles both scoring and sending the data to the API.
+        async function submitQuiz() {
             updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
-            let score = 0;
-            currentQuestions.forEach(q => {
-                if (userAnswers[q.Question_ID] === q.Correct_Answer) score++;
-            });
-            finalScore = score;
-            setTimeout(() => {
-                displayResults();
-                saveScore();
-                toggleSection('scoringSection', false);
-                toggleSection('resultSection', true);
-            }, 1000);
-        }
-
-        async function saveScore() {
-            const saveStatusElement = document.getElementById('saveStatus');
-            saveStatusElement.textContent = "Saving your score...";
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyqVpoPwvsW7m1qbYS4jKm_Y33P-opc8q2zoghxQdFCXgh6dudJ6Su-1h5SC44Pd11d/exec';
             
-            const email = localStorage.getItem('grammarBuddyEmail'); // NEW: Retrieve email from local storage
-
-            const payload = {
-                username: username,
-                level: currentLevel,
-                score: `${finalScore}/${currentQuestions.length}`,
-                email: email // NEW: Add email to the payload
-            };
+            const payload = { action: 'submitQuiz', userAnswers: userAnswers };
+            
             try {
-                await fetch(webAppUrl, {
+                const response = await fetch(webAppUrl, {
                     method: 'POST',
-                    mode: 'no-cors',  
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                saveStatusElement.textContent = "Score saved successfully!";
+                const result = await response.json();
+
+                if (result.error) {
+                    showMessage("Error submitting quiz: " + result.error);
+                    toggleSection('scoringSection', false);
+                    toggleSection('resultSection', true); // Show results with an error message
+                    return;
+                }
+
+                finalScore = result.score;
+                const totalQuestions = result.total;
+
+                setTimeout(async () => {
+                    displayResults(result.results, finalScore, totalQuestions);
+                    await saveScore(finalScore, totalQuestions); // Await score saving
+                    toggleSection('scoringSection', false);
+                    toggleSection('resultSection', true);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                showMessage("An error occurred during quiz submission. Please try again.");
+                toggleSection('scoringSection', false);
+                toggleSection('welcomeSection', true);
+            }
+        }
+
+        async function saveScore(score, total) {
+            const saveStatusElement = document.getElementById('saveStatus');
+            saveStatusElement.textContent = "Saving your score...";
+            
+            const payload = {
+                action: 'saveScore',
+                username: username,
+                level: currentLevel,
+                email: email,
+                score: `${score}/${total}`
+            };
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    saveStatusElement.textContent = result.message;
+                } else {
+                    saveStatusElement.textContent = `Error: ${result.message}`;
+                }
             } catch (error) {
                 console.error('Error saving score:', error);
                 saveStatusElement.textContent = "Error saving score.";
             }
         }
 
-        function displayResults() {
-            // New line to display the username on the results page
+        function displayResults(results, score, total) {
             document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
-
-            // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
-
-            document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}/${total}`;
             const rankLabel = document.getElementById('rankLabel');
-            const scoreRatio = finalScore / currentQuestions.length;
+            const scoreRatio = score / total;
             if (scoreRatio === 1) rankLabel.textContent = "🏆 Outstanding!";
             else if (scoreRatio >= 0.8) rankLabel.textContent = "🎉 Great job!";
             else if (scoreRatio >= 0.5) rankLabel.textContent = "👍 Keep practicing!";
@@ -421,15 +432,14 @@
             
             const explanationsDiv = document.getElementById('explanations');
             explanationsDiv.innerHTML = '';
-            currentQuestions.forEach((q, i) => {
-                const userAnswer = userAnswers[q.Question_ID];
-                const isCorrect = userAnswer === q.Correct_Answer;
+            results.forEach((q, i) => {
+                const isCorrect = q.isCorrect;
                 const icon = isCorrect ? '✅' : '❌';
                 const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
-                const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
+                
                 const card = document.createElement('div');
                 card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
-                card.innerHTML = `<p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.Question_Text}</p><p><strong>Your Answer:</strong> ${userAnswer ? `${userAnswer} (${optionsMap[userAnswer]})` : 'Not answered'}</p><p><strong>Correct Answer:</strong> ${q.Correct_Answer} (${optionsMap[q.Correct_Answer]})</p><p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.Explanation}</span></p>`;
+                card.innerHTML = `<p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.questionText}</p><p><strong>Your Answer:</strong> ${q.userAnswer ? q.userAnswer : 'Not answered'}</p><p><strong>Correct Answer:</strong> ${q.correctAnswer}</p><p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.explanation}</span></p>`;
                 explanationsDiv.appendChild(card);
             });
             if (scoreRatio >= 0.8) { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); }
@@ -443,9 +453,7 @@
         
         // --- Custom Modal Logic ---
         function showMessage(message) {
-            // You can implement a custom message box here if you want to replace alerts.
-            // For now, let's keep the alert for simplicity
-            alert(message);
+            alert(message); // Using a simple alert for this example
         }
 
         function showCancelModal() {
@@ -481,15 +489,15 @@
             const savedUsername = localStorage.getItem('grammarBuddyUsername');
             if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
 
-            const savedEmail = localStorage.getItem('grammarBuddyEmail'); // NEW: Load saved email
-            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; } // NEW: Populate email field
+            const savedEmail = localStorage.getItem('grammarBuddyEmail');
+            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
 
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (isDarkMode) { document.documentElement.classList.add('dark'); } 
             else { document.documentElement.classList.remove('dark'); }
             document.getElementById('themeToggler').textContent = isDarkMode ? 'Light' : 'Dark';
             
-            // --- UPDATED: Sidebar Menu Logic ---
+            // --- Sidebar Menu Logic ---
             const menuBtn = document.getElementById('menu-btn');
             const sidebar = document.getElementById('sidebar-menu');
             const backdrop = document.getElementById('menu-backdrop');

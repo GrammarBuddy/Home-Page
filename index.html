@@ -8,6 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 
     <script>
         tailwind.config = {
@@ -23,19 +24,12 @@
         };
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
         html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
         .loader { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; background-color: currentColor; animation: bounce 0.6s infinite alternate; }
         .loader:nth-child(2) { animation-delay: 0.2s; }
         .loader:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
         .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-        .interactive-element { transition: all 0.2s ease; }
-        .interactive-element:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .interactive-element:active { transform: translateY(0); box-shadow: none; }
-        .selected-option { background-color: #d1d5db; border-color: #9ca3af; }
-        .dark .selected-option { background-color: #4b5563; border-color: #6b7280; }
 
         /* --- Hamburger Menu Styles --- */
         .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
@@ -52,7 +46,7 @@
     
     <!-- ===== Slide-out Sidebar Menu ===== -->
     <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="p-5 pt-16">
+        <div class="p-5 pt-16"> <!-- Adjusted top padding -->
             <nav class="flex flex-col space-y-4">
                 <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
                 <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
@@ -68,9 +62,9 @@
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
         <!-- ===== UPDATED: Header with new layout ===== -->
-        <header class="flex justify-between items-center mb-8">
+        <header class="relative flex justify-between items-center mb-8">
             <!-- Left side: Hamburger -->
-            <div class="flex-none">
+            <div class="flex-1">
                 <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
                     <span class="hamburger-top"></span>
                     <span class="hamburger-middle"></span>
@@ -79,13 +73,13 @@
             </div>
             
             <!-- Center: Title -->
-            <div class="flex-grow text-center mx-4">
-                <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+            <div class="flex-1 text-center">
+                 <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
                 <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
             </div>
 
             <!-- Right side: Toggler -->
-            <div class="flex-none text-right">
+            <div class="flex-1 text-right">
                 <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
             </div>
         </header>
@@ -94,6 +88,7 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
+        <!-- ... (rest of your quiz sections remain unchanged) ... -->
         <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>

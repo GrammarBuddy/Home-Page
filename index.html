@@ -134,6 +134,11 @@
                 <option>Post Graduation</option>
                 <option>PhD</option>
             </select>
+
+            <!-- NEW: Email input field and error message -->
+            <input type="email" id="emailInput" placeholder="Enter your email to save your score" class="w-full border rounded p-2 mb-1 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            <p id="emailError" class="text-red-500 text-sm mb-4 hidden">Please enter a valid email address.</p>
+            
             <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
                 Start Challenge
             </button>
@@ -229,12 +234,32 @@
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
             currentLevel = document.getElementById('levelSelect').value;
+            const email = document.getElementById('emailInput').value.trim(); // NEW: Get email value
+
+            // Reset email error message
+            const emailError = document.getElementById('emailError');
+            emailError.classList.add('hidden');
+            
             // Replaced alert with a custom function to show a message box
             if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
             if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
             if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
             
+            // NEW: Email validation
+            if (!email) {
+                emailError.textContent = "Please enter your email address.";
+                emailError.classList.remove('hidden');
+                return;
+            }
+            if (!email.includes('@')) {
+                emailError.textContent = "Please enter a valid email address with an '@' symbol.";
+                emailError.classList.remove('hidden');
+                return;
+            }
+
             localStorage.setItem('grammarBuddyUsername', username);
+            localStorage.setItem('grammarBuddyEmail', email); // NEW: Save email to local storage
+
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
@@ -356,10 +381,14 @@
             const saveStatusElement = document.getElementById('saveStatus');
             saveStatusElement.textContent = "Saving your score...";
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbyqVpoPwvsW7m1qbYS4jKm_Y33P-opc8q2zoghxQdFCXgh6dudJ6Su-1h5SC44Pd11d/exec';
+            
+            const email = localStorage.getItem('grammarBuddyEmail'); // NEW: Retrieve email from local storage
+
             const payload = {
                 username: username,
                 level: currentLevel,
-                score: `${finalScore}/${currentQuestions.length}`
+                score: `${finalScore}/${currentQuestions.length}`,
+                email: email // NEW: Add email to the payload
             };
             try {
                 await fetch(webAppUrl, {
@@ -451,6 +480,10 @@
         document.addEventListener("DOMContentLoaded", () => {
             const savedUsername = localStorage.getItem('grammarBuddyUsername');
             if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
+
+            const savedEmail = localStorage.getItem('grammarBuddyEmail'); // NEW: Load saved email
+            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; } // NEW: Populate email field
+
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (isDarkMode) { document.documentElement.classList.add('dark'); } 
             else { document.documentElement.classList.remove('dark'); }

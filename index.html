@@ -43,17 +43,15 @@
         
         /* New styling for the selected option in the quiz */
         .selected-option { 
-            /* Changed from blue to grey */
-            background-color: #e5e7eb; /* A light grey */
-            border-color: #9ca3af; /* A darker grey for the border */
+            background-color: var(--primary-light, #93c5fd);
+            border-color: var(--primary, #2563eb);
             transform: scale(1.02);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.2s ease-in-out;
         }
         .dark .selected-option {
-            /* Dark mode grey styling */
-            background-color: #4b5563;
-            border-color: #6b7280;
+            background-color: #1e40af;
+            border-color: #93c5fd;
         }
     </style>
 </head>
@@ -194,6 +192,7 @@
         let currentQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = {};
+        let currentSelection = null; // New variable to hold the current, unsaved selection
         let finalScore = 0;
         let username = '';
         let email = '';
@@ -229,11 +228,9 @@
             email = document.getElementById('emailInput').value.trim();
             currentLevel = document.getElementById('levelSelect').value;
             
-            // Replaced alert with a custom function to show a message box
             if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
             if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
             
-            // Email validation
             if (!email) { showMessage("GrammarBuddy says: Please enter your email address."); return; }
             if (!email.includes('@')) { showMessage("GrammarBuddy says: Please enter a valid email address (missing @)."); return; }
             
@@ -262,6 +259,7 @@
                 
                 currentQuestionIndex = 0;
                 userAnswers = {};
+                currentSelection = null; // Reset the current selection
                 toggleSection('loadingSection', false);
                 toggleSection('quizSection', true);
                 showQuestion();
@@ -281,7 +279,6 @@
             const questionTextElement = document.getElementById('questionText');
             const optionsDiv = document.getElementById('options');
         
-            // The definitive fix: Clear and rebuild the options from scratch to prevent any state bleed.
             optionsDiv.innerHTML = '';
         
             let topicInfoElement = document.getElementById('topicInfo');
@@ -297,13 +294,15 @@
             
             const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
             const qid = q.Question_ID;
-            const userSelectedAnswer = userAnswers[qid];
             
+            // This is the key change: prioritize currentSelection, then fall back to userAnswers
+            let selectedAnswer = currentSelection || userAnswers[qid];
+
             for (let key in optionsMap) {
                 const optionText = optionsMap[key];
                 if (optionText.trim() !== '') {
                     const label = document.createElement('label');
-                    const isSelected = userSelectedAnswer === key;
+                    const isSelected = selectedAnswer === key;
                     label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');
@@ -325,8 +324,7 @@
         // --- END CORRECTED: Show question ---
 
         function selectOption(key) {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            userAnswers[qid] = key;
+            currentSelection = key; // Save the new selection to the temporary variable
             const optionsDiv = document.getElementById('options');
             
             // Explicitly remove the highlight from all options before adding it to the new one.
@@ -342,10 +340,17 @@
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             
-            if (!userAnswers[qid]) {
+            // Check for a selection (either old or new)
+            const selection = currentSelection || userAnswers[qid];
+
+            if (!selection) {
                  showMessage("GrammarBuddy says: Please select an option."); 
                  return; 
             }
+            
+            // Save the current selection to the persistent userAnswers object
+            userAnswers[qid] = selection;
+            currentSelection = null; // Reset the current selection for the new question
         
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
@@ -358,12 +363,23 @@
 
         function prevQuestion() {
             if (currentQuestionIndex > 0) {
+                const qid = currentQuestions[currentQuestionIndex].Question_ID;
+                if (currentSelection) {
+                    userAnswers[qid] = currentSelection;
+                }
                 currentQuestionIndex--;
+                currentSelection = null; // Reset current selection when going back
                 showQuestion();
             }
         }
 
         function submitQuiz() {
+            // Save the last question's answer before submitting
+            const qid = currentQuestions[currentQuestionIndex].Question_ID;
+            if (currentSelection) {
+                userAnswers[qid] = currentSelection;
+            }
+
             updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
@@ -387,7 +403,6 @@
             // ** IMPORTANT: The URL must be the latest Web App URL from your Apps Script deployment **
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
             
-            // This payload includes the `action` field required by your `doPost` function.
             const payload = {
                 action: 'saveScore', 
                 username: username,
@@ -411,13 +426,8 @@
         }
 
         function displayResults() {
-            // New line to display the username on the results page
             document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
-
-            // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
-
-            // Updated: Display the submission date and time with expanded month
             const now = new Date();
             const dateString = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
             const timeString = now.toLocaleTimeString();
@@ -453,10 +463,7 @@
             document.getElementById('progressBar').style.width = `${percentage}%`;
         }
         
-        // --- Custom Modal Logic ---
         function showMessage(message) {
-            // You can implement a custom message box here if you want to replace alerts.
-            // For now, let's keep the alert for simplicity
             alert(message);
         }
 
@@ -478,11 +485,10 @@
         function resetAll() {
             toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
             document.getElementById('levelSelect').selectedIndex = 0;
-            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
+            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0; currentSelection = null;
             updateProgressBar(0);
         }
 
-        // --- CORRECTED THEME TOGGLE FUNCTION ---
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
@@ -498,7 +504,6 @@
             const savedEmail = localStorage.getItem('grammarBuddyEmail');
             if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
             
-            // --- CORRECTED THEME LOGIC ON PAGE LOAD ---
             const savedTheme = localStorage.getItem('theme');
             const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             
@@ -510,9 +515,7 @@
 
             const isDark = document.documentElement.classList.contains('dark');
             document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
-            // --- END CORRECTED THEME LOGIC ---
             
-            // --- UPDATED: Sidebar Menu Logic ---
             const menuBtn = document.getElementById('menu-btn');
             const sidebar = document.getElementById('sidebar-menu');
             const backdrop = document.getElementById('menu-backdrop');

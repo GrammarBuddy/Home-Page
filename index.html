@@ -374,9 +374,9 @@
             // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
 
-            // NEW: Display the submission date and time
+            // Updated: Display the submission date and time with expanded month
             const now = new Date();
-            const dateString = now.toLocaleDateString();
+            const dateString = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
             const timeString = now.toLocaleTimeString();
             document.getElementById('submissionDateTime').textContent = `Submitted on: ${dateString} at ${timeString}`;
 

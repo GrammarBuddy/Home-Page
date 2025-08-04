@@ -272,9 +272,23 @@
             }
         }
 
+        // --- CORRECTED: Show question with Topic and Question_ID
         function showQuestion() {
             const q = currentQuestions[currentQuestionIndex];
-            document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
+            const questionContentWrapper = document.getElementById('questionContentWrapper');
+            const questionTextElement = document.getElementById('questionText');
+
+            // Clear any previous topic/ID text to avoid duplication
+            let topicInfoElement = document.getElementById('topicInfo');
+            if (!topicInfoElement) {
+                topicInfoElement = document.createElement('p');
+                topicInfoElement.id = 'topicInfo';
+                topicInfoElement.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
+                questionContentWrapper.insertBefore(topicInfoElement, questionTextElement);
+            }
+            topicInfoElement.textContent = `Topic: ${q.Topic} | ID: ${q.Question_ID}`;
+
+            questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
             const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
@@ -308,6 +322,7 @@
             nextButton.classList.toggle('bg-primary', currentQuestionIndex !== currentQuestions.length - 1);
             updateProgressBar();
         }
+        // --- END CORRECTED: Show question ---
 
         function selectOption(key) {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;

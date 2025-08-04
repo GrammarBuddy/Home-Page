@@ -363,8 +363,7 @@
             // ** IMPORTANT: The URL must be the latest Web App URL from your Apps Script deployment **
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
             
-            // --- THIS IS THE CORRECTED PAYLOAD ---
-            // The `action` field is required by your `doPost` function.
+            // This payload includes the `action` field required by your `doPost` function.
             const payload = {
                 action: 'saveScore', 
                 username: username,
@@ -459,27 +458,35 @@
             updateProgressBar(0);
         }
 
+        // --- CORRECTED THEME TOGGLE FUNCTION ---
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (isDarkMode) { document.documentElement.classList.add('dark'); } 
-            else { document.documentElement.classList.remove('dark'); }
-            document.getElementById('themeToggler').textContent = isDarkMode ? 'Light' : 'Dark';
+            const isDark = html.classList.contains('dark');
+            document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             const savedUsername = localStorage.getItem('grammarBuddyUsername');
             if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
             
-            // NEW: Pre-fill email from local storage
             const savedEmail = localStorage.getItem('grammarBuddyEmail');
             if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
             
-            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (isDarkMode) { document.documentElement.classList.add('dark'); } 
-            else { document.documentElement.classList.remove('dark'); }
-            document.getElementById('themeToggler').textContent = isDarkMode ? 'Light' : 'Dark';
+            // --- CORRECTED THEME LOGIC ON PAGE LOAD ---
+            const savedTheme = localStorage.getItem('theme');
+            const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                document.documentElement.classList.add(savedTheme);
+            } else if (isSystemDark) {
+                document.documentElement.classList.add('dark');
+            }
+
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
+            // --- END CORRECTED THEME LOGIC ---
             
             // --- UPDATED: Sidebar Menu Logic ---
             const menuBtn = document.getElementById('menu-btn');

@@ -57,10 +57,8 @@
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
     
-    <!-- ===== Slide-out Sidebar Menu ===== -->
     <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="p-5 pt-16"> <!-- Adjusted top padding -->
-            <nav class="flex flex-col space-y-4">
+        <div class="p-5 pt-16"> <nav class="flex flex-col space-y-4">
                 <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
                 <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
                 <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
@@ -69,10 +67,8 @@
             </nav>
         </div>
     </div>
-    <!-- Menu Backdrop -->
     <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
     
-    <!-- ===== Cancel Confirmation Modal ===== -->
     <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
             <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
@@ -87,9 +83,7 @@
 
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-        <!-- ===== UPDATED: Header with new layout ===== -->
         <header class="relative flex justify-between items-center mb-8">
-            <!-- Left side: Hamburger -->
             <div class="flex-1">
                 <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
                     <span class="hamburger-top"></span>
@@ -98,13 +92,11 @@
                 </button>
             </div>
             
-            <!-- Center: Title -->
             <div class="flex-1 text-center">
-                   <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
-                 <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+                   <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
             </div>
 
-            <!-- Right side: Toggler -->
             <div class="flex-1 text-right">
                 <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
             </div>
@@ -114,13 +106,15 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
-        <!-- ... (rest of your quiz sections remain unchanged) ... -->
         <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
             </h1>
             <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
             <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
+            
+            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            
             <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
                 <option value="">-- Select Level --</option>
                 <option>Pre-KG</option>
@@ -171,6 +165,7 @@
             <h2 class="text-2xl font-bold text-center mb-2">Your Results</h2>
             <h3 id="userWelcome" class="text-xl font-semibold text-center mb-2"></h3>
             <p id="levelDisplay" class="text-center text-sm mb-2 text-gray-600 dark:text-gray-400"></p>
+            <p id="submissionDateTime" class="text-center text-red-500 text-xs mb-2"></p>
             <div class="text-center mb-2">
                 <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
             </div>
@@ -199,6 +194,7 @@
         let userAnswers = {};
         let finalScore = 0;
         let username = '';
+        let email = '';
         let currentLevel = '';
         
         /**
@@ -228,13 +224,21 @@
 
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
+            email = document.getElementById('emailInput').value.trim();
             currentLevel = document.getElementById('levelSelect').value;
+            
             // Replaced alert with a custom function to show a message box
             if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
             if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
+            
+            // Email validation
+            if (!email) { showMessage("GrammarBuddy says: Please enter your email address."); return; }
+            if (!email.includes('@')) { showMessage("GrammarBuddy says: Please enter a valid email address (missing @)."); return; }
+            
             if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
             
             localStorage.setItem('grammarBuddyUsername', username);
+            localStorage.setItem('grammarBuddyEmail', email);
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
@@ -355,12 +359,22 @@
         async function saveScore() {
             const saveStatusElement = document.getElementById('saveStatus');
             saveStatusElement.textContent = "Saving your score...";
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
+            
+            // ** IMPORTANT **
+            // Use the correct Web App URL from your Apps Script deployment.
+            // If this URL is wrong, no data will be saved.
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec'; 
+            
+            // --- MODIFIED PAYLOAD TO MATCH YOUR GOOGLE APPS SCRIPT ---
+            // The `action` field is required by your `doPost` function.
             const payload = {
+                action: 'saveScore', 
                 username: username,
+                email: email,
                 level: currentLevel,
                 score: `${finalScore}/${currentQuestions.length}`
             };
+            
             try {
                 await fetch(webAppUrl, {
                     method: 'POST',
@@ -381,6 +395,12 @@
 
             // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
+
+            // Updated: Display the submission date and time with expanded month
+            const now = new Date();
+            const dateString = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('submissionDateTime').textContent = `Submitted on: ${dateString} at ${timeString}`;
 
             document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
             const rankLabel = document.getElementById('rankLabel');
@@ -444,13 +464,20 @@
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDarkMode = html.classList.contains('dark');
+            const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDarkMode) { document.documentElement.classList.add('dark'); } 
+            else { document.documentElement.classList.remove('dark'); }
             document.getElementById('themeToggler').textContent = isDarkMode ? 'Light' : 'Dark';
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             const savedUsername = localStorage.getItem('grammarBuddyUsername');
             if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
+            
+            // NEW: Pre-fill email from local storage
+            const savedEmail = localStorage.getItem('grammarBuddyEmail');
+            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
+            
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (isDarkMode) { document.documentElement.classList.add('dark'); } 
             else { document.documentElement.classList.remove('dark'); }

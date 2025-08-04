@@ -278,10 +278,10 @@
             const questionContentWrapper = document.getElementById('questionContentWrapper');
             const questionTextElement = document.getElementById('questionText');
             const optionsDiv = document.getElementById('options');
-
+        
             // The fix: Clear all previous options and highlights before rendering the new ones
             optionsDiv.innerHTML = '';
-
+        
             let topicInfoElement = document.getElementById('topicInfo');
             if (!topicInfoElement) {
                 topicInfoElement = document.createElement('p');
@@ -290,7 +290,7 @@
                 questionContentWrapper.insertBefore(topicInfoElement, questionTextElement);
             }
             topicInfoElement.textContent = `Topic: ${q.Topic} | Question ID: ${q.Question_ID}`;
-
+        
             questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
             
             const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
@@ -328,7 +328,11 @@
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             userAnswers[qid] = key;
             const optionsDiv = document.getElementById('options');
+            
+            // This is the core part of the fix:
+            // Explicitly remove the highlight from all options before adding it to the new one.
             optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
+            
             const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
             if (selectedLabel) {
                 selectedLabel.parentElement.classList.add('selected-option');
@@ -429,7 +433,7 @@
                 const isCorrect = userAnswer === q.Correct_Answer;
                 const icon = isCorrect ? '✅' : '❌';
                 const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
-                const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
+                const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_B, D: q.Option_C };
                 const card = document.createElement('div');
                 card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
                 card.innerHTML = `<p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.Question_Text}</p><p><strong>Your Answer:</strong> ${userAnswer ? `${userAnswer} (${optionsMap[userAnswer]})` : 'Not answered'}</p><p><strong>Correct Answer:</strong> ${q.Correct_Answer} (${optionsMap[q.Correct_Answer]})</p><p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.Explanation}</span></p>`;

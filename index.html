@@ -279,7 +279,7 @@
             const questionTextElement = document.getElementById('questionText');
             const optionsDiv = document.getElementById('options');
         
-            // The definitive fix: Clear all previous options and their styling before rendering.
+            // The definitive fix: Clear and rebuild the options from scratch to prevent any state bleed.
             optionsDiv.innerHTML = '';
         
             let topicInfoElement = document.getElementById('topicInfo');

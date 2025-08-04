@@ -43,15 +43,17 @@
         
         /* New styling for the selected option in the quiz */
         .selected-option { 
-            background-color: var(--primary-light, #93c5fd);
-            border-color: var(--primary, #2563eb);
+            /* Changed from blue to grey */
+            background-color: #e5e7eb; /* A light grey */
+            border-color: #9ca3af; /* A darker grey for the border */
             transform: scale(1.02);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.2s ease-in-out;
         }
         .dark .selected-option {
-            background-color: #1e40af;
-            border-color: #93c5fd;
+            /* Dark mode grey styling */
+            background-color: #4b5563;
+            border-color: #6b7280;
         }
     </style>
 </head>

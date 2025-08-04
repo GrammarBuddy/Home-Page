@@ -192,7 +192,6 @@
         let currentQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = {};
-        let currentSelection = null; // New variable to hold the current, unsaved selection
         let finalScore = 0;
         let username = '';
         let email = '';
@@ -259,7 +258,6 @@
                 
                 currentQuestionIndex = 0;
                 userAnswers = {};
-                currentSelection = null; // Reset the current selection
                 toggleSection('loadingSection', false);
                 toggleSection('quizSection', true);
                 showQuestion();
@@ -272,14 +270,21 @@
             }
         }
 
+        // NEW: Function to clear the UI and state for the current question
+        function clearQuestionState() {
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            // We no longer need a `currentSelection` variable if we rebuild the UI from `userAnswers`
+            // Instead, we ensure userAnswers is the single source of truth.
+        }
+
         // --- CORRECTED: Show question with Topic and Question_ID ---
         function showQuestion() {
+            clearQuestionState(); // Start with a fresh UI state
             const q = currentQuestions[currentQuestionIndex];
             const questionContentWrapper = document.getElementById('questionContentWrapper');
             const questionTextElement = document.getElementById('questionText');
             const optionsDiv = document.getElementById('options');
-        
-            optionsDiv.innerHTML = '';
         
             let topicInfoElement = document.getElementById('topicInfo');
             if (!topicInfoElement) {
@@ -294,16 +299,15 @@
             
             const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
             const qid = q.Question_ID;
+            const userSelectedAnswer = userAnswers[qid]; // Get the stored answer, if any
             
-            // This is the key change: prioritize currentSelection, then fall back to userAnswers
-            let selectedAnswer = currentSelection || userAnswers[qid];
-
             for (let key in optionsMap) {
                 const optionText = optionsMap[key];
                 if (optionText.trim() !== '') {
                     const label = document.createElement('label');
-                    const isSelected = selectedAnswer === key;
+                    const isSelected = userSelectedAnswer === key;
                     label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
+                    // The selectOption function now immediately updates userAnswers
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');
                     input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
@@ -324,10 +328,11 @@
         // --- END CORRECTED: Show question ---
 
         function selectOption(key) {
-            currentSelection = key; // Save the new selection to the temporary variable
+            const qid = currentQuestions[currentQuestionIndex].Question_ID;
+            userAnswers[qid] = key; // Immediately save the selection to the official state object
             const optionsDiv = document.getElementById('options');
             
-            // Explicitly remove the highlight from all options before adding it to the new one.
+            // Reapply the highlight based on the new selection
             optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
             
             const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
@@ -340,17 +345,10 @@
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             
-            // Check for a selection (either old or new)
-            const selection = currentSelection || userAnswers[qid];
-
-            if (!selection) {
+            if (!userAnswers[qid]) {
                  showMessage("GrammarBuddy says: Please select an option."); 
                  return; 
             }
-            
-            // Save the current selection to the persistent userAnswers object
-            userAnswers[qid] = selection;
-            currentSelection = null; // Reset the current selection for the new question
         
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
@@ -363,23 +361,12 @@
 
         function prevQuestion() {
             if (currentQuestionIndex > 0) {
-                const qid = currentQuestions[currentQuestionIndex].Question_ID;
-                if (currentSelection) {
-                    userAnswers[qid] = currentSelection;
-                }
                 currentQuestionIndex--;
-                currentSelection = null; // Reset current selection when going back
                 showQuestion();
             }
         }
 
         function submitQuiz() {
-            // Save the last question's answer before submitting
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            if (currentSelection) {
-                userAnswers[qid] = currentSelection;
-            }
-
             updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
@@ -485,7 +472,7 @@
         function resetAll() {
             toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
             document.getElementById('levelSelect').selectedIndex = 0;
-            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0; currentSelection = null;
+            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
             updateProgressBar(0);
         }
 

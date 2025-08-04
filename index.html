@@ -57,8 +57,10 @@
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
     
-        <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="p-5 pt-16">             <nav class="flex flex-col space-y-4">
+    <!-- ===== Slide-out Sidebar Menu ===== -->
+    <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-5 pt-16"> <!-- Adjusted top padding -->
+            <nav class="flex flex-col space-y-4">
                 <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
                 <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
                 <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
@@ -67,9 +69,11 @@
             </nav>
         </div>
     </div>
-        <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+    <!-- Menu Backdrop -->
+    <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
     
-        <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <!-- ===== Cancel Confirmation Modal ===== -->
+    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
             <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
             <p class="mb-6">GrammarBuddy says: Do you want to cancel the quiz? Your progress will be lost.</p>
@@ -83,8 +87,10 @@
 
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-                <header class="relative flex justify-between items-center mb-8">
-                        <div class="flex-1">
+        <!-- ===== UPDATED: Header with new layout ===== -->
+        <header class="relative flex justify-between items-center mb-8">
+            <!-- Left side: Hamburger -->
+            <div class="flex-1">
                 <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
                     <span class="hamburger-top"></span>
                     <span class="hamburger-middle"></span>
@@ -92,12 +98,14 @@
                 </button>
             </div>
             
-                        <div class="flex-1 text-center">
+            <!-- Center: Title -->
+            <div class="flex-1 text-center">
                    <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
                  <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
             </div>
 
-                        <div class="flex-1 text-right">
+            <!-- Right side: Toggler -->
+            <div class="flex-1 text-right">
                 <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
             </div>
         </header>
@@ -106,6 +114,7 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
+        <!-- ... (rest of your quiz sections remain unchanged) ... -->
         <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
@@ -162,13 +171,11 @@
             <h2 class="text-2xl font-bold text-center mb-2">Your Results</h2>
             <h3 id="userWelcome" class="text-xl font-semibold text-center mb-2"></h3>
             <p id="levelDisplay" class="text-center text-sm mb-2 text-gray-600 dark:text-gray-400"></p>
-                        <p id="submissionTimestamp" class="text-center mt-6 text-sm text-gray-500 dark:text-gray-400"></p>
             <div class="text-center mb-2">
                 <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
             </div>
             <p id="rankLabel" class="text-center mb-4 text-lg font-medium text-gray-700 dark:text-gray-300"></p>
             <div id="explanations" class="space-y-4 text-sm"></div>
-            
             <div class="text-center mt-6">
                 <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
                 <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
@@ -193,7 +200,6 @@
         let finalScore = 0;
         let username = '';
         let currentLevel = '';
-        let submissionTime = null; // Variable to store the submission time
         
         /**
          * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
@@ -333,10 +339,6 @@
             updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
-
-            // Set the submission time right before calculation
-            submissionTime = new Date();
-
             let score = 0;
             currentQuestions.forEach(q => {
                 if (userAnswers[q.Question_ID] === q.Correct_Answer) score++;
@@ -374,22 +376,11 @@
         }
 
         function displayResults() {
-            // Display the username on the results page
+            // New line to display the username on the results page
             document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
 
-            // Display the selected level on the results page
+            // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
-
-            // Display the submission date and time.
-            if (submissionTime) {
-                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-                const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-                const formattedDate = submissionTime.toLocaleDateString('en-US', dateOptions);
-                const formattedTime = submissionTime.toLocaleTimeString('en-US', timeOptions);
-                document.getElementById('submissionTimestamp').textContent = `Submitted on ${formattedDate} at ${formattedTime}`;
-            } else {
-                document.getElementById('submissionTimestamp').textContent = `Submission timestamp not available.`;
-            }
 
             document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
             const rankLabel = document.getElementById('rankLabel');
@@ -448,7 +439,6 @@
             document.getElementById('levelSelect').selectedIndex = 0;
             currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
             updateProgressBar(0);
-            submissionTime = null;
         }
 
         function toggleTheme() {

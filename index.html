@@ -272,13 +272,16 @@
             }
         }
 
-        // --- CORRECTED: Show question with Topic and Question_ID
+        // --- CORRECTED: Show question with Topic and Question_ID ---
         function showQuestion() {
             const q = currentQuestions[currentQuestionIndex];
             const questionContentWrapper = document.getElementById('questionContentWrapper');
             const questionTextElement = document.getElementById('questionText');
+            const optionsDiv = document.getElementById('options');
 
-            // Clear any previous topic/ID text to avoid duplication
+            // The fix: Clear all previous options and highlights before rendering the new ones
+            optionsDiv.innerHTML = '';
+
             let topicInfoElement = document.getElementById('topicInfo');
             if (!topicInfoElement) {
                 topicInfoElement = document.createElement('p');
@@ -289,32 +292,29 @@
             topicInfoElement.textContent = `Topic: ${q.Topic} | Question ID: ${q.Question_ID}`;
 
             questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
-            const optionsDiv = document.getElementById('options');
-            optionsDiv.innerHTML = '';
-            const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
             
-            // Loop through options, only display if the option value is not an empty string
+            const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
+            const qid = q.Question_ID;
+            const userSelectedAnswer = userAnswers[qid];
+            
             for (let key in optionsMap) {
                 const optionText = optionsMap[key];
                 if (optionText.trim() !== '') {
                     const label = document.createElement('label');
-                    label.className = 'block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700';
+                    const isSelected = userSelectedAnswer === key;
+                    // Dynamically add the 'selected-option' class if this is the user's answer
+                    label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');
                     input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
+                    // Set the radio button as checked if it's the user's answer
+                    input.checked = isSelected;
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(`${key}: ${optionText}`));
                     optionsDiv.appendChild(label);
                 }
             }
             
-            const qid = q.Question_ID;
-            if (userAnswers[qid]) {
-                const selectedLabel = optionsDiv.querySelector(`input[value="${userAnswers[qid]}"]`);
-                if (selectedLabel) {
-                    selectedLabel.parentElement.classList.add('selected-option');
-                }
-            }
             document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
             const nextButton = document.getElementById('nextButton');
             nextButton.textContent = (currentQuestionIndex === currentQuestions.length - 1) ? 'Submit & See Results' : 'Next';

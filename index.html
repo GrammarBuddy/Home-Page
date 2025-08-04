@@ -194,7 +194,7 @@
         let finalScore = 0;
         let username = '';
         let currentLevel = '';
-        let submissionTime = null; // NEW: Variable to store the submission time
+        let submissionTime = null; // Variable to store the submission time
         
         /**
          * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
@@ -334,7 +334,7 @@
             updateProgressBar(100);
             toggleSection('quizSection', false);
             toggleSection('scoringSection', true);
-            // NEW: Capture the current time when the quiz is submitted
+            // Corrected logic: Capture the time here, before the timeout
             submissionTime = new Date();
             let score = 0;
             currentQuestions.forEach(q => {
@@ -379,13 +379,16 @@
             // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
 
-            // NEW: Display the submission date and time.
+            // Corrected: Display the submission date and time.
             if (submissionTime) {
                 const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
                 const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
                 const formattedDate = submissionTime.toLocaleDateString('en-US', dateOptions);
                 const formattedTime = submissionTime.toLocaleTimeString('en-US', timeOptions);
                 document.getElementById('submissionTimestamp').textContent = `Submitted on ${formattedDate} at ${formattedTime}`;
+            } else {
+                // Fallback if, for some reason, the time isn't captured
+                document.getElementById('submissionTimestamp').textContent = `Submitted on an unknown date.`;
             }
 
             document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
@@ -445,6 +448,8 @@
             document.getElementById('levelSelect').selectedIndex = 0;
             currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
             updateProgressBar(0);
+            // Corrected: Also reset the timestamp here
+            submissionTime = null;
         }
 
         function toggleTheme() {

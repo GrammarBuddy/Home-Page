@@ -112,6 +112,9 @@
             </h1>
             <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
             <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
+            
+            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            
             <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
                 <option value="">-- Select Level --</option>
                 <option>Pre-KG</option>
@@ -191,6 +194,7 @@
         let userAnswers = {};
         let finalScore = 0;
         let username = '';
+        let email = ''; // NEW: Global variable to store email
         let currentLevel = '';
         
         /**
@@ -220,13 +224,21 @@
 
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
+            email = document.getElementById('emailInput').value.trim(); // NEW: Get email value
             currentLevel = document.getElementById('levelSelect').value;
+            
             // Replaced alert with a custom function to show a message box
             if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
             if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
+            
+            // NEW: Email validation
+            if (!email) { showMessage("GrammarBuddy says: Please enter your email address."); return; }
+            if (!email.includes('@')) { showMessage("GrammarBuddy says: Please enter a valid email address (missing @)."); return; }
+            
             if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
             
             localStorage.setItem('grammarBuddyUsername', username);
+            localStorage.setItem('grammarBuddyEmail', email); // NEW: Save email to local storage
             toggleSection('welcomeSection', false);
             toggleSection('loadingSection', true);
 
@@ -350,6 +362,7 @@
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
             const payload = {
                 username: username,
+                email: email, // NEW: Include email in the payload
                 level: currentLevel,
                 score: `${finalScore}/${currentQuestions.length}`
             };
@@ -449,6 +462,11 @@
         document.addEventListener("DOMContentLoaded", () => {
             const savedUsername = localStorage.getItem('grammarBuddyUsername');
             if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
+            
+            // NEW: Pre-fill email from local storage
+            const savedEmail = localStorage.getItem('grammarBuddyEmail');
+            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
+            
             const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             if (isDarkMode) { document.documentElement.classList.add('dark'); } 
             else { document.documentElement.classList.remove('dark'); }

@@ -279,7 +279,7 @@
             const questionTextElement = document.getElementById('questionText');
             const optionsDiv = document.getElementById('options');
         
-            // The fix: Clear all previous options and highlights before rendering the new ones
+            // The definitive fix: Clear all previous options and their styling before rendering.
             optionsDiv.innerHTML = '';
         
             let topicInfoElement = document.getElementById('topicInfo');
@@ -302,12 +302,10 @@
                 if (optionText.trim() !== '') {
                     const label = document.createElement('label');
                     const isSelected = userSelectedAnswer === key;
-                    // Dynamically add the 'selected-option' class if this is the user's answer
                     label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');
                     input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
-                    // Set the radio button as checked if it's the user's answer
                     input.checked = isSelected;
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(`${key}: ${optionText}`));
@@ -329,7 +327,6 @@
             userAnswers[qid] = key;
             const optionsDiv = document.getElementById('options');
             
-            // This is the core part of the fix:
             // Explicitly remove the highlight from all options before adding it to the new one.
             optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
             
@@ -343,8 +340,6 @@
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             
-            // This is the fix: Check if an answer exists AND if the user has selected an option on the *current* question.
-            // By doing this, we force the user to interact with the question again if they go back.
             if (!userAnswers[qid]) {
                  showMessage("GrammarBuddy says: Please select an option."); 
                  return; 

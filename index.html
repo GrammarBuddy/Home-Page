@@ -360,12 +360,10 @@
             const saveStatusElement = document.getElementById('saveStatus');
             saveStatusElement.textContent = "Saving your score...";
             
-            // ** IMPORTANT **
-            // Use the correct Web App URL from your Apps Script deployment.
-            // If this URL is wrong, no data will be saved.
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec'; 
+            // ** IMPORTANT: The URL must be the latest Web App URL from your Apps Script deployment **
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
             
-            // --- MODIFIED PAYLOAD TO MATCH YOUR GOOGLE APPS SCRIPT ---
+            // --- THIS IS THE CORRECTED PAYLOAD ---
             // The `action` field is required by your `doPost` function.
             const payload = {
                 action: 'saveScore', 

@@ -286,7 +286,7 @@
                 topicInfoElement.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
                 questionContentWrapper.insertBefore(topicInfoElement, questionTextElement);
             }
-            topicInfoElement.textContent = `Topic: ${q.Topic} | ID: ${q.Question_ID}`;
+            topicInfoElement.textContent = `Topic: ${q.Topic} | Question ID: ${q.Question_ID}`;
 
             questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
             const optionsDiv = document.getElementById('options');

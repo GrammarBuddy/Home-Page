@@ -338,11 +338,18 @@
                 selectedLabel.parentElement.classList.add('selected-option');
             }
         }
-
+        
+        // --- CORRECTED: nextQuestion() function ---
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            // Replaced alert with a custom function to show a message box
-            if (!userAnswers[qid]) { showMessage("GrammarBuddy says: Please select an option."); return; }
+            
+            // This is the fix: Check if an answer exists AND if the user has selected an option on the *current* question.
+            // By doing this, we force the user to interact with the question again if they go back.
+            if (!userAnswers[qid]) {
+                 showMessage("GrammarBuddy says: Please select an option."); 
+                 return; 
+            }
+        
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
                 showQuestion();
@@ -350,6 +357,7 @@
                 submitQuiz();
             }
         }
+        // --- END CORRECTED: nextQuestion() function ---
 
         function prevQuestion() {
             if (currentQuestionIndex > 0) {
@@ -433,7 +441,7 @@
                 const isCorrect = userAnswer === q.Correct_Answer;
                 const icon = isCorrect ? '✅' : '❌';
                 const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
-                const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_B, D: q.Option_C };
+                const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
                 const card = document.createElement('div');
                 card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
                 card.innerHTML = `<p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.Question_Text}</p><p><strong>Your Answer:</strong> ${userAnswer ? `${userAnswer} (${optionsMap[userAnswer]})` : 'Not answered'}</p><p><strong>Correct Answer:</strong> ${q.Correct_Answer} (${optionsMap[q.Correct_Answer]})</p><p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.Explanation}</span></p>`;

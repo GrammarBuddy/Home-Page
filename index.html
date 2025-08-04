@@ -206,12 +206,10 @@
             const rows = csvText.trim().split(/\r?\n/);
             const headers = rows[0].split(',').map(header => header.trim());
             
-            // Regex to split by comma, but not commas inside double quotes
             const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
             return rows.slice(1).map(rowText => {
                 const values = rowText.split(regex).map(field => {
-                    // Remove leading/trailing whitespace and surrounding quotes
                     return field.trim().replace(/^"|"$/g, '');
                 });
 
@@ -221,6 +219,12 @@
                 }, {});
             });
         }
+        
+        // NEW: Function to validate a question object
+        function isValidQuestion(q) {
+            return q.Question_ID && q.Question_Text && q.Correct_Answer && q.Level;
+        }
+
 
         async function startQuiz() {
             username = document.getElementById('usernameInput').value.trim();
@@ -248,13 +252,14 @@
                     const csvText = await response.text();
                     allQuizData = parseCSV(csvText);
                 }
-
-                const filtered = allQuizData.filter(q => q.Level === currentLevel);
+                
+                // NEW: Filter and validate the questions for the selected level
+                const filtered = allQuizData.filter(q => q.Level === currentLevel && isValidQuestion(q));
                 const shuffled = filtered.sort(() => 0.5 - Math.random());
                 currentQuestions = shuffled.slice(0, 10);
 
-                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} questions for the level '${currentLevel}'.`); }
-                if (currentQuestions.length === 0) { showMessage(`Sorry, no questions found for the level '${currentLevel}' in the Google Sheet.`); resetAll(); return; }
+                if (currentQuestions.length === 0) { showMessage(`Sorry, no valid questions found for the level '${currentLevel}' in the Google Sheet. Please check the data integrity.`); resetAll(); return; }
+                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} valid questions for the level '${currentLevel}'.`); }
                 
                 currentQuestionIndex = 0;
                 userAnswers = {};
@@ -269,22 +274,14 @@
                 resetAll();
             }
         }
-
-        // NEW: Function to clear the UI and state for the current question
-        function clearQuestionState() {
-            const optionsDiv = document.getElementById('options');
-            optionsDiv.innerHTML = '';
-            // We no longer need a `currentSelection` variable if we rebuild the UI from `userAnswers`
-            // Instead, we ensure userAnswers is the single source of truth.
-        }
-
-        // --- CORRECTED: Show question with Topic and Question_ID ---
+        
         function showQuestion() {
-            clearQuestionState(); // Start with a fresh UI state
             const q = currentQuestions[currentQuestionIndex];
             const questionContentWrapper = document.getElementById('questionContentWrapper');
             const questionTextElement = document.getElementById('questionText');
             const optionsDiv = document.getElementById('options');
+        
+            optionsDiv.innerHTML = '';
         
             let topicInfoElement = document.getElementById('topicInfo');
             if (!topicInfoElement) {
@@ -299,7 +296,7 @@
             
             const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
             const qid = q.Question_ID;
-            const userSelectedAnswer = userAnswers[qid]; // Get the stored answer, if any
+            const userSelectedAnswer = userAnswers[qid];
             
             for (let key in optionsMap) {
                 const optionText = optionsMap[key];
@@ -307,7 +304,6 @@
                     const label = document.createElement('label');
                     const isSelected = userSelectedAnswer === key;
                     label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
-                    // The selectOption function now immediately updates userAnswers
                     label.onclick = () => selectOption(key);
                     const input = document.createElement('input');
                     input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
@@ -325,14 +321,12 @@
             nextButton.classList.toggle('bg-primary', currentQuestionIndex !== currentQuestions.length - 1);
             updateProgressBar();
         }
-        // --- END CORRECTED: Show question ---
-
+        
         function selectOption(key) {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            userAnswers[qid] = key; // Immediately save the selection to the official state object
+            userAnswers[qid] = key;
             const optionsDiv = document.getElementById('options');
             
-            // Reapply the highlight based on the new selection
             optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
             
             const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
@@ -341,7 +335,6 @@
             }
         }
         
-        // --- CORRECTED: nextQuestion() function ---
         function nextQuestion() {
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             
@@ -357,8 +350,7 @@
                 submitQuiz();
             }
         }
-        // --- END CORRECTED: nextQuestion() function ---
-
+        
         function prevQuestion() {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
@@ -387,7 +379,6 @@
             const saveStatusElement = document.getElementById('saveStatus');
             saveStatusElement.textContent = "Saving your score...";
             
-            // ** IMPORTANT: The URL must be the latest Web App URL from your Apps Script deployment **
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
             
             const payload = {

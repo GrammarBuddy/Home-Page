@@ -57,10 +57,8 @@
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
     
-    <!-- ===== Slide-out Sidebar Menu ===== -->
     <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="p-5 pt-16"> <!-- Adjusted top padding -->
-            <nav class="flex flex-col space-y-4">
+        <div class="p-5 pt-16"> <nav class="flex flex-col space-y-4">
                 <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
                 <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
                 <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
@@ -69,10 +67,8 @@
             </nav>
         </div>
     </div>
-    <!-- Menu Backdrop -->
     <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
     
-    <!-- ===== Cancel Confirmation Modal ===== -->
     <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
             <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
@@ -87,9 +83,7 @@
 
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-        <!-- ===== UPDATED: Header with new layout ===== -->
         <header class="relative flex justify-between items-center mb-8">
-            <!-- Left side: Hamburger -->
             <div class="flex-1">
                 <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
                     <span class="hamburger-top"></span>
@@ -98,13 +92,11 @@
                 </button>
             </div>
             
-            <!-- Center: Title -->
             <div class="flex-1 text-center">
-                   <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
-                 <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+                   <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
             </div>
 
-            <!-- Right side: Toggler -->
             <div class="flex-1 text-right">
                 <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
             </div>
@@ -114,7 +106,6 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
-        <!-- ... (rest of your quiz sections remain unchanged) ... -->
         <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
@@ -171,6 +162,7 @@
             <h2 class="text-2xl font-bold text-center mb-2">Your Results</h2>
             <h3 id="userWelcome" class="text-xl font-semibold text-center mb-2"></h3>
             <p id="levelDisplay" class="text-center text-sm mb-2 text-gray-600 dark:text-gray-400"></p>
+            <p id="submissionDateTime" class="text-center text-red-500 text-xs mb-2"></p>
             <div class="text-center mb-2">
                 <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
             </div>
@@ -381,6 +373,12 @@
 
             // NEW: Display the selected level on the results page
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
+
+            // NEW: Display the submission date and time
+            const now = new Date();
+            const dateString = now.toLocaleDateString();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('submissionDateTime').textContent = `Submitted on: ${dateString} at ${timeString}`;
 
             document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
             const rankLabel = document.getElementById('rankLabel');

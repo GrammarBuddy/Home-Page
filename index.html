@@ -53,6 +53,22 @@
             background-color: #1e40af;
             border-color: #93c5fd;
         }
+
+        /* Tighter spacing for options and inputs */
+        .space-y-3 > * + * {
+            margin-top: 0.5rem; /* Reduced from 0.75rem */
+        }
+        
+        /* Tighter spacing for welcome section elements */
+        #welcomeSection input, #welcomeSection select {
+            margin-bottom: 0.5rem; /* Reduced from 1rem */
+        }
+        
+        /* Consistent vertical alignment for header elements */
+        .header-element {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
@@ -83,8 +99,8 @@
 
     <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-        <header class="relative flex justify-between items-center mb-8">
-            <div class="flex-1">
+        <header class="relative flex justify-between items-center mb-4">
+            <div class="flex-1 header-element">
                 <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
                     <span class="hamburger-top"></span>
                     <span class="hamburger-middle"></span>
@@ -97,7 +113,7 @@
                    <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
             </div>
 
-            <div class="flex-1 text-right">
+            <div class="flex-1 text-right header-element justify-end">
                 <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
             </div>
         </header>
@@ -111,9 +127,9 @@
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
             </h1>
             <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
-            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
+            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
             
-            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element">
             
             <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
                 <option value="">-- Select Level --</option>
@@ -275,6 +291,15 @@
             }
         }
         
+        // NEW: Function to shuffle an array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // REVISED showQuestion function to fix alignment
         function showQuestion() {
             const q = currentQuestions[currentQuestionIndex];
             const questionContentWrapper = document.getElementById('questionContentWrapper');
@@ -294,25 +319,42 @@
         
             questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
             
-            const optionsMap = { A: q.Option_A, B: q.Option_B, C: q.Option_C, D: q.Option_D };
+            const optionsData = [
+                { key: 'A', text: q.Option_A },
+                { key: 'B', text: q.Option_B },
+                { key: 'C', text: q.Option_C },
+                { key: 'D', text: q.Option_D }
+            ].filter(option => option.text.trim() !== '');
+            
+            shuffleArray(optionsData);
+        
             const qid = q.Question_ID;
             const userSelectedAnswer = userAnswers[qid];
             
-            for (let key in optionsMap) {
-                const optionText = optionsMap[key];
-                if (optionText.trim() !== '') {
-                    const label = document.createElement('label');
-                    const isSelected = userSelectedAnswer === key;
-                    label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
-                    label.onclick = () => selectOption(key);
-                    const input = document.createElement('input');
-                    input.type = 'radio'; input.name = 'option'; input.value = key; input.className = 'mr-2 hidden';
-                    input.checked = isSelected;
-                    label.appendChild(input);
-                    label.appendChild(document.createTextNode(`${key}: ${optionText}`));
-                    optionsDiv.appendChild(label);
-                }
-            }
+            // Generate a temporary list of letters to use for the display
+            const displayLetters = ['A', 'B', 'C', 'D'];
+            
+            optionsData.forEach((option, index) => {
+                const label = document.createElement('label');
+                const isSelected = userSelectedAnswer === option.key;
+                label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
+                label.onclick = () => selectOption(option.key);
+                
+                const input = document.createElement('input');
+                input.type = 'radio'; input.name = 'option'; input.value = option.key; input.className = 'mr-2 hidden';
+                input.checked = isSelected;
+                
+                // REVISED: Add a span for the letter to maintain alignment
+                const optionSpan = document.createElement('span');
+                optionSpan.textContent = `${displayLetters[index]}: `;
+                optionSpan.classList.add('font-bold', 'w-6', 'inline-block'); // Tailwind classes for alignment
+                
+                label.appendChild(input);
+                label.appendChild(optionSpan);
+                label.appendChild(document.createTextNode(option.text));
+                
+                optionsDiv.appendChild(label);
+            });
             
             document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
             const nextButton = document.getElementById('nextButton');
@@ -339,8 +381,8 @@
             const qid = currentQuestions[currentQuestionIndex].Question_ID;
             
             if (!userAnswers[qid]) {
-                 showMessage("GrammarBuddy says: Please select an option."); 
-                 return; 
+                    showMessage("GrammarBuddy says: Please select an option."); 
+                    return; 
             }
         
             if (currentQuestionIndex < currentQuestions.length - 1) {

@@ -445,7 +445,8 @@
                 saveStatusElement.textContent = "Error saving score.";
             }
         }
-
+        
+        // This is the fixed function that now correctly shows only the text.
         function displayResults() {
             document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
             document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;

@@ -236,7 +236,7 @@
             });
         }
         
-        // NEW: Function to validate a question object
+        // Function to validate a question object
         function isValidQuestion(q) {
             return q.Question_ID && q.Question_Text && q.Correct_Answer && q.Level;
         }
@@ -269,7 +269,7 @@
                     allQuizData = parseCSV(csvText);
                 }
                 
-                // NEW: Filter and validate the questions for the selected level
+                // Filter and validate the questions for the selected level
                 const filtered = allQuizData.filter(q => q.Level === currentLevel && isValidQuestion(q));
                 const shuffled = filtered.sort(() => 0.5 - Math.random());
                 currentQuestions = shuffled.slice(0, 10);
@@ -291,7 +291,7 @@
             }
         }
         
-        // NEW: Function to shuffle an array
+        // Function to shuffle an array
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -471,6 +471,7 @@
                 const icon = isCorrect ? '✅' : '❌';
                 const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
                 
+                // This map is used to get the actual text from the key
                 const optionsMap = { 
                     A: q.Option_A, 
                     B: q.Option_B, 

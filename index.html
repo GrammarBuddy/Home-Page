@@ -34,7 +34,7 @@
         /* --- Hamburger Menu Styles --- */
         .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
         .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; left: 0; width: 24px; height: 2px; background: #374151; transition: all 0.4s; }
-        .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-bottom { background: #f3f4f6; }
+        .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-middle { background: #f3f4f6; }
         .hamburger-middle { transform: translateY(7px); }
         .hamburger-bottom { transform: translateY(14px); }
         .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
@@ -319,6 +319,7 @@
         
             questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
             
+            // CORRECTED: Create an array of option objects and shuffle it
             const optionsData = [
                 { key: 'A', text: q.Option_A },
                 { key: 'B', text: q.Option_B },
@@ -331,23 +332,23 @@
             const qid = q.Question_ID;
             const userSelectedAnswer = userAnswers[qid];
             
-            // Generate a temporary list of letters to use for the display
             const displayLetters = ['A', 'B', 'C', 'D'];
             
             optionsData.forEach((option, index) => {
                 const label = document.createElement('label');
                 const isSelected = userSelectedAnswer === option.key;
                 label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
+                
+                // IMPORTANT: The onclick handler now passes the original key (A,B,C,D) from the shuffled option object
                 label.onclick = () => selectOption(option.key);
                 
                 const input = document.createElement('input');
                 input.type = 'radio'; input.name = 'option'; input.value = option.key; input.className = 'mr-2 hidden';
                 input.checked = isSelected;
                 
-                // REVISED: Add a span for the letter to maintain alignment
                 const optionSpan = document.createElement('span');
                 optionSpan.textContent = `${displayLetters[index]}: `;
-                optionSpan.classList.add('font-bold', 'w-6', 'inline-block'); // Tailwind classes for alignment
+                optionSpan.classList.add('font-bold', 'w-6', 'inline-block');
                 
                 label.appendChild(input);
                 label.appendChild(optionSpan);

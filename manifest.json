@@ -1,6 +1,6 @@
 {
-  "name": "GrammarBuddy",
-  "short_name": "GB",
+  "name": "Grammar Buddy",
+  "short_name": "Grammar Buddy",
   "start_url": "/homepage/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -1,58 +1,90 @@
-// Define a unique name for the cache
-const CACHE_NAME = 'grammarbuddy-cache-v1';
+const CACHE_NAME = 'grammarbuddy-cache-v2';
+const OFFLINE_URL = '/homepage/offline.html';
 
-// List all the files you want to cache for offline use
-// Be sure to include all CSS, JavaScript, and other assets.
-// The paths are relative to the root of your GitHub Pages site.
 const urlsToCache = [
-  '/homepage/', // Your main index page
+  '/homepage/',
   '/homepage/index.html',
-  '/homepage/styles.css', // Assuming you have a CSS file
-  '/homepage/script.js', // Assuming you have a JavaScript file
-  '/homepage/icons/icon-192x192.png', // The icon from the manifest
-  '/homepage/icons/icon-512x512.png'  // The other icon
+  '/homepage/offline.html',
+  '/homepage/styles.css',
+  '/homepage/script.js',
+  '/homepage/icons/icon-192x192.png',
+  '/homepage/icons/icon-512x512.png'
 ];
 
-// Install event: Caches all the necessary files when the PWA is installed
+// Install: cache essential assets
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Fetch event: Intercepts network requests and serves content from the cache if available
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // If the resource is in the cache, return it
-        if (response) {
-          return response;
-        }
-
-        // Otherwise, fetch the resource from the network
-        return fetch(event.request);
-      })
-  );
-});
-
-// Activate event: Cleans up old caches to ensure the app stays up to date
+// Activate: cleanup old caches
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
+    caches.keys().then(cacheNames =>
+      Promise.all(
         cacheNames.map(cacheName => {
-          // If the cache name is not in the whitelist, delete it
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
         })
-      );
-    })
+      )
+    )
   );
+  self.clients.claim();
+});
+
+// Fetch: try network first, fallback to cache, then offline page
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Cache the fetched response
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request)
+          .then(cached => cached || caches.match(OFFLINE_URL))
+      )
+  );
+});
+
+// Background Sync for failed POST requests
+self.addEventListener('sync', event => {
+  if (event.tag === 'retry-posts') {
+    event.waitUntil(retryQueuedPosts());
+  }
+});
+
+async function retryQueuedPosts() {
+  const queue = await getFailedRequests();
+  for (const req of queue) {
+    try {
+      await fetch(req.url, { method: 'POST', body: req.body, headers: req.headers });
+      console.log('Retried:', req.url);
+    } catch (err) {
+      console.error('Retry failed:', req.url);
+    }
+  }
+}
+
+// Placeholder: store failed POST requests (needs IndexedDB for real use)
+async function getFailedRequests() {
+  return []; // Implement your own storage logic
+}
+
+// Periodic Background Sync
+self.addEventListener('periodicsync', event => {
+  if (event.tag === 'update-content') {
+    event.waitUntil(
+      fetch('/homepage/index.html')
+        .then(res => caches.open(CACHE_NAME).then(cache => cache.put('/homepage/index.html', res)))
+    );
+  }
 });

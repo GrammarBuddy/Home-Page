@@ -576,5 +576,27 @@
             dismissBtn.addEventListener('click', hideCancelModal);
         });
     </script>
+    <!-- Service Worker Registration ... Your existing HTML content here -->
+
+<script>
+  // Check if the browser supports Service Workers
+  if ('serviceWorker' in navigator) {
+    // Wait until the window has finished loading before registering the service worker
+    window.addEventListener('load', () => {
+      // Register the service worker from the root of your GitHub Pages site
+      // The path is important for the scope of the service worker
+      navigator.serviceWorker.register('/homepage/service-worker.js')
+        .then(registration => {
+          // Registration was successful
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+          // Registration failed
+          console.log('Service Worker registration failed:', error);
+        });
+    });
+  }
+</script>
+
 </body>
 </html>

@@ -1,12 +1,17 @@
 {
+  "id": "https://grammarbuddy.github.io/homepage/",
   "name": "GrammarBuddy",
   "short_name": "GrammarBuddy",
   "start_url": "https://grammarbuddy.github.io/homepage/",
   "scope": "https://grammarbuddy.github.io/homepage/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f5ebeb",
   "theme_color": "#6200EE",
   "description": "For Pre-KG to PhD Learners!",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
     {
       "src": "https://grammarbuddy.github.io/homepage/icons/icon-192x192.png",
@@ -16,6 +21,18 @@
     {
       "src": "https://grammarbuddy.github.io/homepage/icons/icon-512x512.png",
       "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://grammarbuddy.github.io/homepage/screenshots/screen1.png",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    },
+    {
+      "src": "https://grammarbuddy.github.io/homepage/screenshots/screen2.png",
+      "sizes": "1080x1920",
       "type": "image/png"
     }
   ]

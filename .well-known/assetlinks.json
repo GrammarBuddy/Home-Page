@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.grammarbuddy.twa",
+        "sha256_cert_fingerprints": ["5D:83:56:B7:17:A0:9E:8C:BB:11:27:38:84:FD:BA:80:14:58:1F:51:78:63:21:09:57:8F:16:2F:CE:88:1B:4E"]
+      }
+    }]

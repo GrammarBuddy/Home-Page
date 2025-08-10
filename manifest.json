@@ -6,9 +6,22 @@
   "scope": "https://grammarbuddy.github.io/homepage/",
   "display": "standalone",
   "orientation": "portrait",
+  "dir": "ltr",
+  "lang": "en",
   "background_color": "#D6D6D6",
   "theme_color": "#D6D6D6",
   "description": "For Pre-KG to PhD Learners!",
+  "categories": ["education", "productivity"],
+  "iarc_rating_id": "e",
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.grammarbuddy.app",
+      "id": "com.grammarbuddy.app"
+    }
+  ],
+  "scope_extensions": ["https://grammarbuddy.github.io"],
   "launch_handler": {
     "client_mode": "navigate-existing"
   },

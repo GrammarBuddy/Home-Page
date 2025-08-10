@@ -6,12 +6,9 @@
   "scope": "https://grammarbuddy.github.io/homepage/",
   "display": "standalone",
   "orientation": "portrait",
-  "dir": "ltr",
-  "lang": "en",
   "background_color": "#D6D6D6",
   "theme_color": "#D6D6D6",
   "description": "For Pre-KG to PhD Learners!",
-  "categories": ["education", "productivity"],
   "launch_handler": {
     "client_mode": "navigate-existing"
   },

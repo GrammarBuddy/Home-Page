@@ -187,7 +187,7 @@
             <div id="explanations" class="space-y-4 text-sm"></div>
             <div class="text-center mt-6">
                 <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
-                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
+                <button id="restartButton" onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
                     Take Another Quiz
                 </button>
             </div>
@@ -210,7 +210,8 @@
         let username = '';
         let email = '';
         let currentLevel = '';
-        
+        let isSavingScore = false; // New state variable
+
         /**
          * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
          * @param {string} csvText - The raw CSV text from the Google Sheet.
@@ -417,10 +418,13 @@
         }
 
         async function saveScore() {
+            isSavingScore = true;
             const saveStatusElement = document.getElementById('saveStatus');
+            const restartButton = document.getElementById('restartButton');
             saveStatusElement.textContent = "Saving your score...";
+            restartButton.classList.add('disabled-button');
             
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc3-ei7nE6mDSLJ3H2f/exec';
             
             const payload = {
                 action: 'saveScore', 
@@ -431,16 +435,23 @@
             };
             
             try {
-                await fetch(webAppUrl, {
+                const response = await fetch(webAppUrl, {
                     method: 'POST',
                     mode: 'no-cors',  
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
+                // We're using no-cors, so we can't check response.ok.
+                // We'll assume success for the purpose of this demo.
                 saveStatusElement.textContent = "Score saved successfully!";
             } catch (error) {
                 console.error('Error saving score:', error);
                 saveStatusElement.textContent = "Error saving score.";
+            } finally {
+                // This block runs regardless of success or failure
+                isSavingScore = false;
+                restartButton.classList.remove('disabled-button');
             }
         }
         
@@ -596,3 +607,4 @@
 
 </body>
 </html>
+

@@ -3,7 +3,7 @@
   "short_name": "GrammarBuddy",
   "start_url": "/homepage/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#f5ebeb",
   "theme_color": "#6200EE",
   "description": "For Pre-KG to PhD Learners!",
   "icons": [

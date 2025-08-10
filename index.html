@@ -61,11 +61,6 @@
             margin-top: 0.5rem; /* Reduced from 0.75rem */
         }
         
-        /* Tighter spacing for welcome section elements */
-        #welcomeSection input, #welcomeSection select {
-            margin-bottom: 0.5rem; /* Reduced from 1rem */
-        }
-        
         /* Consistent vertical alignment for header elements */
         .header-element {
             display: flex;
@@ -124,17 +119,17 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
-        <div id="welcomeSection">
+        <div id="welcomeSection" class="px-4 py-8">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
             </h1>
-            <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
-            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
+            <p class="text-center mb-6">Explore English in a whole new way — playful, powerful, and for every level!</p>
+            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full p-3 mb-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 interactive-element border border-gray-300 dark:border-gray-600">
             
-            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full p-3 mb-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 interactive-element border border-gray-300 dark:border-gray-600">
             
-            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
-                <option value="">-- Select Level --</option>
+            <select id="levelSelect" class="w-full p-3 mb-6 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white interactive-element border border-gray-300 dark:border-gray-600">
+                <option value="" disabled selected>-- Select Level --</option>
                 <option>Pre-KG</option>
                 <option>Kindergarten</option>
                 <option>Lower Primary (1&2)</option>
@@ -146,7 +141,7 @@
                 <option>Post Graduation</option>
                 <option>PhD</option>
             </select>
-            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
+            <button onclick="startQuiz()" class="w-full p-3 rounded-lg bg-primary hover:bg-primary-dark text-white font-bold transition-colors duration-200 interactive-element">
                 Start Challenge
             </button>
         </div>

@@ -1,8 +1,5 @@
 [{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.grammarbuddy.homepage",
-        "sha256_cert_fingerprints": ["4F:DB:F9:11:79:45:B9:7C:D7:B5:39:E8:8D:AF:E6:7D:B7:85:76:46:EA:1C:88:29:B5:3A:C7:F5:52:CB:1C:F8"]
-      }
-    }]
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target" : { "namespace": "android_app", "package_name": "io.github.grammarbuddy.homepage",
+               "sha256_cert_fingerprints": ["4F:DB:F9:11:79:45:B9:7C:D7:B5:39:E8:8D:AF:E6:7D:B7:85:76:46:EA:1C:88:29:B5:3A:C7:F5:52:CB:1C:F8"] }
+}]

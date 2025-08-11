@@ -1,9 +1,9 @@
 {
-  "id": "https://grammarbuddy.github.io/homepage/",
+  "id": "https://grammarbuddy.github.io/",
   "name": "GrammarBuddy",
   "short_name": "GrammarBuddy",
-  "start_url": "https://grammarbuddy.github.io/homepage/",
-  "scope": "https://grammarbuddy.github.io/homepage/",
+  "start_url": "https://grammarbuddy.github.io/",
+  "scope": "https://grammarbuddy.github.io/",
   "display": "standalone",
   "orientation": "portrait",
   "dir": "ltr",
@@ -27,24 +27,24 @@
   },
   "icons": [
     {
-      "src": "https://grammarbuddy.github.io/homepage/icons/icon-192x192.png",
+      "src": "https://grammarbuddy.github.io/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://grammarbuddy.github.io/homepage/icons/icon-512x512.png",
+      "src": "https://grammarbuddy.github.io/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "screenshots": [
     {
-      "src": "https://grammarbuddy.github.io/homepage/screenshots/screen1.png",
+      "src": "https://grammarbuddy.github.io/screenshots/screen1.png",
       "sizes": "1080x1920",
       "type": "image/png"
     },
     {
-      "src": "https://grammarbuddy.github.io/homepage/screenshots/screen2.png",
+      "src": "https://grammarbuddy.github.io/screenshots/screen2.png",
       "sizes": "1080x1920",
       "type": "image/png"
     }

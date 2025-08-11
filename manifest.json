@@ -1,8 +1,7 @@
 {
-  "id": "https://grammarbuddy.github.io/",
   "name": "GrammarBuddy",
   "short_name": "GrammarBuddy",
-  "start_url": "/",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

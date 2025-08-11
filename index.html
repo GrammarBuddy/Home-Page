@@ -2,18 +2,10 @@
 <html lang="en" class="light">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>GrammarBuddy</title>
-
-    <meta name="description" content="GrammarBuddy: For Pre-KG to PhD Learners!" />
-    <meta name="theme-color" content="#D6D6D6" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="GrammarBuddy" />
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-    <link rel="manifest" href="/manifest.json" />
-
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>" />
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -39,13 +31,12 @@
         @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
         .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-        /* --- Hamburger Menu Styles (Corrected) --- */
+        /* --- Hamburger Menu Styles --- */
         .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
         .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; left: 0; width: 24px; height: 2px; background: #374151; transition: all 0.4s; }
         .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-middle { background: #f3f4f6; }
-        /* Adjusted translateY values for proper spacing */
-        .hamburger-middle { transform: translateY(9px); }
-        .hamburger-bottom { transform: translateY(18px); }
+        .hamburger-middle { transform: translateY(7px); }
+        .hamburger-bottom { transform: translateY(14px); }
         .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
         .open .hamburger-middle { display: none; }
         .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
@@ -68,6 +59,11 @@
             margin-top: 0.5rem; /* Reduced from 0.75rem */
         }
         
+        /* Tighter spacing for welcome section elements */
+        #welcomeSection input, #welcomeSection select {
+            margin-bottom: 0.5rem; /* Reduced from 1rem */
+        }
+        
         /* Consistent vertical alignment for header elements */
         .header-element {
             display: flex;
@@ -79,7 +75,7 @@
     
     <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
         <div class="p-5 pt-16"> <nav class="flex flex-col space-y-4">
-                <a href="https://grammarbuddy.github.io/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
+                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
                 <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
                 <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
                 <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Careers</a>
@@ -126,17 +122,17 @@
             <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
         </div>
 
-        <div id="welcomeSection" class="px-4 py-8">
+        <div id="welcomeSection">
             <h1 class="text-3xl font-bold text-center mb-4">
                 🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
             </h1>
-            <p class="text-center mb-6">Explore English in a whole new way — playful, powerful, and for every level!</p>
-            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full p-3 mb-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 interactive-element border border-gray-300 dark:border-gray-600">
+            <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
+            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
             
-            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full p-3 mb-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white placeholder-gray-400 interactive-element border border-gray-300 dark:border-gray-600">
+            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element">
             
-            <select id="levelSelect" class="w-full p-3 mb-6 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white interactive-element border border-gray-300 dark:border-gray-600">
-                <option value="" disabled selected>-- Select Level --</option>
+            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+                <option value="">-- Select Level --</option>
                 <option>Pre-KG</option>
                 <option>Kindergarten</option>
                 <option>Lower Primary (1&2)</option>
@@ -148,7 +144,7 @@
                 <option>Post Graduation</option>
                 <option>PhD</option>
             </select>
-            <button onclick="startQuiz()" class="w-full p-3 rounded-lg bg-primary hover:bg-primary-dark text-white font-bold transition-colors duration-200 interactive-element">
+            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
                 Start Challenge
             </button>
         </div>
@@ -193,7 +189,7 @@
             <div id="explanations" class="space-y-4 text-sm"></div>
             <div class="text-center mt-6">
                 <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
-                <button id="restartButton" onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
+                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
                     Take Another Quiz
                 </button>
             </div>
@@ -216,8 +212,7 @@
         let username = '';
         let email = '';
         let currentLevel = '';
-        let isSavingScore = false; // New state variable
-
+        
         /**
          * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
          * @param {string} csvText - The raw CSV text from the Google Sheet.
@@ -424,13 +419,10 @@
         }
 
         async function saveScore() {
-            isSavingScore = true;
             const saveStatusElement = document.getElementById('saveStatus');
-            const restartButton = document.getElementById('restartButton');
             saveStatusElement.textContent = "Saving your score...";
-            restartButton.classList.add('disabled-button');
             
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc3-ei7nE6mDSLJ3H2f/exec';
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
             
             const payload = {
                 action: 'saveScore', 
@@ -441,23 +433,16 @@
             };
             
             try {
-                const response = await fetch(webAppUrl, {
+                await fetch(webAppUrl, {
                     method: 'POST',
                     mode: 'no-cors',  
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                
-                // We're using no-cors, so we can't check response.ok.
-                // We'll assume success for the purpose of this demo.
                 saveStatusElement.textContent = "Score saved successfully!";
             } catch (error) {
                 console.error('Error saving score:', error);
                 saveStatusElement.textContent = "Error saving score.";
-            } finally {
-                // This block runs regardless of success or failure
-                isSavingScore = false;
-                restartButton.classList.remove('disabled-button');
             }
         }
         
@@ -589,18 +574,5 @@
             dismissBtn.addEventListener('click', hideCancelModal);
         });
     </script>
-    
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          }, function(err) {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-        });
-      }
-    </script>
-
 </body>
 </html>

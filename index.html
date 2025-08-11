@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>GrammarBuddy</title>
-    <!-- Link the manifest.json file to your HTML -->
-    <link rel="manifest" href="/homepage//manifest.json">
+    <link rel="manifest" href="/manifest.json">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -73,7 +72,7 @@
     
     <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
         <div class="p-5 pt-16"> <nav class="flex flex-col space-y-4">
-                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
+                <a href="https://grammarbuddy.github.io/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
                 <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
                 <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
                 <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Careers</a>
@@ -583,62 +582,18 @@
             dismissBtn.addEventListener('click', hideCancelModal);
         });
     </script>
-    <!-- Service Worker Registration ... Your existing HTML content here -->
-
-<script>
- // Check if the browser supports Service Workers
- if ('serviceWorker' in navigator) {
-   // Wait until the window has finished loading before registering the service worker
-   window.addEventListener('load', () => {
-     // Register the service worker from the root of your GitHub Pages site
-     // The path is important for the scope of the service worker
-     navigator.serviceWorker.register('/homepage/service-worker.js')
-       .then(registration => {
-         // Registration was successful
-         console.log('Service Worker registered with scope:', registration.scope);
-       })
-       .catch(error => {
-         // Registration failed
-         console.log('Service Worker registration failed:', error);
-       });
-   });
- }
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/homepage/service-worker.js').then(async reg => {
-    console.log('Service Worker registered:', reg);
-
-    // Background Sync
-    if ('sync' in reg) {
-      try {
-        await reg.sync.register('retry-posts');
-        console.log('Background sync registered');
-      } catch (err) {
-        console.warn('Background sync registration failed', err);
-      }
-    }
-
-    // Periodic Background Sync
-    if ('periodicSync' in reg) {
-      try {
-        const tags = await reg.periodicSync.getTags();
-        if (!tags.includes('update-content')) {
-          await reg.periodicSync.register('update-content', { minInterval: 24 * 60 * 60 * 1000 });
-          console.log('Periodic background sync registered');
-        }
-      } catch (err) {
-        console.warn('Periodic sync registration failed', err);
-      }
-    }
-  }).catch(err => {
-    console.error('Service Worker registration failed:', err);
-  });
-}
-</script>
-
     
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
+
 </body>
 </html>
-

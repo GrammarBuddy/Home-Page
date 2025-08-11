@@ -2,8 +2,8 @@
   "id": "https://grammarbuddy.github.io/",
   "name": "GrammarBuddy",
   "short_name": "GrammarBuddy",
-  "start_url": "https://grammarbuddy.github.io/",
-  "scope": "https://grammarbuddy.github.io/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "dir": "ltr",
@@ -12,7 +12,6 @@
   "theme_color": "#D6D6D6",
   "description": "For Pre-KG to PhD Learners!",
   "categories": ["education", "productivity"],
-  "iarc_rating_id": "e",
   "prefer_related_applications": false,
   "related_applications": [
     {
@@ -21,30 +20,26 @@
       "id": "com.grammarbuddy.app"
     }
   ],
-  "scope_extensions": ["https://grammarbuddy.github.io"],
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
   "icons": [
     {
-      "src": "https://grammarbuddy.github.io/icons/icon-192x192.png",
+      "src": "icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://grammarbuddy.github.io/icons/icon-512x512.png",
+      "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "screenshots": [
     {
-      "src": "https://grammarbuddy.github.io/screenshots/screen1.png",
+      "src": "screenshots/screen1.png",
       "sizes": "1080x1920",
       "type": "image/png"
     },
     {
-      "src": "https://grammarbuddy.github.io/screenshots/screen2.png",
+      "src": "screenshots/screen2.png",
       "sizes": "1080x1920",
       "type": "image/png"
     }

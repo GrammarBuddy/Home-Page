@@ -2,7 +2,7 @@
 
 Welcome to GrammarBuddy! A sleek, modern, and interactive web-based quiz application designed to help users of all ages improve their English grammar skills. This app pulls questions directly from a live Google Sheet, making it incredibly easy to manage and update the quiz content.
 
-### [View the Live Demo](https://grammarbuddy.github.io/homepage/)
+### [View the Live Demo](https://grammarbuddy.in)
 
 ---
 

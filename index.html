@@ -1,579 +1,597 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>GrammarBuddy</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GrammarBuddy</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { DEFAULT: '#2563eb', light: '#93c5fd', dark: '#1e40af' },
-                        secondary: { DEFAULT: '#10b981' },
-                    },
-                },
-            },
-        };
-    </script>
-    <style>
-        /* Base styles for a smooth, responsive experience */
-        html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
-        .loader { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; background-color: currentColor; animation: bounce 0.6s infinite alternate; }
-        .loader:nth-child(2) { animation-delay: 0.2s; }
-        .loader:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
-        .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { DEFAULT: '#2563eb', light: '#93c5fd', dark: '#1e40af' },
+                        secondary: { DEFAULT: '#10b981' },
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Base styles for a smooth, responsive experience */
+        html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        .loader { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; background-color: currentColor; animation: bounce 0.6s infinite alternate; }
+        .loader:nth-child(2) { animation-delay: 0.2s; }
+        .loader:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { from { transform: translateY(0); opacity: 0.3; } to { transform: translateY(-0.6rem); opacity: 1; } }
+        .disabled-button { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-        /* --- Hamburger Menu Styles --- */
-        .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
-        .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; left: 0; width: 24px; height: 2px; background: #374151; transition: all 0.4s; }
-        .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-middle { background: #f3f4f6; }
-        .hamburger-middle { transform: translateY(7px); }
-        .hamburger-bottom { transform: translateY(14px); }
-        .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
-        .open .hamburger-middle { display: none; }
-        .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
-        
-        /* New styling for the selected option in the quiz */
-        .selected-option { 
-            background-color: var(--primary-light, #93c5fd);
-            border-color: var(--primary, #2563eb);
-            transform: scale(1.02);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: all 0.2s ease-in-out;
-        }
-        .dark .selected-option {
-            background-color: #1e40af;
-            border-color: #93c5fd;
-        }
+        /* --- Hamburger Menu Styles --- */
+        .hamburger { cursor: pointer; width: 24px; height: 24px; transition: all 0.25s; position: relative; }
+        .hamburger-top, .hamburger-middle, .hamburger-bottom { position: absolute; left: 0; width: 24px; height: 2px; background: #374151; transition: all 0.4s; }
+        .dark .hamburger-top, .dark .hamburger-middle, .dark .hamburger-middle { background: #f3f4f6; }
+        .hamburger-middle { transform: translateY(7px); }
+        .hamburger-bottom { transform: translateY(14px); }
+        .open .hamburger-top { transform: rotate(45deg) translateY(6px) translateX(6px); }
+        .open .hamburger-middle { display: none; }
+        .open .hamburger-bottom { transform: rotate(-45deg) translateY(6px) translateX(-6px); }
+        
+        /* New styling for the selected option in the quiz */
+        .selected-option { 
+            background-color: var(--primary-light, #93c5fd);
+            border-color: var(--primary, #2563eb);
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease-in-out;
+        }
+        .dark .selected-option {
+            background-color: #1e40af;
+            border-color: #93c5fd;
+        }
 
-        /* Tighter spacing for options and inputs */
-        .space-y-3 > * + * {
-            margin-top: 0.5rem; /* Reduced from 0.75rem */
-        }
-        
-        /* Tighter spacing for welcome section elements */
-        #welcomeSection input, #welcomeSection select {
-            margin-bottom: 0.5rem; /* Reduced from 1rem */
-        }
-        
-        /* Consistent vertical alignment for header elements */
-        .header-element {
-            display: flex;
-            align-items: center;
-        }
-    </style>
+        /* Tighter spacing for options and inputs */
+        .space-y-3 > * + * {
+            margin-top: 0.5rem; /* Reduced from 0.75rem */
+        }
+        
+        /* Tighter spacing for welcome section elements */
+        #welcomeSection input, #welcomeSection select {
+            margin-bottom: 0.5rem; /* Reduced from 1rem */
+        }
+        
+        /* Consistent vertical alignment for header elements */
+        .header-element {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Blinking effect for the text */
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .blinking {
+            animation: blink 1s step-start infinite;
+        }
+    </style>
 </head>
 <body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors">
-    
-    <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="p-5 pt-16"> <nav class="flex flex-col space-y-4">
-                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
-                <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
-                <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
-                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Careers</a>
-                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">About Us</a>
-            </nav>
-        </div>
-    </div>
-    <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
-    
-    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
-            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
-            <p class="mb-6">GrammarBuddy says: Do you want to cancel the quiz? Your progress will be lost.</p>
-            <div class="flex justify-center space-x-4">
-                <button id="confirmCancelBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg interactive-element hover:bg-red-600 transition-colors">Yes, cancel</button>
-                <button id="dismissCancelBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg interactive-element hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors">No, continue</button>
-            </div>
-        </div>
-    </div>
+    
+    <div id="sidebar-menu" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-5 pt-16"> <nav class="flex flex-col space-y-4">
+                <a href="https://grammarbuddy.github.io/homepage/" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Home</a>
+                <a href="https://sites.google.com/view/gbspellbee/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Spelling Bee</a>
+                <a href="https://sites.google.com/view/titatov3/home" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">TaTiTo Code</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">Careers</a>
+                <a href="https://www.google.com" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors py-2">About Us</a>
+            </nav>
+        </div>
+    </div>
+    <div id="menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+    
+    <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl text-center max-w-sm w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
+            <p class="mb-6">GrammarBuddy says: Do you want to cancel the quiz? Your progress will be lost.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="confirmCancelBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg interactive-element hover:bg-red-600 transition-colors">Yes, cancel</button>
+                <button id="dismissCancelBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg interactive-element hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors">No, continue</button>
+            </div>
+        </div>
+    </div>
 
 
-    <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
+    <div id="quizContainer" class="max-w-xl mx-auto px-4 py-6">
 
-        <header class="relative flex justify-between items-center mb-4">
-            <div class="flex-1 header-element">
-                <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
-                    <span class="hamburger-top"></span>
-                    <span class="hamburger-middle"></span>
-                    <span class="hamburger-bottom"></span>
-                </button>
-            </div>
-            
-            <div class="flex-1 text-center">
-                    <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
-                   <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
-            </div>
+        <header class="relative flex justify-between items-center mb-4">
+            <div class="flex-1 header-element">
+                <button id="menu-btn" class="z-50 block hamburger focus:outline-none">
+                    <span class="hamburger-top"></span>
+                    <span class="hamburger-middle"></span>
+                    <span class="hamburger-bottom"></span>
+                </button>
+            </div>
+            
+            <div class="flex-1 text-center">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-primary dark:text-primary-light">GrammarBuddy</h1>
+                   <p class="text-xs text-gray-900 dark:text-white mt-1">For Pre-KG to PhD Learners!</p>
+            </div>
 
-            <div class="flex-1 text-right header-element justify-end">
-                <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
-            </div>
-        </header>
+            <div class="flex-1 text-right header-element justify-end">
+                <button id="themeToggler" onclick="toggleTheme()" class="text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded interactive-element">Theme</button>
+            </div>
+        </header>
 
-        <div class="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded mb-4">
-            <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
-        </div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded mb-4">
+            <div id="progressBar" class="bg-primary h-3 rounded transition-all duration-300" style="width: 0%"></div>
+        </div>
 
-        <div id="welcomeSection">
-            <h1 class="text-3xl font-bold text-center mb-4">
-                🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
-            </h1>
-            <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
-            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
-            
-            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element">
-            
-            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
-                <option value="">-- Select Level --</option>
-                <option>Pre-KG</option>
-                <option>Kindergarten</option>
-                <option>Lower Primary (1&2)</option>
-                <option>Upper Primary (3-5)</option>
-                <option>Middle School (6-8)</option>
-                <option>Secondary (9&10)</option>
-                <option>Senior Secondary (11&12)</option>
-                <option>Graduation</option>
-                <option>Post Graduation</option>
-                <option>PhD</option>
-            </select>
-            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
-                Start Challenge
-            </button>
-        </div>
+        <div id="welcomeSection">
+            <h1 class="text-3xl font-bold text-center mb-4">
+                🎓 Welcome to <span class="text-primary dark:text-primary-light">GrammarBuddy!</span>
+            </h1>
+            <p class="text-center mb-4">Explore English in a whole new way — playful, powerful, and for every level!</p>
+            <input type="text" id="usernameInput" placeholder="Ready to begin? Name your avatar!" maxlength="10" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element" pattern="[a-zA-Z0-9]{1,10}">
+            
+            <input type="email" id="emailInput" placeholder="Enter your email address" class="w-full border rounded p-2 mb-2 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+            
+            <select id="levelSelect" class="w-full border rounded p-2 mb-4 dark:bg-gray-800 dark:border-gray-600 interactive-element">
+                <option value="">-- Select Level --</option>
+                <option>Pre-KG</option>
+                <option>Kindergarten</option>
+                <option>Lower Primary (1&2)</option>
+                <option>Upper Primary (3-5)</option>
+                <option>Middle School (6-8)</option>
+                <option>Secondary (9&10)</option>
+                <option>Senior Secondary (11&12)</option>
+                <option>Graduation</option>
+                <option>Post Graduation</option>
+                <option>PhD</option>
+            </select>
+            <button onclick="startQuiz()" class="bg-primary text-white px-4 py-2 rounded w-full interactive-element">
+                Start Challenge
+            </button>
+        </div>
 
-        <div id="loadingSection" class="hidden text-center py-12">
-            <p class="text-lg font-semibold mb-4">Fetching live questions...</p>
-            <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
-                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
-            </div>
-        </div>
+        <div id="loadingSection" class="hidden text-center py-12">
+            <p class="text-lg font-semibold mb-4">Fetching live questions...</p>
+            <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
+                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
+            </div>
+        </div>
 
-        <div id="quizSection" class="hidden">
-            <div id="questionContentWrapper" class="transition-all duration-300 ease-in-out">
-                <div id="questionText" class="text-lg font-semibold mb-4"></div>
-                <div id="options" class="space-y-3 mb-4"></div>
-            </div>
-            <div class="flex justify-between items-center mt-6">
-                <button onclick="showCancelModal()" class="text-sm text-red-500 underline">Cancel</button>
-                <div class="space-x-2">
-                    <button id="prevButton" onclick="prevQuestion()" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-3 py-2 rounded disabled-button interactive-element">Previous</button>
-                    <button id="nextButton" onclick="nextQuestion()" class="bg-primary text-white px-4 py-2 rounded interactive-element">Next</button>
-                </div>
-            </div>
-        </div>
+        <div id="quizSection" class="hidden">
+            <div id="questionContentWrapper" class="transition-all duration-300 ease-in-out">
+                <div id="questionText" class="text-lg font-semibold mb-4"></div>
+                <div id="options" class="space-y-3 mb-4"></div>
+            </div>
+            <div class="flex justify-between items-center mt-6">
+                <button onclick="showCancelModal()" class="text-sm text-red-500 underline">Cancel</button>
+                <div class="space-x-2">
+                    <button id="prevButton" onclick="prevQuestion()" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white px-3 py-2 rounded disabled-button interactive-element">Previous</button>
+                    <button id="nextButton" onclick="nextQuestion()" class="bg-primary text-white px-4 py-2 rounded interactive-element">Next</button>
+                </div>
+            </div>
+        </div>
 
-        <div id="scoringSection" class="hidden text-center py-12">
-            <p class="text-lg font-semibold mb-4">Calculating your score...</p>
-            <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
-                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
-            </div>
-        </div>
+        <div id="scoringSection" class="hidden text-center py-12">
+            <p class="text-lg font-semibold mb-4">Calculating your score...</p>
+            <div class="flex justify-center space-x-2 text-primary dark:text-primary-light">
+                <span class="loader"></span><span class="loader"></span><span class="loader"></span>
+            </div>
+        </div>
 
-        <div id="resultSection" class="hidden">
-            <h2 class="text-2xl font-bold text-center mb-2">Your Results</h2>
-            <h3 id="userWelcome" class="text-xl font-semibold text-center mb-2"></h3>
-            <p id="levelDisplay" class="text-center text-sm mb-2 text-gray-600 dark:text-gray-400"></p>
-            <p id="submissionDateTime" class="text-center text-red-500 text-xs mb-2"></p>
-            <div class="text-center mb-2">
-                <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
-            </div>
-            <p id="rankLabel" class="text-center mb-4 text-lg font-medium text-gray-700 dark:text-gray-300"></p>
-            <div id="explanations" class="space-y-4 text-sm"></div>
-            <div class="text-center mt-6">
-                <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
-                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
-                    Take Another Quiz
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
-        <p class="text-sm text-gray-500 dark:text-gray-400">&copy; GrammarBuddy . All Rights Reserved</p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Designed & Developed by Varun K | Co-Developed by Yuvika V</p>
-    </footer>
-
-
-    <script>
-        // State Variables
-        let allQuizData = [];
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
-        let userAnswers = {};
-        let finalScore = 0;
-        let username = '';
-        let email = '';
-        let currentLevel = '';
-        
-        /**
-         * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
-         * @param {string} csvText - The raw CSV text from the Google Sheet.
-         * @returns {Array<Object>} An array of objects representing the quiz questions.
-         */
-        function parseCSV(csvText) {
-            const rows = csvText.trim().split(/\r?\n/);
-            const headers = rows[0].split(',').map(header => header.trim());
-            
-            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-
-            return rows.slice(1).map(rowText => {
-                const values = rowText.split(regex).map(field => {
-                    return field.trim().replace(/^"|"$/g, '');
-                });
-
-                return headers.reduce((obj, header, i) => {
-                    obj[header] = values[i] || '';
-                    return obj;
-                }, {});
-            });
-        }
-        
-        // Function to validate a question object
-        function isValidQuestion(q) {
-            return q.Question_ID && q.Question_Text && q.Correct_Answer && q.Level;
-        }
+        <div id="resultSection" class="hidden">
+            <h2 class="text-2xl font-bold text-center mb-2">Your Results</h2>
+            <h3 id="userWelcome" class="text-xl font-semibold text-center mb-2"></h3>
+            <p id="levelDisplay" class="text-center text-sm mb-2 text-gray-600 dark:text-gray-400"></p>
+            <p id="submissionDateTime" class="text-center text-red-500 text-xs mb-2"></p>
+            <div class="text-center mb-2">
+                <span id="scoreDisplay" class="inline-block text-3xl font-bold bg-primary text-white px-6 py-2 rounded-full shadow"></span>
+            </div>
+            <p id="rankLabel" class="text-center mb-4 text-lg font-medium text-gray-700 dark:text-gray-300"></p>
+            <div id="explanations" class="space-y-4 text-sm"></div>
+            <div class="text-center mt-6">
+                <p class="italic text-sm text-gray-500 dark:text-gray-400"><span id="saveStatus"></span></p>
+                <button onclick="restartQuiz()" class="mt-4 bg-secondary text-white px-4 py-2 rounded interactive-element">
+                    Take Another Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+        <p class="text-sm font-semibold text-primary dark:text-primary-light blinking">
+            Top GrammarBuddy achievers will receive awards and certificates—ensure your correct email is entered for notification.
+        </p>
+        <div class="flex justify-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <a href="https://sites.google.com/view/gbspellbee/home" class="hover:text-primary dark:hover:text-primary-light transition-colors">Spelling Bee</a>
+            <a href="https://sites.google.com/view/titatov3/home" class="hover:text-primary dark:hover:text-primary-light transition-colors">TaTiTo Code</a>
+        </div>
+    </div>
+    
+    <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
+        <p class="text-sm text-gray-500 dark:text-gray-400">&copy; GrammarBuddy . All Rights Reserved</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Designed & Developed by Varun K | Co-Developed by Yuvika V</p>
+    </footer>
 
 
-        async function startQuiz() {
-            username = document.getElementById('usernameInput').value.trim();
-            email = document.getElementById('emailInput').value.trim();
-            currentLevel = document.getElementById('levelSelect').value;
-            
-            if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
-            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
-            
-            if (!email) { showMessage("GrammarBuddy says: Please enter your email address."); return; }
-            if (!email.includes('@')) { showMessage("GrammarBuddy says: Please enter a valid email address (missing @)."); return; }
-            
-            if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
-            
-            localStorage.setItem('grammarBuddyUsername', username);
-            localStorage.setItem('grammarBuddyEmail', email);
-            toggleSection('welcomeSection', false);
-            toggleSection('loadingSection', true);
+    <script>
+        // State Variables
+        let allQuizData = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let finalScore = 0;
+        let username = '';
+        let email = '';
+        let currentLevel = '';
+        
+        /**
+         * @description Parses a CSV string, correctly handling commas inside and outside double quotes.
+         * @param {string} csvText - The raw CSV text from the Google Sheet.
+         * @returns {Array<Object>} An array of objects representing the quiz questions.
+         */
+        function parseCSV(csvText) {
+            const rows = csvText.trim().split(/\r?\n/);
+            const headers = rows[0].split(',').map(header => header.trim());
+            
+            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
-            try {
-                if (allQuizData.length === 0) {
-                    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U7NK6M65kZNnINzA10Pxb2-uA2AVG2J0KigQDjFsJHP60VethYK8DEWGwb4N8gdE6oG2omLlKxmu/pub?output=csv';
-                    const response = await fetch(sheetUrl);
-                    if (!response.ok) throw new Error('Network response was not ok. Check the Sheet URL.');
-                    const csvText = await response.text();
-                    allQuizData = parseCSV(csvText);
-                }
-                
-                // Filter and validate the questions for the selected level
-                const filtered = allQuizData.filter(q => q.Level === currentLevel && isValidQuestion(q));
-                const shuffled = filtered.sort(() => 0.5 - Math.random());
-                currentQuestions = shuffled.slice(0, 10);
+            return rows.slice(1).map(rowText => {
+                const values = rowText.split(regex).map(field => {
+                    return field.trim().replace(/^"|"$/g, '');
+                });
 
-                if (currentQuestions.length === 0) { showMessage(`Sorry, no valid questions found for the level '${currentLevel}' in the Google Sheet. Please check the data integrity.`); resetAll(); return; }
-                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} valid questions for the level '${currentLevel}'.`); }
-                
-                currentQuestionIndex = 0;
-                userAnswers = {};
-                toggleSection('loadingSection', false);
-                toggleSection('quizSection', true);
-                showQuestion();
-                updateProgressBar();
+                return headers.reduce((obj, header, i) => {
+                    obj[header] = values[i] || '';
+                    return obj;
+                }, {});
+            });
+        }
+        
+        // Function to validate a question object
+        function isValidQuestion(q) {
+            return q.Question_ID && q.Question_Text && q.Correct_Answer && q.Level;
+        }
 
-            } catch (error) {
-                console.error("Failed to load quiz questions:", error);
-                showMessage("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
-                resetAll();
-            }
-        }
-        
-        // Function to shuffle an array
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-        
-        // REVISED showQuestion function to fix alignment
-        function showQuestion() {
-            const q = currentQuestions[currentQuestionIndex];
-            const questionContentWrapper = document.getElementById('questionContentWrapper');
-            const questionTextElement = document.getElementById('questionText');
-            const optionsDiv = document.getElementById('options');
-        
-            optionsDiv.innerHTML = '';
-        
-            let topicInfoElement = document.getElementById('topicInfo');
-            if (!topicInfoElement) {
-                topicInfoElement = document.createElement('p');
-                topicInfoElement.id = 'topicInfo';
-                topicInfoElement.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
-                questionContentWrapper.insertBefore(topicInfoElement, questionTextElement);
-            }
-            topicInfoElement.textContent = `Topic: ${q.Topic} | Question ID: ${q.Question_ID}`;
-        
-            questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
-            
-            // CORRECTED: Create an array of option objects and shuffle it
-            const optionsData = [
-                { key: 'A', text: q.Option_A },
-                { key: 'B', text: q.Option_B },
-                { key: 'C', text: q.Option_C },
-                { key: 'D', text: q.Option_D }
-            ].filter(option => option.text.trim() !== '');
-            
-            shuffleArray(optionsData);
-        
-            const qid = q.Question_ID;
-            const userSelectedAnswer = userAnswers[qid];
-            
-            const displayLetters = ['A', 'B', 'C', 'D'];
-            
-            optionsData.forEach((option, index) => {
-                const label = document.createElement('label');
-                const isSelected = userSelectedAnswer === option.key;
-                label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
-                
-                // IMPORTANT: The onclick handler now passes the original key (A,B,C,D) from the shuffled option object
-                label.onclick = () => selectOption(option.key);
-                
-                const input = document.createElement('input');
-                input.type = 'radio'; input.name = 'option'; input.value = option.key; input.className = 'mr-2 hidden';
-                input.checked = isSelected;
-                
-                const optionSpan = document.createElement('span');
-                optionSpan.textContent = `${displayLetters[index]}: `;
-                optionSpan.classList.add('font-bold', 'w-6', 'inline-block');
-                
-                label.appendChild(input);
-                label.appendChild(optionSpan);
-                label.appendChild(document.createTextNode(option.text));
-                
-                optionsDiv.appendChild(label);
-            });
-            
-            document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
-            const nextButton = document.getElementById('nextButton');
-            nextButton.textContent = (currentQuestionIndex === currentQuestions.length - 1) ? 'Submit & See Results' : 'Next';
-            nextButton.classList.toggle('bg-secondary', currentQuestionIndex === currentQuestions.length - 1);
-            nextButton.classList.toggle('bg-primary', currentQuestionIndex !== currentQuestions.length - 1);
-            updateProgressBar();
-        }
-        
-        function selectOption(key) {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            userAnswers[qid] = key;
-            const optionsDiv = document.getElementById('options');
-            
-            optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
-            
-            const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
-            if (selectedLabel) {
-                selectedLabel.parentElement.classList.add('selected-option');
-            }
-        }
-        
-        function nextQuestion() {
-            const qid = currentQuestions[currentQuestionIndex].Question_ID;
-            
-            if (!userAnswers[qid]) {
-                    showMessage("GrammarBuddy says: Please select an option."); 
-                    return; 
-            }
-        
-            if (currentQuestionIndex < currentQuestions.length - 1) {
-                currentQuestionIndex++;
-                showQuestion();
-            } else {
-                submitQuiz();
-            }
-        }
-        
-        function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                showQuestion();
-            }
-        }
 
-        function submitQuiz() {
-            updateProgressBar(100);
-            toggleSection('quizSection', false);
-            toggleSection('scoringSection', true);
-            let score = 0;
-            currentQuestions.forEach(q => {
-                if (userAnswers[q.Question_ID] === q.Correct_Answer) score++;
-            });
-            finalScore = score;
-            setTimeout(() => {
-                displayResults();
-                saveScore();
-                toggleSection('scoringSection', false);
-                toggleSection('resultSection', true);
-            }, 1000);
-        }
+        async function startQuiz() {
+            username = document.getElementById('usernameInput').value.trim();
+            email = document.getElementById('emailInput').value.trim();
+            currentLevel = document.getElementById('levelSelect').value;
+            
+            if (!username) { showMessage("GrammarBuddy says: Please enter a username."); return; }
+            if (!/^[a-zA-Z0-9]{1,10}$/.test(username)) { showMessage("GrammarBuddy says: Username must be 1 to 10 alphanumeric characters."); return; }
+            
+            if (!email) { showMessage("GrammarBuddy says: Please enter your email address."); return; }
+            if (!email.includes('@')) { showMessage("GrammarBuddy says: Please enter a valid email address (missing @)."); return; }
+            
+            if (!currentLevel) { showMessage("GrammarBuddy says: Please select a level."); return; }
+            
+            localStorage.setItem('grammarBuddyUsername', username);
+            localStorage.setItem('grammarBuddyEmail', email);
+            toggleSection('welcomeSection', false);
+            toggleSection('loadingSection', true);
 
-        async function saveScore() {
-            const saveStatusElement = document.getElementById('saveStatus');
-            saveStatusElement.textContent = "Wait ... Saving your score ...";
-            
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
-            
-            const payload = {
-                action: 'saveScore', 
-                username: username,
-                email: email,
-                level: currentLevel,
-                score: `${finalScore}/${currentQuestions.length}`
-            };
-            
-            try {
-                await fetch(webAppUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',  
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                saveStatusElement.textContent = "Score saved successfully!";
-            } catch (error) {
-                console.error('Error saving score:', error);
-                saveStatusElement.textContent = "Error saving score.";
-            }
-        }
-        
-        // This is the fixed function that now correctly shows only the text.
-        function displayResults() {
-            document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
-            document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
-            const now = new Date();
-            const dateString = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-            const timeString = now.toLocaleTimeString();
-            document.getElementById('submissionDateTime').textContent = `Submitted on: ${dateString} at ${timeString}`;
+            try {
+                if (allQuizData.length === 0) {
+                    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U7NK6M65kZNnINzA10Pxb2-uA2AVG2J0KigQDjFsJHP60VethYK8DEWGwb4N8gdE6oG2omLlKxmu/pub?output=csv';
+                    const response = await fetch(sheetUrl);
+                    if (!response.ok) throw new Error('Network response was not ok. Check the Sheet URL.');
+                    const csvText = await response.text();
+                    allQuizData = parseCSV(csvText);
+                }
+                
+                // Filter and validate the questions for the selected level
+                const filtered = allQuizData.filter(q => q.Level === currentLevel && isValidQuestion(q));
+                const shuffled = filtered.sort(() => 0.5 - Math.random());
+                currentQuestions = shuffled.slice(0, 10);
 
-            document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
-            const rankLabel = document.getElementById('rankLabel');
-            const scoreRatio = finalScore / currentQuestions.length;
-            if (scoreRatio === 1) rankLabel.textContent = "🏆 Outstanding!";
-            else if (scoreRatio >= 0.8) rankLabel.textContent = "🎉 Great job!";
-            else if (scoreRatio >= 0.5) rankLabel.textContent = "👍 Keep practicing!";
-            else rankLabel.textContent = "📚 Don’t give up. Try again!";
-            
-            const explanationsDiv = document.getElementById('explanations');
-            explanationsDiv.innerHTML = '';
-            currentQuestions.forEach((q, i) => {
-                const userAnswerKey = userAnswers[q.Question_ID];
-                const isCorrect = userAnswerKey === q.Correct_Answer;
-                const icon = isCorrect ? '✅' : '❌';
-                const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
-                
-                // This map is used to get the actual text from the key
-                const optionsMap = { 
-                    A: q.Option_A, 
-                    B: q.Option_B, 
-                    C: q.Option_C, 
-                    D: q.Option_D 
-                };
+                if (currentQuestions.length === 0) { showMessage(`Sorry, no valid questions found for the level '${currentLevel}' in the Google Sheet. Please check the data integrity.`); resetAll(); return; }
+                if (currentQuestions.length < 10) { console.warn(`Warning: Only found ${currentQuestions.length} valid questions for the level '${currentLevel}'.`); }
+                
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                toggleSection('loadingSection', false);
+                toggleSection('quizSection', true);
+                showQuestion();
+                updateProgressBar();
 
-                const userAnswerText = userAnswerKey ? optionsMap[userAnswerKey] : 'Not answered';
-                const correctAnswerText = optionsMap[q.Correct_Answer];
+            } catch (error) {
+                console.error("Failed to load quiz questions:", error);
+                showMessage("An error occurred: " + error.message + "\nPlease make sure the Google Sheet is published and the URL is correct.");
+                resetAll();
+            }
+        }
+        
+        // Function to shuffle an array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // REVISED showQuestion function to fix alignment
+        function showQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            const questionContentWrapper = document.getElementById('questionContentWrapper');
+            const questionTextElement = document.getElementById('questionText');
+            const optionsDiv = document.getElementById('options');
+        
+            optionsDiv.innerHTML = '';
+        
+            let topicInfoElement = document.getElementById('topicInfo');
+            if (!topicInfoElement) {
+                topicInfoElement = document.createElement('p');
+                topicInfoElement.id = 'topicInfo';
+                topicInfoElement.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
+                questionContentWrapper.insertBefore(topicInfoElement, questionTextElement);
+            }
+            topicInfoElement.textContent = `Topic: ${q.Topic} | Question ID: ${q.Question_ID}`;
+        
+            questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.Question_Text}`;
+            
+            // CORRECTED: Create an array of option objects and shuffle it
+            const optionsData = [
+                { key: 'A', text: q.Option_A },
+                { key: 'B', text: q.Option_B },
+                { key: 'C', text: q.Option_C },
+                { key: 'D', text: q.Option_D }
+            ].filter(option => option.text.trim() !== '');
+            
+            shuffleArray(optionsData);
+        
+            const qid = q.Question_ID;
+            const userSelectedAnswer = userAnswers[qid];
+            
+            const displayLetters = ['A', 'B', 'C', 'D'];
+            
+            optionsData.forEach((option, index) => {
+                const label = document.createElement('label');
+                const isSelected = userSelectedAnswer === option.key;
+                label.className = `block border rounded px-4 py-3 cursor-pointer dark:border-gray-600 interactive-element hover:bg-gray-100 dark:hover:bg-gray-700 ${isSelected ? 'selected-option' : ''}`;
+                
+                // IMPORTANT: The onclick handler now passes the original key (A,B,C,D) from the shuffled option object
+                label.onclick = () => selectOption(option.key);
+                
+                const input = document.createElement('input');
+                input.type = 'radio'; input.name = 'option'; input.value = option.key; input.className = 'mr-2 hidden';
+                input.checked = isSelected;
+                
+                const optionSpan = document.createElement('span');
+                optionSpan.textContent = `${displayLetters[index]}: `;
+                optionSpan.classList.add('font-bold', 'w-6', 'inline-block');
+                
+                label.appendChild(input);
+                label.appendChild(optionSpan);
+                label.appendChild(document.createTextNode(option.text));
+                
+                optionsDiv.appendChild(label);
+            });
+            
+            document.getElementById('prevButton').classList.toggle('disabled-button', currentQuestionIndex === 0);
+            const nextButton = document.getElementById('nextButton');
+            nextButton.textContent = (currentQuestionIndex === currentQuestions.length - 1) ? 'Submit & See Results' : 'Next';
+            nextButton.classList.toggle('bg-secondary', currentQuestionIndex === currentQuestions.length - 1);
+            nextButton.classList.toggle('bg-primary', currentQuestionIndex !== currentQuestions.length - 1);
+            updateProgressBar();
+        }
+        
+        function selectOption(key) {
+            const qid = currentQuestions[currentQuestionIndex].Question_ID;
+            userAnswers[qid] = key;
+            const optionsDiv = document.getElementById('options');
+            
+            optionsDiv.querySelectorAll('label').forEach(label => label.classList.remove('selected-option'));
+            
+            const selectedLabel = optionsDiv.querySelector(`input[value="${key}"]`);
+            if (selectedLabel) {
+                selectedLabel.parentElement.classList.add('selected-option');
+            }
+        }
+        
+        function nextQuestion() {
+            const qid = currentQuestions[currentQuestionIndex].Question_ID;
+            
+            if (!userAnswers[qid]) {
+                    showMessage("GrammarBuddy says: Please select an option."); 
+                    return; 
+            }
+        
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+        
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
 
-                const card = document.createElement('div');
-                card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
-                card.innerHTML = `
-                    <p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.Question_Text}</p>
-                    <p><strong>Your Answer:</strong> ${userAnswerText}</p>
-                    <p><strong>Correct Answer:</strong> ${correctAnswerText}</p>
-                    <p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.Explanation}</span></p>
-                `;
-                explanationsDiv.appendChild(card);
-            });
-            if (scoreRatio >= 0.8) { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); }
-        }
-        
-        function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
-        function updateProgressBar(progress) {
-            const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
-            document.getElementById('progressBar').style.width = `${percentage}%`;
-        }
-        
-        function showMessage(message) {
-            alert(message);
-        }
+        function submitQuiz() {
+            updateProgressBar(100);
+            toggleSection('quizSection', false);
+            toggleSection('scoringSection', true);
+            let score = 0;
+            currentQuestions.forEach(q => {
+                if (userAnswers[q.Question_ID] === q.Correct_Answer) score++;
+            });
+            finalScore = score;
+            setTimeout(() => {
+                displayResults();
+                saveScore();
+                toggleSection('scoringSection', false);
+                toggleSection('resultSection', true);
+            }, 1000);
+        }
 
-        function showCancelModal() {
-            document.getElementById('cancelModal').classList.remove('hidden');
-        }
+        async function saveScore() {
+            const saveStatusElement = document.getElementById('saveStatus');
+            saveStatusElement.textContent = "Wait ... Saving your score ...";
+            
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyx916H_72LsiU9IV7LiFnZJ_wYNyWKbLMTBgvWvN6ZKGy51rc7-ei7nE6mDSLJ3H2f/exec';
+            
+            const payload = {
+                action: 'saveScore', 
+                username: username,
+                email: email,
+                level: currentLevel,
+                score: `${finalScore}/${currentQuestions.length}`
+            };
+            
+            try {
+                await fetch(webAppUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',  
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                saveStatusElement.textContent = "Score saved successfully!";
+            } catch (error) {
+                console.error('Error saving score:', error);
+                saveStatusElement.textContent = "Error saving score.";
+            }
+        }
+        
+        // This is the fixed function that now correctly shows only the text.
+        function displayResults() {
+            document.getElementById('userWelcome').textContent = `Hi, ${username}!`;
+            document.getElementById('levelDisplay').textContent = `Level: ${currentLevel}`;
+            const now = new Date();
+            const dateString = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('submissionDateTime').textContent = `Submitted on: ${dateString} at ${timeString}`;
 
-        function hideCancelModal() {
-            document.getElementById('cancelModal').classList.add('hidden');
-        }
+            document.getElementById('scoreDisplay').textContent = `Score: ${finalScore}/${currentQuestions.length}`;
+            const rankLabel = document.getElementById('rankLabel');
+            const scoreRatio = finalScore / currentQuestions.length;
+            if (scoreRatio === 1) rankLabel.textContent = "🏆 Outstanding!";
+            else if (scoreRatio >= 0.8) rankLabel.textContent = "🎉 Great job!";
+            else if (scoreRatio >= 0.5) rankLabel.textContent = "👍 Keep practicing!";
+            else rankLabel.textContent = "📚 Don’t give up. Try again!";
+            
+            const explanationsDiv = document.getElementById('explanations');
+            explanationsDiv.innerHTML = '';
+            currentQuestions.forEach((q, i) => {
+                const userAnswerKey = userAnswers[q.Question_ID];
+                const isCorrect = userAnswerKey === q.Correct_Answer;
+                const icon = isCorrect ? '✅' : '❌';
+                const panelColor = isCorrect ? 'bg-green-100 dark:bg-green-800' : 'bg-red-100 dark:bg-red-800';
+                
+                // This map is used to get the actual text from the key
+                const optionsMap = { 
+                    A: q.Option_A, 
+                    B: q.Option_B, 
+                    C: q.Option_C, 
+                    D: q.Option_D 
+                };
 
-        function cancelQuiz() {
-            hideCancelModal();
-            resetAll();
-        }
+                const userAnswerText = userAnswerKey ? optionsMap[userAnswerKey] : 'Not answered';
+                const correctAnswerText = optionsMap[q.Correct_Answer];
 
-        function restartQuiz() { resetAll(); }
-        
-        function resetAll() {
-            toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
-            document.getElementById('levelSelect').selectedIndex = 0;
-            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
-            updateProgressBar(0);
-        }
+                const card = document.createElement('div');
+                card.className = `border rounded ${panelColor} p-3 dark:border-gray-700`;
+                card.innerHTML = `
+                    <p class="font-semibold flex items-center mb-2">${icon} ${i + 1}. ${q.Question_Text}</p>
+                    <p><strong>Your Answer:</strong> ${userAnswerText}</p>
+                    <p><strong>Correct Answer:</strong> ${correctAnswerText}</p>
+                    <p class="mt-2"><strong>Explanation:</strong> <span class="italic">${q.Explanation}</span></p>
+                `;
+                explanationsDiv.appendChild(card);
+            });
+            if (scoreRatio >= 0.8) { confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } }); }
+        }
+        
+        function toggleSection(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
+        function updateProgressBar(progress) {
+            const percentage = (progress !== undefined) ? progress : ((currentQuestionIndex / currentQuestions.length) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+        
+        function showMessage(message) {
+            alert(message);
+        }
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        }
+        function showCancelModal() {
+            document.getElementById('cancelModal').classList.remove('hidden');
+        }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const savedUsername = localStorage.getItem('grammarBuddyUsername');
-            if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
-            
-            const savedEmail = localStorage.getItem('grammarBuddyEmail');
-            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
-            
-            const savedTheme = localStorage.getItem('theme');
-            const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            if (savedTheme) {
-                document.documentElement.classList.add(savedTheme);
-            } else if (isSystemDark) {
-                document.documentElement.classList.add('dark');
-            }
+        function hideCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
+        }
 
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
-            
-            const menuBtn = document.getElementById('menu-btn');
-            const sidebar = document.getElementById('sidebar-menu');
-            const backdrop = document.getElementById('menu-backdrop');
-            const cancelBtn = document.getElementById('confirmCancelBtn');
-            const dismissBtn = document.getElementById('dismissCancelBtn');
+        function cancelQuiz() {
+            hideCancelModal();
+            resetAll();
+        }
 
-            const toggleMenu = () => {
-                menuBtn.classList.toggle('open');
-                sidebar.classList.toggle('-translate-x-full');
-                backdrop.classList.toggle('hidden');
-                document.body.classList.toggle('overflow-hidden');
-            };
+        function restartQuiz() { resetAll(); }
+        
+        function resetAll() {
+            toggleSection('quizSection', false); toggleSection('resultSection', false); toggleSection('scoringSection', false); toggleSection('welcomeSection', true);
+            document.getElementById('levelSelect').selectedIndex = 0;
+            currentQuestions = []; userAnswers = {}; currentQuestionIndex = 0;
+            updateProgressBar(0);
+        }
 
-            menuBtn.addEventListener('click', toggleMenu);
-            backdrop.addEventListener('click', toggleMenu);
-            
-            cancelBtn.addEventListener('click', cancelQuiz);
-            dismissBtn.addEventListener('click', hideCancelModal);
-        });
-    </script>
-  
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedUsername = localStorage.getItem('grammarBuddyUsername');
+            if (savedUsername) { document.getElementById('usernameInput').value = savedUsername; }
+            
+            const savedEmail = localStorage.getItem('grammarBuddyEmail');
+            if (savedEmail) { document.getElementById('emailInput').value = savedEmail; }
+            
+            const savedTheme = localStorage.getItem('theme');
+            const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                document.documentElement.classList.add(savedTheme);
+            } else if (isSystemDark) {
+                document.documentElement.classList.add('dark');
+            }
+
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('themeToggler').textContent = isDark ? 'Light' : 'Dark';
+            
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+            const cancelBtn = document.getElementById('confirmCancelBtn');
+            const dismissBtn = document.getElementById('dismissCancelBtn');
+
+            const toggleMenu = () => {
+                menuBtn.classList.toggle('open');
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden');
+            };
+
+            menuBtn.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
+            
+            cancelBtn.addEventListener('click', cancelQuiz);
+            dismissBtn.addEventListener('click', hideCancelModal);
+        });
+    </script>
+  
 </body>
 </html>

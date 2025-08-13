@@ -196,43 +196,49 @@
         </div>
     </div>
 
-    <!-- Achievers Notice -->
-    <div class="achievers-blink">
-        Top GrammarBuddy achievers will receive awards and certificates — ensure your correct email is entered for notification.
-    </div>
+<!-- Achievers & Links Section -->
+<div class="achievers-highlight">
+    Top GrammarBuddy achievers will receive awards and certificates — ensure your correct email is entered for notification.
+</div>
+<div class="related-links">
+    <a href="https://sites.google.com/view/gbspellbee/home" target="_blank">Spelling Bee</a> |
+    <a href="https://sites.google.com/view/titatov3/home" target="_blank">TaTiTo Code</a>
+</div>
 
-    <!-- Related Links -->
-    <div class="related-links">
-        <a href="https://sites.google.com/view/gbspellbee/home" target="_blank">Spelling Bee</a> |
-        <a href="https://sites.google.com/view/titatov3/home" target="_blank">TaTiTo Code</a>
-    </div>
+<style>
+    .achievers-highlight {
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: bold;
+        padding: 6px 10px;
+        animation: bgBlink 1.5s infinite alternate;
+    }
+    @keyframes bgBlink {
+        0% { background-color: #ffe6e6; }
+        100% { background-color: #ffcccc; }
+    }
+    .dark .achievers-highlight {
+        animation: bgBlinkDark 1.5s infinite alternate;
+    }
+    @keyframes bgBlinkDark {
+        0% { background-color: #661a1a; }
+        100% { background-color: #802020; }
+    }
 
-    <style>
-        .achievers-blink {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            animation: blink 1.2s steps(2, start) infinite;
-        }
-        .light .achievers-blink { color: #ff4d4d; } /* light mode red */
-        .dark .achievers-blink { color: #ff9999; }  /* dark mode softer red */
-        @keyframes blink { to { visibility: hidden; } }
-
-        .related-links {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.85rem;
-        }
-        .related-links a {
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        .light .related-links a { color: #0077cc; }
-        .dark .related-links a { color: #66b2ff; }
-        .related-links a:hover { text-decoration: underline; }
-    </style>
-
+    .related-links {
+        text-align: center;
+        margin-top: 8px;
+        font-size: 0.85rem;
+    }
+    .related-links a {
+        margin: 0 8px;
+        text-decoration: none;
+    }
+    .light .related-links a { color: #0077cc; }
+    .dark .related-links a { color: #66b2ff; }
+    .related-links a:hover { text-decoration: underline; }
+</style>
+<!-- END of Achievers & Links Section -->
     
     <footer class="text-center py-8 mt-12 border-t border-gray-200 dark:border-gray-700">
         <p class="text-sm text-gray-500 dark:text-gray-400">&copy; GrammarBuddy . All Rights Reserved</p>

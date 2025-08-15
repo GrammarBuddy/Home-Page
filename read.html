@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrammarBuddy Read Aloud</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -60,12 +60,12 @@
         border-radius: 0.5rem;
         font-weight: 600;
         cursor: pointer;
-        background-color: #10b981; /* Match Start button color */
+        background-color: #10b981;
         color: white;
         transition: background-color 0.2s;
     }
     .level-btn:hover {
-        background-color: #059669; /* Darker green on hover */
+        background-color: #059669;
     }
 
     .progress-bar-container {
@@ -81,16 +81,15 @@
         width: 0;
         background-color: #10b981;
         border-radius: 4px;
-        transition: width 0.1s linear;
     }
 
     .screen {
         flex: 1;
         position: relative;
-        overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow: hidden;
     }
 
     .scroll-text {
@@ -100,8 +99,7 @@
         line-height: 1.6;
         text-align: center;
         box-sizing: border-box;
-        transform: translateY(100%);
-        transition: transform 0.1s linear; /* Smooths out the animation */
+        will-change: transform;
     }
 
     .controls {
@@ -180,7 +178,7 @@
 
     <div class="level-buttons">
         <button class="level-btn" id="easy-btn">Easy</button>
-        <button class="level-btn" id="difficult-btn">Difficult</button>
+        <button class="level-btn" id="medium-btn">Medium</button>
         <button class="level-btn" id="hard-btn">Hard</button>
     </div>
 
@@ -231,31 +229,29 @@ window.onload = function() {
     let isPaused = false;
     let animationProgress = 0;
     let lastTimestamp = 0;
+    let viewportHeight = 0;
+    let totalTextHeight = 0;
+    let distanceToScroll = 0;
+    let speedInPixelsPerSecond = 0;
 
     const wordCount = textContent.trim().split(/\s+/).length;
 
     function setSpeed(wpm) {
         totalAnimationDuration = (wordCount / wpm) * 60;
+        if (distanceToScroll > 0) {
+            speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
+        }
     }
+
     setSpeed(speedSlider.value);
 
     function animateScroll(timestamp) {
         if (!isPaused) {
-            if (lastTimestamp === 0) {
-                lastTimestamp = timestamp;
-            }
-
+            if (lastTimestamp === 0) lastTimestamp = timestamp;
             const deltaTime = timestamp - lastTimestamp;
             lastTimestamp = timestamp;
 
-            const viewportHeight = scrollContainer.parentElement.clientHeight;
-            const totalTextHeight = scrollContainer.scrollHeight;
-            const distanceToScroll = totalTextHeight + viewportHeight;
-
-            const speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
-            const distanceScrolled = speedInPixelsPerSecond * (deltaTime / 1000);
-
-            animationProgress += distanceScrolled;
+            animationProgress += speedInPixelsPerSecond * (deltaTime / 1000);
             scrollContainer.style.transform = `translateY(${viewportHeight - animationProgress}px)`;
 
             const progressPercentage = (animationProgress / distanceToScroll) * 100;
@@ -263,8 +259,6 @@ window.onload = function() {
 
             if (animationProgress < distanceToScroll) {
                 animationFrameId = requestAnimationFrame(animateScroll);
-            } else {
-                resetApp();
             }
         }
     }
@@ -273,6 +267,8 @@ window.onload = function() {
         overlay.style.display = 'flex';
         let count = 3;
         overlay.textContent = count;
+        overlay.style.fontSize = "4rem";
+
         const countdownInterval = setInterval(() => {
             count--;
             if (count > 0) {
@@ -281,25 +277,29 @@ window.onload = function() {
                 clearInterval(countdownInterval);
                 overlay.textContent = "Get Ready to Read!";
                 overlay.style.fontSize = "3rem";
-                
-                // Use a small delay to allow the browser to repaint
-                // the DOM before starting the animation.
+
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     startScroll();
-                }, 50); // Small, but noticeable delay
+                }, 1000);
             }
         }, 1000);
     }
 
     function startScroll() {
         mainTextElement.textContent = textContent.trim();
-        scrollContainer.style.transform = `translateY(100%)`;
+
+        viewportHeight = scrollContainer.parentElement.clientHeight;
+        totalTextHeight = scrollContainer.scrollHeight;
+        distanceToScroll = totalTextHeight + viewportHeight;
+        speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
+
+        scrollContainer.style.transform = `translateY(${viewportHeight}px)`;
         progressBar.style.width = '0%';
         startBtn.style.display = 'none';
         pauseBtn.style.display = 'block';
         resetBtn.style.display = 'block';
-        
+
         isPaused = false;
         animationProgress = 0;
         lastTimestamp = 0;
@@ -307,7 +307,7 @@ window.onload = function() {
     }
 
     function resetApp() {
-        scrollContainer.style.transform = `translateY(100%)`;
+        scrollContainer.style.transform = `translateY(${viewportHeight}px)`;
         mainTextElement.textContent = "";
         startBtn.style.display = 'block';
         pauseBtn.style.display = 'none';
@@ -320,9 +320,7 @@ window.onload = function() {
         cancelAnimationFrame(animationFrameId);
     }
 
-    startBtn.addEventListener('click', () => {
-        showCountdownAndStart();
-    });
+    startBtn.addEventListener('click', showCountdownAndStart);
 
     pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;

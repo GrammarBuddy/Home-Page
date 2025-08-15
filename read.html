@@ -233,6 +233,7 @@ window.onload = function() {
     let totalTextHeight = 0;
     let distanceToScroll = 0;
     let speedInPixelsPerSecond = 0;
+    const startOffset = 20; // small offset for instant start
 
     const wordCount = textContent.trim().split(/\s+/).length;
 
@@ -252,7 +253,7 @@ window.onload = function() {
             lastTimestamp = timestamp;
 
             animationProgress += speedInPixelsPerSecond * (deltaTime / 1000);
-            scrollContainer.style.transform = `translateY(${viewportHeight - animationProgress}px)`;
+            scrollContainer.style.transform = `translateY(${startOffset - animationProgress}px)`;
 
             const progressPercentage = (animationProgress / distanceToScroll) * 100;
             progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
@@ -291,10 +292,12 @@ window.onload = function() {
 
         viewportHeight = scrollContainer.parentElement.clientHeight;
         totalTextHeight = scrollContainer.scrollHeight;
-        distanceToScroll = totalTextHeight + viewportHeight;
+
+        scrollContainer.style.transform = `translateY(${startOffset}px)`;
+
+        distanceToScroll = totalTextHeight + startOffset;
         speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
 
-        scrollContainer.style.transform = `translateY(${viewportHeight}px)`;
         progressBar.style.width = '0%';
         startBtn.style.display = 'none';
         pauseBtn.style.display = 'block';
@@ -307,7 +310,7 @@ window.onload = function() {
     }
 
     function resetApp() {
-        scrollContainer.style.transform = `translateY(${viewportHeight}px)`;
+        scrollContainer.style.transform = `translateY(${startOffset}px)`;
         mainTextElement.textContent = "";
         startBtn.style.display = 'block';
         pauseBtn.style.display = 'none';

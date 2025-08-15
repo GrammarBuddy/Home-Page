@@ -4,350 +4,231 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrammarBuddy Read Aloud</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f0f4f8;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        color: #334155;
-    }
-
-    .app-container {
-        width: 90vw;
-        max-width: 800px;
-        height: 85vh;
-        background-color: #ffffff;
-        border-radius: 1.5rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        box-sizing: border-box;
-        overflow: hidden;
-    }
-
-    /* Heading */
-    .app-header {
-        text-align: center;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 0.5rem;
-    }
-    .app-header i {
-        color: #4f46e5;
-        margin-right: 0.5rem;
-    }
-
-    /* Level buttons */
-    .level-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    .level-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: #10b981;
-        color: white;
-        transition: background-color 0.2s;
-    }
-    .level-btn:hover {
-        background-color: #059669;
-    }
-
-    .progress-bar-container {
-        width: 100%;
-        height: 8px;
-        background-color: #e2e8f0;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-    }
-
-    .progress-bar {
-        height: 100%;
-        width: 0;
-        background-color: #10b981;
-        border-radius: 4px;
-    }
-
-    .screen {
-        flex: 1;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-    .scroll-text {
-        position: absolute;
-        width: 100%;
-        padding: 0 1rem;
-        line-height: 1.6;
-        text-align: center;
-        box-sizing: border-box;
-        will-change: transform;
-    }
-
-    .controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .control-group {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        color: #4a5568;
-    }
-
-    .control-group input[type="range"] {
-        -webkit-appearance: none;
-        width: 150px;
-        height: 8px;
-        background: #d1d5db;
-        border-radius: 4px;
-        outline: none;
-    }
-
-    .control-group input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #4a5568;
-        cursor: pointer;
-    }
-
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-    }
-
-    .btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 0.75rem;
-        color: white;
-        cursor: pointer;
-    }
-
-    .btn-start { background-color: #10b981; }
-    .btn-pause { background-color: #f97316; }
-    .btn-reset { background-color: #ef4444; }
-
-    /* Countdown overlay */
-    .overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 4rem;
-        font-weight: 700;
-        color: #1e293b;
-        z-index: 10;
-    }
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px;
+    }
+    .app-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        width: 800px;
+        max-width: 100%;
+        padding: 20px;
+    }
+    h1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    .buttons {
+        margin-bottom: 10px;
+    }
+    .buttons button {
+        background: #22c55e;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        margin-right: 5px;
+    }
+    .progress-bar {
+        height: 6px;
+        background: #e5e7eb;
+        border-radius: 3px;
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+    .progress {
+        height: 100%;
+        width: 0%;
+        background: #22c55e;
+        transition: width 0.2s linear;
+    }
+    .scroll-container {
+        height: 300px;
+        overflow: hidden;
+        position: relative;
+    }
+    .scroll-text {
+        position: absolute;
+        width: 100%;
+        padding: 0 5px;
+        line-height: 1.5rem;
+    }
+    #main-text {
+        margin: 0;
+    }
+    .controls {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .controls button {
+        border: none;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    .resume-btn { background: #f97316; }
+    .reset-btn { background: #ef4444; }
+    .speed-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4rem;
+        font-weight: bold;
+        z-index: 10;
+    }
 </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="app-header">
-        <i class="fas fa-graduation-cap"></i> GrammarBuddy Read Aloud
-    </div>
+    <h1>🎓 GrammarBuddy Read Aloud</h1>
 
-    <div class="level-buttons">
-        <button class="level-btn" id="easy-btn">Easy</button>
-        <button class="level-btn" id="medium-btn">Medium</button>
-        <button class="level-btn" id="hard-btn">Hard</button>
-    </div>
+    <div class="buttons">
+        <button id="easy-btn">Easy</button>
+        <button id="difficult-btn">Difficult</button>
+        <button id="hard-btn">Hard</button>
+    </div>
 
-    <div class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-    </div>
-    <div class="screen">
-        <div id="scroll-container" class="scroll-text">
-            <p id="main-text"></p>
-        </div>
-        <div id="overlay" class="overlay" style="display: none;"></div>
-    </div>
-    <div class="controls">
-        <div class="control-group">
-            <label for="speed-slider">Speed:</label>
-            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
-            <span id="speed-value">150 WPM</span>
-        </div>
-        <div class="btn-group">
-            <button id="start-btn" class="btn btn-start">Start</button>
-            <button id="pause-btn" class="btn btn-pause" style="display: none;">Pause</button>
-            <button id="reset-btn" class="btn btn-reset" style="display: none;">Reset</button>
-        </div>
-    </div>
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="scroll-container" id="scroll-wrapper">
+        <div class="scroll-text" id="scroll-text">
+            <p id="main-text"></p>
+        </div>
+        <div class="overlay" id="overlay"></div>
+    </div>
+
+    <div class="controls">
+        <div class="speed-control">
+            <label><strong>Speed:</strong></label>
+            <input type="range" id="speed-slider" min="50" max="300" value="150">
+            <span id="speed-label">150 WPM</span>
+        </div>
+        <button id="resume-btn" class="resume-btn" style="display:none;">Resume</button>
+        <button id="reset-btn" class="reset-btn" style="display:none;">Reset</button>
+    </div>
 </div>
 
 <script>
-window.onload = function() {
-    const startBtn = document.getElementById('start-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const scrollContainer = document.getElementById('scroll-container');
-    const mainTextElement = document.getElementById('main-text');
-    const speedSlider = document.getElementById('speed-slider');
-    const speedValueDisplay = document.getElementById('speed-value');
-    const progressBar = document.getElementById('progress-bar');
-    const overlay = document.getElementById('overlay');
+const overlay = document.getElementById('overlay');
+const mainTextElement = document.getElementById('main-text');
+const scrollContainer = document.getElementById('scroll-text');
+const scrollWrapper = document.getElementById('scroll-wrapper');
+const progressBar = document.getElementById('progress');
+const speedSlider = document.getElementById('speed-slider');
+const speedLabel = document.getElementById('speed-label');
+const resumeBtn = document.getElementById('resume-btn');
+const resetBtn = document.getElementById('reset-btn');
 
-    const textContent = `
-    The old lighthouse keeper, Elias, watched the sea with a practiced eye.
-    For fifty years, the rhythm of the waves had been the only constant in his life.
-    He had seen storms that painted the sky in shades of bruised purple and green,
-    and mornings so calm the ocean looked like a sheet of hammered silver...
-    `;
+let textContent = "The old lighthouse keeper, Elias, watched the sea with a practiced eye. For fifty years, the rhythm of the waves had been the only constant in his life. He had seen storms that painted the sky in shades of black and gold, and mornings where the ocean lay still, like a sheet of glass. To the townsfolk, Elias was a relic, a man anchored to the past. But to him, the lighthouse was not just stone and light—it was a promise kept, night after night.";
+let animationFrameId;
+let animationProgress = 0;
+let lastTimestamp = 0;
+let isPaused = false;
+let speedInPixelsPerSecond;
+let totalAnimationDuration = 60; // seconds
 
-    let animationFrameId = null;
-    let totalAnimationDuration = 0;
-    let isPaused = false;
-    let animationProgress = 0;
-    let lastTimestamp = 0;
-    let viewportHeight = 0;
-    let totalTextHeight = 0;
-    let distanceToScroll = 0;
-    let speedInPixelsPerSecond = 0;
-    let startY = 0;
+function setSpeed(wpm) {
+    const words = textContent.trim().split(/\s+/).length;
+    totalAnimationDuration = (words / wpm) * 60;
+    speedLabel.textContent = `${wpm} WPM`;
+}
+speedSlider.addEventListener('input', e => setSpeed(+e.target.value));
 
-    const wordCount = textContent.trim().split(/\s+/).length;
+function showCountdownAndStart() {
+    overlay.style.display = 'flex';
+    let count = 3;
+    overlay.textContent = count;
 
-    function setSpeed(wpm) {
-        totalAnimationDuration = (wordCount / wpm) * 60;
-        if (distanceToScroll > 0) {
-            speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
+    const countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            overlay.textContent = count;
+        } else {
+            clearInterval(countdownInterval);
+            overlay.textContent = "Get Ready to Read!";
+            overlay.style.fontSize = "2rem";
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                centerTextBeforeScroll();
+            }, 1000);
         }
-    }
+    }, 1000);
+}
 
-    setSpeed(speedSlider.value);
+function centerTextBeforeScroll() {
+    mainTextElement.textContent = textContent.trim();
+    const viewportHeight = scrollWrapper.clientHeight;
+    const firstLineCenterOffset = viewportHeight / 2;
 
-    function animateScroll(timestamp) {
+    scrollContainer.style.transform = `translateY(${firstLineCenterOffset}px)`;
+    progressBar.style.width = '0%';
+
+    // Wait 3 seconds before starting scroll
+    setTimeout(() => startScroll(viewportHeight, firstLineCenterOffset), 3000);
+}
+
+function startScroll(viewportHeight, startingOffset) {
+    const totalTextHeight = scrollContainer.scrollHeight;
+    const distanceToScroll = totalTextHeight + startingOffset;
+    speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
+
+    isPaused = false;
+    animationProgress = 0;
+    lastTimestamp = 0;
+
+    function animate(timestamp) {
         if (!isPaused) {
             if (lastTimestamp === 0) lastTimestamp = timestamp;
             const deltaTime = timestamp - lastTimestamp;
             lastTimestamp = timestamp;
 
             animationProgress += speedInPixelsPerSecond * (deltaTime / 1000);
-            scrollContainer.style.transform = `translateY(${startY - animationProgress}px)`;
+            scrollContainer.style.transform = `translateY(${startingOffset - animationProgress}px)`;
 
             const progressPercentage = (animationProgress / distanceToScroll) * 100;
             progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
 
             if (animationProgress < distanceToScroll) {
-                animationFrameId = requestAnimationFrame(animateScroll);
+                animationFrameId = requestAnimationFrame(animate);
             }
         }
     }
+    animationFrameId = requestAnimationFrame(animate);
+}
 
-    function showCountdownAndStart() {
-        mainTextElement.textContent = textContent.trim();
-        overlay.style.display = 'flex';
-        let count = 3;
-        overlay.textContent = count;
-        overlay.style.fontSize = "4rem";
-
-        const countdownInterval = setInterval(() => {
-            count--;
-            if (count > 0) {
-                overlay.textContent = count;
-            } else {
-                clearInterval(countdownInterval);
-                overlay.textContent = "Get Ready to Read!";
-                overlay.style.fontSize = "3rem";
-
-                // Set the initial position of the text to be centered
-                setTimeout(() => {
-                    viewportHeight = scrollContainer.parentElement.clientHeight;
-                    const firstLineHeight = mainTextElement.firstElementChild ? mainTextElement.firstElementChild.getBoundingClientRect().height : 25; // Estimate if not available
-                    startY = (viewportHeight / 2) - (firstLineHeight / 2);
-                    scrollContainer.style.transform = `translateY(${startY}px)`;
-                }, 50); // Small delay to allow the text to render
-
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    startScroll();
-                }, 3000); // Wait 3 seconds before starting the scroll
-            }
-        }, 1000);
-    }
-
-    function startScroll() {
-        totalTextHeight = scrollContainer.scrollHeight;
-        distanceToScroll = totalTextHeight + startY; // Adjust distance to scroll
-        speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
-
-        progressBar.style.width = '0%';
-        startBtn.style.display = 'none';
-        pauseBtn.style.display = 'block';
-        resetBtn.style.display = 'block';
-
-        isPaused = false;
-        animationProgress = 0;
-        lastTimestamp = 0;
-        animationFrameId = requestAnimationFrame(animateScroll);
-    }
-
-    function resetApp() {
-        scrollContainer.style.transform = `translateY(0px)`;
-        mainTextElement.textContent = "";
-        startBtn.style.display = 'block';
-        pauseBtn.style.display = 'none';
-        resetBtn.style.display = 'none';
-        pauseBtn.textContent = 'Pause';
-        progressBar.style.width = '0%';
-        isPaused = false;
-        animationProgress = 0;
-        lastTimestamp = 0;
-        cancelAnimationFrame(animationFrameId);
-    }
-
-    startBtn.addEventListener('click', showCountdownAndStart);
-
-    pauseBtn.addEventListener('click', () => {
-        isPaused = !isPaused;
-        if (isPaused) {
-            pauseBtn.textContent = 'Resume';
-            cancelAnimationFrame(animationFrameId);
-        } else {
-            pauseBtn.textContent = 'Pause';
-            lastTimestamp = 0;
-            animationFrameId = requestAnimationFrame(animateScroll);
-        }
-    });
-
-    resetBtn.addEventListener('click', resetApp);
-
-    speedSlider.addEventListener('input', (event) => {
-        const newSpeed = event.target.value;
-        speedValueDisplay.textContent = `${newSpeed} WPM`;
-        setSpeed(newSpeed);
-    });
-};
+document.getElementById('easy-btn').addEventListener('click', showCountdownAndStart);
+setSpeed(+speedSlider.value);
 </script>
 </body>
 </html>

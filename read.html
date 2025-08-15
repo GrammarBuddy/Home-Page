@@ -3,399 +3,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrammarBuddy Read Aloud</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>GrammarBuddy ReadAloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f9fafb;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
 
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f3f4f6;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        color: #334155;
-    }
+    .app-container {
+        max-width: 700px;
+        width: 100%;
+        padding: 2rem;
+        background: white;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-radius: 1rem;
+        margin-top: 2rem;
+    }
 
-    .app-container {
-        width: 90vw;
-        max-width: 700px;
-        background-color: #ffffff;
-        border-radius: 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.05);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        padding: 2.5rem;
-        box-sizing: border-box;
-        overflow: hidden;
-    }
+    .header {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
 
-    /* Heading */
-    .app-header {
-        text-align: center;
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1f2937;
-        margin-bottom: 1.5rem;
-    }
-    .app-header i {
-        color: #4b44ec;
-        margin-right: 0.75rem;
-    }
+    .header i {
+        margin-right: 0.5rem;
+        font-size: 1.8rem;
+        color: #10b981;
+    }
 
-    /* Level buttons */
-    .level-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    .level-btn {
-        padding: 0.7rem 1.5rem;
-        border: none;
-        border-radius: 2rem;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: #d1d5db;
-        color: #4b5563;
-        transition: all 0.2s ease;
-    }
-    .level-btn:hover {
-        background-color: #9ca3af;
-    }
-    .level-btn.selected {
-        background-color: #3b82f6;
-        color: white;
-        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-    }
+    .level-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
 
-    .progress-bar-container {
-        width: 100%;
-        height: 8px;
-        background-color: #e5e7eb;
-        border-radius: 4px;
-        margin-bottom: 1.5rem;
-    }
+    .level-btn {
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 0.6rem;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: #10b981;
+        color: white;
+        transition: background-color 0.2s, transform 0.1s;
+        box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+    }
 
-    .progress-bar {
-        height: 100%;
-        width: 0;
-        background-color: #3b82f6;
-        border-radius: 4px;
-        transition: width 0.1s linear;
-    }
+    .level-btn:hover {
+        background-color: #059669;
+        transform: translateY(-1px);
+    }
 
-    .screen {
-        flex: 1;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f9fafb;
-        border-radius: 1rem;
-        padding: 2rem 1rem;
-        box-sizing: border-box;
-    }
+    .level-btn.selected {
+        background-color: #059669;
+    }
 
-    .scroll-text {
-        position: absolute;
-        width: 100%;
-        line-height: 1.8;
-        text-align: center;
-        box-sizing: border-box;
-        transform: translateY(100%);
-        color: #4b5563;
-        font-weight: 300;
-    }
+    .scroll-container {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem;
+        background-color: #fdfdfd;
+        margin-bottom: 1.5rem;
+    }
 
-    .controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem;
-        margin-top: 2rem;
-    }
+    .scroll-text {
+        position: absolute;
+        bottom: -100%;
+        width: 100%;
+        padding: 1rem;
+        line-height: 1.6;
+        font-size: 1.1rem;
+    }
 
-    .control-group {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-weight: 600;
-        color: #4a5568;
-    }
+    .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: bold;
+        z-index: 10;
+    }
 
-    .control-group input[type="range"] {
-        -webkit-appearance: none;
-        width: 200px;
-        height: 8px;
-        background: #d1d5db;
-        border-radius: 4px;
-        outline: none;
-        transition: background 0.3s ease;
-    }
-    .control-group input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: #3b82f6;
-        cursor: pointer;
-        border: 4px solid #ffffff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+    .controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
 
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-    }
+    .speed-control {
+        flex: 1;
+    }
 
-    .btn {
-        padding: 0.8rem 2rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 2rem;
-        color: white;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-    .btn-start { background-color: #3b82f6; }
-    .btn-pause { background-color: #f59e0b; }
-    .btn-reset { background-color: #ef4444; }
+    input[type="range"] {
+        width: 100%;
+    }
 
-    /* Countdown overlay */
-    .overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.95);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 5rem;
-        font-weight: 700;
-        color: #1f2937;
-        z-index: 10;
-        border-radius: 2rem;
-    }
+    .btn {
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 0.6rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-start {
+        background-color: #10b981;
+        color: white;
+        box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-start:hover {
+        background-color: #059669;
+        transform: translateY(-1px);
+    }
+
+    .progress-bar {
+        height: 6px;
+        background: #e5e7eb;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .progress {
+        height: 100%;
+        width: 0;
+        background: #10b981;
+        transition: width 0.1s;
+    }
 </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="app-header">
-        <i class="fas fa-graduation-cap"></i> GrammarBuddy Read Aloud
-    </div>
+    <div class="header">
+        <i>🎓</i> GrammarBuddy Read Aloud
+    </div>
 
-    <div class="level-buttons">
-        <button class="level-btn" id="easy-btn">Easy</button>
-        <button class="level-btn" id="difficult-btn">Difficult</button>
-        <button class="level-btn" id="hard-btn">Hard</button>
-    </div>
+    <div class="level-buttons">
+        <button class="level-btn selected" data-level="Easy">Easy</button>
+        <button class="level-btn" data-level="Difficult">Difficult</button>
+        <button class="level-btn" data-level="Hard">Hard</button>
+    </div>
 
-    <div class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-    </div>
-    <div class="screen">
-        <div id="scroll-container" class="scroll-text">
-            <p id="main-text"></p>
-        </div>
-        <div id="overlay" class="overlay" style="display: none;"></div>
-    </div>
-    <div class="controls">
-        <div class="control-group">
-            <label for="speed-slider">Speed:</label>
-            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
-            <span id="speed-value">150 WPM</span>
-        </div>
-        <div class="btn-group">
-            <button id="start-btn" class="btn btn-start">Start</button>
-            <button id="pause-btn" class="btn btn-pause" style="display: none;">Pause</button>
-            <button id="reset-btn" class="btn btn-reset" style="display: none;">Reset</button>
-        </div>
-    </div>
+    <div class="progress-bar">
+        <div class="progress"></div>
+    </div>
+
+    <div class="scroll-container">
+        <div class="scroll-text"></div>
+        <div class="overlay"></div>
+    </div>
+
+    <div class="controls">
+        <div class="speed-control">
+            <label for="speed-slider">Speed:</label>
+            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
+        </div>
+        <span id="speed-value">150 WPM</span>
+        <button class="btn btn-start" id="start-btn">Start</button>
+    </div>
 </div>
 
 <script>
-window.onload = function() {
-    const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1rkSxjJHT4enuqDaPVCBN7LNSRjFxPtQV0E1V9OD-zgc/gviz/tq?tqx=out:json&sheet=Read';
+const sheetURL = "https://docs.google.com/spreadsheets/d/1rkSxjJHT4enuqDaPVCBN7LNSRjFxPtQV0E1V9OD-zgc/gviz/tq?tqx=out:csv&sheet=Read";
 
-    const startBtn = document.getElementById('start-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('pause-btn');
-    const scrollContainer = document.getElementById('scroll-container');
-    const mainTextElement = document.getElementById('main-text');
-    const speedSlider = document.getElementById('speed-slider');
-    const speedValueDisplay = document.getElementById('speed-value');
-    const progressBar = document.getElementById('progress-bar');
-    const overlay = document.getElementById('overlay');
-    const levelButtons = document.querySelectorAll('.level-btn');
-    
-    let allPassages = [];
-    let selectedLevel = 'Easy';
-    let animationFrameId = null;
-    let startTime = null;
-    let totalAnimationDuration = 0;
-    let isPaused = false;
-    
-    document.getElementById('easy-btn').classList.add('selected');
+let passages = [];
+let currentLevel = "Easy";
+let currentPassage = "";
+let scrollText = document.querySelector(".scroll-text");
+let overlay = document.querySelector(".overlay");
+let progressBar = document.querySelector(".progress");
+let speedSlider = document.getElementById("speed-slider");
+let speedValue = document.getElementById("speed-value");
+let startBtn = document.getElementById("start-btn");
+let levelBtns = document.querySelectorAll(".level-btn");
 
-    function fetchPassages() {
-        fetch(SPREADSHEET_URL)
-            .then(res => res.text())
-            .then(text => {
-                const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-                const data = JSON.parse(jsonText);
-                const rows = data.table.rows;
-                
-                allPassages = rows.map(row => {
-                    const level = row.c[1]?.v;
-                    const passage = row.c[2]?.v;
-                    return { level, passage };
-                }).filter(p => p.level && p.passage);
-                
-                console.log('Passages loaded:', allPassages.length);
-            })
-            .catch(err => {
-                console.error('Failed to fetch passages:', err);
-                alert('Failed to load passages from the spreadsheet.');
-            });
-    }
+fetch(sheetURL)
+    .then(res => res.text())
+    .then(data => {
+        let rows = data.split("\n").slice(1);
+        passages = rows.map(r => {
+            let [code, level, passage] = r.split(/,(.+)/)[0].split(",");
+            let cols = r.split(",");
+            return {
+                PASSAGE_CODE: cols[0]?.trim(),
+                LEVEL: cols[1]?.trim(),
+                PASSAGE: cols.slice(2).join(",").trim()
+            };
+        }).filter(p => p.PASSAGE);
+    });
 
-    fetchPassages();
+levelBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        levelBtns.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        currentLevel = btn.dataset.level;
+    });
+});
 
-    function setSpeed(wpm, wordCount) {
-        if (wordCount === 0) {
-            totalAnimationDuration = 0;
-            return;
-        }
-        const durationInSeconds = (wordCount / wpm) * 60;
-        totalAnimationDuration = durationInSeconds;
+speedSlider.addEventListener("input", () => {
+    speedValue.textContent = speedSlider.value + " WPM";
+});
 
-        const styleTag = document.querySelector('style') || document.createElement('style');
-        styleTag.innerHTML = `
-            @keyframes scroll {
-                0% { transform: translateY(100%); }
-                100% { transform: translateY(-100%); }
-            }
-        `;
-        document.head.appendChild(styleTag);
-    }
-    
-    function updateProgressBar(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = (timestamp - startTime) / 1000;
-        const progress = (elapsed / totalAnimationDuration) * 100;
-        progressBar.style.width = `${Math.min(progress, 100)}%`;
-        if (progress < 100 && !isPaused) {
-            animationFrameId = requestAnimationFrame(updateProgressBar);
-        }
-    }
+startBtn.addEventListener("click", () => {
+    if (!passages.length) return;
+    let filtered = passages.filter(p => p.LEVEL.toLowerCase() === currentLevel.toLowerCase());
+    currentPassage = filtered[Math.floor(Math.random() * filtered.length)].PASSAGE;
+    startCountdown();
+});
 
-    function showCountdownAndStart(passageText) {
-        overlay.style.display = 'flex';
-        let count = 3;
-        overlay.textContent = count;
-        const countdownInterval = setInterval(() => {
-            count--;
-            if (count > 0) {
-                overlay.textContent = count;
-            } else {
-                clearInterval(countdownInterval);
-                overlay.textContent = "Get Ready to Read!";
-                overlay.style.fontSize = "3rem";
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    startScroll(passageText);
-                }, 1000);
-            }
-        }, 1000);
-    }
-
-    function startScroll(passageText) {
-        mainTextElement.textContent = passageText;
-        
-        const wordCount = passageText.trim().split(/\s+/).length;
-        setSpeed(speedSlider.value, wordCount);
-        
-        scrollContainer.style.animation = 'none';
-        progressBar.style.width = '0%';
-        scrollContainer.style.transform = `translateY(100%)`;
-
-        setTimeout(() => {
-            scrollContainer.style.animation = `scroll ${totalAnimationDuration}s linear forwards`;
-            startBtn.style.display = 'none';
-            pauseBtn.style.display = 'block';
-            resetBtn.style.display = 'block';
-
-            startTime = null;
-            isPaused = false;
-            animationFrameId = requestAnimationFrame(updateProgressBar);
-        }, 10);
-    }
-
-    startBtn.addEventListener('click', () => {
-        const filteredPassages = allPassages.filter(p => p.level?.toLowerCase() === selectedLevel?.toLowerCase());
-        if (filteredPassages.length > 0) {
-            const randomIndex = Math.floor(Math.random() * filteredPassages.length);
-            const passageToRead = filteredPassages[randomIndex].passage;
-            showCountdownAndStart(passageToRead);
+function startCountdown() {
+    overlay.style.display = "flex";
+    let count = 3;
+    overlay.textContent = count;
+    let interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            overlay.textContent = count;
         } else {
-            alert(`No passages found for the selected level: ${selectedLevel}`);
+            clearInterval(interval);
+            overlay.textContent = "Get Ready to Read!";
+            setTimeout(() => {
+                overlay.style.display = "none";
+                startScroll();
+            }, 1000);
         }
-    });
+    }, 1000);
+}
 
-    pauseBtn.addEventListener('click', () => {
-        if (isPaused) {
-            scrollContainer.style.animationPlayState = 'running';
-            pauseBtn.textContent = 'Pause';
-            isPaused = false;
-            startTime = performance.now() - (totalAnimationDuration * (parseFloat(progressBar.style.width) / 100) * 1000);
-            animationFrameId = requestAnimationFrame(updateProgressBar);
-        } else {
-            scrollContainer.style.animationPlayState = 'paused';
-            pauseBtn.textContent = 'Resume';
-            isPaused = true;
-            cancelAnimationFrame(animationFrameId);
+function startScroll() {
+    scrollText.innerHTML = currentPassage;
+    scrollText.style.bottom = "-100%";
+    let speed = parseInt(speedSlider.value);
+    let words = currentPassage.split(" ").length;
+    let duration = (words / speed) * 60 * 1000;
+    let start = null;
+
+    function animateScroll(timestamp) {
+        if (!start) start = timestamp;
+        let progress = (timestamp - start) / duration;
+        scrollText.style.bottom = (-100 + progress * 100) + "%";
+        progressBar.style.width = Math.min(progress * 100, 100) + "%";
+        if (progress < 1) {
+            requestAnimationFrame(animateScroll);
         }
-    });
-
-    resetBtn.addEventListener('click', () => {
-        scrollContainer.style.animation = 'none';
-        scrollContainer.style.transform = `translateY(100%)`;
-        mainTextElement.textContent = "";
-        startBtn.style.display = 'block';
-        pauseBtn.style.display = 'none';
-        resetBtn.style.display = 'none';
-        pauseBtn.textContent = 'Pause';
-        progressBar.style.width = '0%';
-        cancelAnimationFrame(animationFrameId);
-    });
-
-    speedSlider.addEventListener('input', (event) => {
-        const newSpeed = event.target.value;
-        speedValueDisplay.textContent = `${newSpeed} WPM`;
-        if (!isPaused) {
-          const wordCount = mainTextElement.textContent.trim().split(/\s+/).length;
-          setSpeed(newSpeed, wordCount);
-        }
-    });
-
-    levelButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            levelButtons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            selectedLevel = button.textContent;
-            resetBtn.click();
-        });
-    });
-};
+    }
+    requestAnimationFrame(animateScroll);
+}
 </script>
 </body>
 </html>

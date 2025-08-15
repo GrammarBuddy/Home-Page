@@ -23,12 +23,12 @@
         width: 90vw;
         max-width: 700px;
         background-color: #ffffff;
-        border-radius: 2rem; /* Even more rounded corners for a modern feel */
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer, layered shadow */
+        border-radius: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.05);
         position: relative;
         display: flex;
         flex-direction: column;
-        padding: 2.5rem; /* Increased padding */
+        padding: 2.5rem;
         box-sizing: border-box;
         overflow: hidden;
     }
@@ -42,7 +42,7 @@
         margin-bottom: 1.5rem;
     }
     .app-header i {
-        color: #4b44ec; /* Deep blue accent */
+        color: #4b44ec;
         margin-right: 0.75rem;
     }
 
@@ -56,10 +56,10 @@
     .level-btn {
         padding: 0.7rem 1.5rem;
         border: none;
-        border-radius: 2rem; /* Pill shape */
+        border-radius: 2rem;
         font-weight: 600;
         cursor: pointer;
-        background-color: #d1d5db; /* Neutral gray */
+        background-color: #d1d5db;
         color: #4b5563;
         transition: all 0.2s ease;
     }
@@ -67,7 +67,7 @@
         background-color: #9ca3af;
     }
     .level-btn.selected {
-        background-color: #3b82f6; /* Vibrant blue for active state */
+        background-color: #3b82f6;
         color: white;
         box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
     }
@@ -104,12 +104,12 @@
     .scroll-text {
         position: absolute;
         width: 100%;
-        line-height: 1.8; /* Increased line height for better readability */
+        line-height: 1.8;
         text-align: center;
         box-sizing: border-box;
         transform: translateY(100%);
         color: #4b5563;
-        font-weight: 300; /* Lighter font weight for a modern look */
+        font-weight: 300;
     }
 
     .controls {
@@ -142,7 +142,7 @@
         width: 22px;
         height: 22px;
         border-radius: 50%;
-        background: #3b82f6; /* Match primary button color */
+        background: #3b82f6;
         cursor: pointer;
         border: 4px solid #ffffff;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -158,7 +158,7 @@
         font-size: 1.1rem;
         font-weight: 600;
         border: none;
-        border-radius: 2rem; /* Pill shape for buttons */
+        border-radius: 2rem;
         color: white;
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -228,7 +228,7 @@ window.onload = function() {
 
     const startBtn = document.getElementById('start-btn');
     const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
+    const resetBtn = document.getElementById('pause-btn');
     const scrollContainer = document.getElementById('scroll-container');
     const mainTextElement = document.getElementById('main-text');
     const speedSlider = document.getElementById('speed-slider');

@@ -6,29 +6,29 @@
 <title>GrammarBuddy Read Aloud</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 
     body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #e0f2f7, #cceeff); /* Light blue gradient background */
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f3f4f6;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
         margin: 0;
-        color: #374151; /* Darker text color */
+        color: #334155;
     }
 
     .app-container {
         width: 90vw;
-        max-width: 700px; /* Slightly smaller max width */
+        max-width: 700px;
         background-color: #ffffff;
-        border-radius: 1rem; /* More pronounced rounded corners */
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Softer shadow */
+        border-radius: 2rem; /* Even more rounded corners for a modern feel */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer, layered shadow */
         position: relative;
         display: flex;
         flex-direction: column;
-        padding: 2rem; /* Increased padding */
+        padding: 2.5rem; /* Increased padding */
         box-sizing: border-box;
         overflow: hidden;
     }
@@ -36,13 +36,13 @@
     /* Heading */
     .app-header {
         text-align: center;
-        font-size: 2rem; /* Larger font size */
+        font-size: 2.2rem;
         font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 1rem;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
     }
     .app-header i {
-        color: #6366f1; /* Updated primary color */
+        color: #4b44ec; /* Deep blue accent */
         margin-right: 0.75rem;
     }
 
@@ -50,40 +50,41 @@
     .level-buttons {
         display: flex;
         justify-content: center;
-        gap: 0.75rem;
+        gap: 1rem;
         margin-bottom: 1.5rem;
     }
     .level-btn {
-        padding: 0.6rem 1.2rem;
+        padding: 0.7rem 1.5rem;
         border: none;
-        border-radius: 0.75rem; /* Rounded buttons */
+        border-radius: 2rem; /* Pill shape */
         font-weight: 600;
         cursor: pointer;
-        background-color: #34d399; /* Updated button color */
-        color: white;
-        transition: background-color 0.3s ease;
+        background-color: #d1d5db; /* Neutral gray */
+        color: #4b5563;
+        transition: all 0.2s ease;
     }
     .level-btn:hover {
-        background-color: #22c55e; /* Darker shade on hover */
+        background-color: #9ca3af;
     }
     .level-btn.selected {
-        background-color: #10b981; /* Active button color */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #3b82f6; /* Vibrant blue for active state */
+        color: white;
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
     }
 
     .progress-bar-container {
         width: 100%;
-        height: 10px; /* Slightly thicker progress bar */
+        height: 8px;
         background-color: #e5e7eb;
-        border-radius: 5px;
+        border-radius: 4px;
         margin-bottom: 1.5rem;
     }
 
     .progress-bar {
         height: 100%;
         width: 0;
-        background-color: #34d399;
-        border-radius: 5px;
+        background-color: #3b82f6;
+        border-radius: 4px;
         transition: width 0.1s linear;
     }
 
@@ -94,21 +95,21 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 0.5rem; /* Optional rounded corners for the screen */
-        background-color: #f9fafb; /* Light background for the text area */
-        padding: 1rem;
+        background-color: #f9fafb;
+        border-radius: 1rem;
+        padding: 2rem 1rem;
         box-sizing: border-box;
     }
 
     .scroll-text {
         position: absolute;
         width: 100%;
-        padding: 1.5rem;
-        line-height: 1.7;
+        line-height: 1.8; /* Increased line height for better readability */
         text-align: center;
         box-sizing: border-box;
         transform: translateY(100%);
-        color: #4b5563; /* Comfortable reading text color */
+        color: #4b5563;
+        font-weight: 300; /* Lighter font weight for a modern look */
     }
 
     .controls {
@@ -116,7 +117,7 @@
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
     }
 
     .control-group {
@@ -127,31 +128,24 @@
         color: #4a5568;
     }
 
-    .control-group label {
-        white-space: nowrap; /* Prevent label text wrapping */
-    }
-
     .control-group input[type="range"] {
         -webkit-appearance: none;
-        width: 180px; /* Slightly wider slider */
+        width: 200px;
         height: 8px;
         background: #d1d5db;
         border-radius: 4px;
         outline: none;
+        transition: background 0.3s ease;
     }
-
     .control-group input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         border-radius: 50%;
-        background: #4a5568;
+        background: #3b82f6; /* Match primary button color */
         cursor: pointer;
-        transition: background-color 0.3s ease-in-out;
-    }
-
-    .control-group input[type="range"]::-webkit-slider-thumb:hover {
-        background: #27272a;
+        border: 4px solid #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .btn-group {
@@ -160,38 +154,36 @@
     }
 
     .btn {
-        padding: 0.8rem 1.8rem; /* Slightly larger buttons */
+        padding: 0.8rem 2rem;
         font-size: 1.1rem;
         font-weight: 600;
         border: none;
-        border-radius: 0.5rem;
+        border-radius: 2rem; /* Pill shape for buttons */
         color: white;
         cursor: pointer;
-        transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-
-    .btn-start { background-color: #34d399; }
-    .btn-pause { background-color: #f97316; }
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    .btn-start { background-color: #3b82f6; }
+    .btn-pause { background-color: #f59e0b; }
     .btn-reset { background-color: #ef4444; }
 
     /* Countdown overlay */
     .overlay {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.85); /* Slightly translucent overlay */
+        background: rgba(255,255,255,0.95);
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 4.5rem; /* Slightly larger countdown */
+        font-size: 5rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #1f2937;
         z-index: 10;
-        border-radius: 1rem; /* Match container border-radius */
+        border-radius: 2rem;
     }
 </style>
 </head>

@@ -235,44 +235,35 @@ window.onload = function() {
     const wordCount = textContent.trim().split(/\s+/).length;
 
     function setSpeed(wpm) {
-        // Calculate the total duration in seconds based on words per minute.
         totalAnimationDuration = (wordCount / wpm) * 60;
     }
     setSpeed(speedSlider.value);
 
     function animateScroll(timestamp) {
         if (!isPaused) {
-            // Initialize lastTimestamp on the first frame
             if (lastTimestamp === 0) {
                 lastTimestamp = timestamp;
             }
 
-            // Calculate the time elapsed since the last frame
             const deltaTime = timestamp - lastTimestamp;
             lastTimestamp = timestamp;
 
-            // Calculate the distance to scroll (total text height + screen height)
             const viewportHeight = scrollContainer.parentElement.clientHeight;
             const totalTextHeight = scrollContainer.scrollHeight;
             const distanceToScroll = totalTextHeight + viewportHeight;
 
-            // Calculate the speed based on the total duration
             const speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
             const distanceScrolled = speedInPixelsPerSecond * (deltaTime / 1000);
 
-            // Update the animation progress and transform
             animationProgress += distanceScrolled;
             scrollContainer.style.transform = `translateY(${viewportHeight - animationProgress}px)`;
 
-            // Update the progress bar
             const progressPercentage = (animationProgress / distanceToScroll) * 100;
             progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
 
-            // Continue the animation if not finished
             if (animationProgress < distanceToScroll) {
                 animationFrameId = requestAnimationFrame(animateScroll);
             } else {
-                // Animation is complete
                 resetApp();
             }
         }
@@ -290,10 +281,13 @@ window.onload = function() {
                 clearInterval(countdownInterval);
                 overlay.textContent = "Get Ready to Read!";
                 overlay.style.fontSize = "3rem";
+                
+                // Use a small delay to allow the browser to repaint
+                // the DOM before starting the animation.
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     startScroll();
-                }, 0); // Changed from 1000 to 0
+                }, 50); // Small, but noticeable delay
             }
         }, 1000);
     }
@@ -337,7 +331,7 @@ window.onload = function() {
             cancelAnimationFrame(animationFrameId);
         } else {
             pauseBtn.textContent = 'Pause';
-            lastTimestamp = 0; // Reset lastTimestamp to prevent jumps
+            lastTimestamp = 0;
             animationFrameId = requestAnimationFrame(animateScroll);
         }
     });

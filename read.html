@@ -6,203 +6,203 @@
 <title>GrammarBuddy Read Aloud</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f0f4f8;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        color: #334155;
-    }
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f0f4f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: #334155;
+    }
 
-    .app-container {
-        width: 90vw;
-        max-width: 800px;
-        height: 85vh;
-        background-color: #ffffff;
-        border-radius: 1.5rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        box-sizing: border-box;
-        overflow: hidden;
-    }
+    .app-container {
+        width: 90vw;
+        max-width: 800px;
+        height: 85vh;
+        background-color: #ffffff;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
 
-    /* Heading */
-    .app-header {
-        text-align: center;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 0.5rem;
-    }
-    .app-header i {
-        color: #4f46e5;
-        margin-right: 0.5rem;
-    }
+    /* Heading */
+    .app-header {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    .app-header i {
+        color: #4f46e5;
+        margin-right: 0.5rem;
+    }
 
-    /* Level buttons */
-    .level-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    .level-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: #10b981;
-        color: white;
-        transition: background-color 0.2s;
-    }
-    .level-btn:hover {
-        background-color: #059669;
-    }
+    /* Level buttons */
+    .level-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .level-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: #10b981;
+        color: white;
+        transition: background-color 0.2s;
+    }
+    .level-btn:hover {
+        background-color: #059669;
+    }
 
-    .progress-bar-container {
-        width: 100%;
-        height: 8px;
-        background-color: #e2e8f0;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-    }
+    .progress-bar-container {
+        width: 100%;
+        height: 8px;
+        background-color: #e2e8f0;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
 
-    .progress-bar {
-        height: 100%;
-        width: 0;
-        background-color: #10b981;
-        border-radius: 4px;
-    }
+    .progress-bar {
+        height: 100%;
+        width: 0;
+        background-color: #10b981;
+        border-radius: 4px;
+    }
 
-    .screen {
-        flex: 1;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
+    .screen {
+        flex: 1;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
 
-    .scroll-text {
-        position: absolute;
-        width: 100%;
-        padding: 0 1rem;
-        line-height: 1.6;
-        text-align: center;
-        box-sizing: border-box;
-        will-change: transform;
-    }
+    .scroll-text {
+        position: absolute;
+        width: 100%;
+        padding: 0 1rem;
+        line-height: 1.6;
+        text-align: center;
+        box-sizing: border-box;
+        will-change: transform;
+    }
 
-    .controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
+    .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
 
-    .control-group {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        color: #4a5568;
-    }
+    .control-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #4a5568;
+    }
 
-    .control-group input[type="range"] {
-        -webkit-appearance: none;
-        width: 150px;
-        height: 8px;
-        background: #d1d5db;
-        border-radius: 4px;
-        outline: none;
-    }
+    .control-group input[type="range"] {
+        -webkit-appearance: none;
+        width: 150px;
+        height: 8px;
+        background: #d1d5db;
+        border-radius: 4px;
+        outline: none;
+    }
 
-    .control-group input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #4a5568;
-        cursor: pointer;
-    }
+    .control-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #4a5568;
+        cursor: pointer;
+    }
 
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-    }
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+    }
 
-    .btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 0.75rem;
-        color: white;
-        cursor: pointer;
-    }
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.75rem;
+        color: white;
+        cursor: pointer;
+    }
 
-    .btn-start { background-color: #10b981; }
-    .btn-pause { background-color: #f97316; }
-    .btn-reset { background-color: #ef4444; }
+    .btn-start { background-color: #10b981; }
+    .btn-pause { background-color: #f97316; }
+    .btn-reset { background-color: #ef4444; }
 
-    /* Countdown overlay */
-    .overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 4rem;
-        font-weight: 700;
-        color: #1e293b;
-        z-index: 10;
-    }
+    /* Countdown overlay */
+    .overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255,255,255,0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4rem;
+        font-weight: 700;
+        color: #1e293b;
+        z-index: 10;
+    }
 </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="app-header">
-        <i class="fas fa-graduation-cap"></i> GrammarBuddy Read Aloud
-    </div>
+    <div class="app-header">
+        <i class="fas fa-graduation-cap"></i> GrammarBuddy Read Aloud
+    </div>
 
-    <div class="level-buttons">
-        <button class="level-btn" id="easy-btn">Easy</button>
-        <button class="level-btn" id="medium-btn">Medium</button>
-        <button class="level-btn" id="hard-btn">Hard</button>
-    </div>
+    <div class="level-buttons">
+        <button class="level-btn" id="easy-btn">Easy</button>
+        <button class="level-btn" id="medium-btn">Medium</button>
+        <button class="level-btn" id="hard-btn">Hard</button>
+    </div>
 
-    <div class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-    </div>
-    <div class="screen">
-        <div id="scroll-container" class="scroll-text">
-            <p id="main-text"></p>
-        </div>
-        <div id="overlay" class="overlay" style="display: none;"></div>
-    </div>
-    <div class="controls">
-        <div class="control-group">
-            <label for="speed-slider">Speed:</label>
-            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
-            <span id="speed-value">150 WPM</span>
-        </div>
-        <div class="btn-group">
-            <button id="start-btn" class="btn btn-start">Start</button>
-            <button id="pause-btn" class="btn btn-pause" style="display: none;">Pause</button>
-            <button id="reset-btn" class="btn btn-reset" style="display: none;">Reset</button>
-        </div>
-    </div>
+    <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div class="screen">
+        <div id="scroll-container" class="scroll-text">
+            <p id="main-text"></p>
+        </div>
+        <div id="overlay" class="overlay" style="display: none;"></div>
+    </div>
+    <div class="controls">
+        <div class="control-group">
+            <label for="speed-slider">Speed:</label>
+            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
+            <span id="speed-value">150 WPM</span>
+        </div>
+        <div class="btn-group">
+            <button id="start-btn" class="btn btn-start">Start</button>
+            <button id="pause-btn" class="btn btn-pause" style="display: none;">Pause</button>
+            <button id="reset-btn" class="btn btn-reset" style="display: none;">Reset</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -218,9 +218,9 @@ window.onload = function() {
     const overlay = document.getElementById('overlay');
 
     const textContent = `
-    The old lighthouse keeper, Elias, watched the sea with a practiced eye. 
-    For fifty years, the rhythm of the waves had been the only constant in his life. 
-    He had seen storms that painted the sky in shades of bruised purple and green, 
+    The old lighthouse keeper, Elias, watched the sea with a practiced eye.
+    For fifty years, the rhythm of the waves had been the only constant in his life.
+    He had seen storms that painted the sky in shades of bruised purple and green,
     and mornings so calm the ocean looked like a sheet of hammered silver...
     `;
 
@@ -233,7 +233,7 @@ window.onload = function() {
     let totalTextHeight = 0;
     let distanceToScroll = 0;
     let speedInPixelsPerSecond = 0;
-    const startOffset = 20; // small offset for instant start
+    let startY = 0;
 
     const wordCount = textContent.trim().split(/\s+/).length;
 
@@ -253,7 +253,7 @@ window.onload = function() {
             lastTimestamp = timestamp;
 
             animationProgress += speedInPixelsPerSecond * (deltaTime / 1000);
-            scrollContainer.style.transform = `translateY(${startOffset - animationProgress}px)`;
+            scrollContainer.style.transform = `translateY(${startY - animationProgress}px)`;
 
             const progressPercentage = (animationProgress / distanceToScroll) * 100;
             progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
@@ -265,6 +265,7 @@ window.onload = function() {
     }
 
     function showCountdownAndStart() {
+        mainTextElement.textContent = textContent.trim();
         overlay.style.display = 'flex';
         let count = 3;
         overlay.textContent = count;
@@ -279,23 +280,25 @@ window.onload = function() {
                 overlay.textContent = "Get Ready to Read!";
                 overlay.style.fontSize = "3rem";
 
+                // Set the initial position of the text to be centered
+                setTimeout(() => {
+                    viewportHeight = scrollContainer.parentElement.clientHeight;
+                    const firstLineHeight = mainTextElement.firstElementChild ? mainTextElement.firstElementChild.getBoundingClientRect().height : 25; // Estimate if not available
+                    startY = (viewportHeight / 2) - (firstLineHeight / 2);
+                    scrollContainer.style.transform = `translateY(${startY}px)`;
+                }, 50); // Small delay to allow the text to render
+
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     startScroll();
-                }, 1000);
+                }, 3000); // Wait 3 seconds before starting the scroll
             }
         }, 1000);
     }
 
     function startScroll() {
-        mainTextElement.textContent = textContent.trim();
-
-        viewportHeight = scrollContainer.parentElement.clientHeight;
         totalTextHeight = scrollContainer.scrollHeight;
-
-        scrollContainer.style.transform = `translateY(${startOffset}px)`;
-
-        distanceToScroll = totalTextHeight + startOffset;
+        distanceToScroll = totalTextHeight + startY; // Adjust distance to scroll
         speedInPixelsPerSecond = distanceToScroll / totalAnimationDuration;
 
         progressBar.style.width = '0%';
@@ -310,7 +313,7 @@ window.onload = function() {
     }
 
     function resetApp() {
-        scrollContainer.style.transform = `translateY(${startOffset}px)`;
+        scrollContainer.style.transform = `translateY(0px)`;
         mainTextElement.textContent = "";
         startBtn.style.display = 'block';
         pauseBtn.style.display = 'none';

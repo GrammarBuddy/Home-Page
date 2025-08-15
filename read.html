@@ -6,30 +6,29 @@
 <title>GrammarBuddy Read Aloud</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
     body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f0f4f8;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #e0f2f7, #cceeff); /* Light blue gradient background */
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
         margin: 0;
-        color: #334155;
+        color: #374151; /* Darker text color */
     }
 
     .app-container {
         width: 90vw;
-        max-width: 800px;
-        height: 85vh;
+        max-width: 700px; /* Slightly smaller max width */
         background-color: #ffffff;
-        border-radius: 1.5rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border-radius: 1rem; /* More pronounced rounded corners */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Softer shadow */
         position: relative;
         display: flex;
         flex-direction: column;
-        padding: 1rem;
+        padding: 2rem; /* Increased padding */
         box-sizing: border-box;
         overflow: hidden;
     }
@@ -37,55 +36,54 @@
     /* Heading */
     .app-header {
         text-align: center;
-        font-size: 1.8rem;
+        font-size: 2rem; /* Larger font size */
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
     }
     .app-header i {
-        color: #4f46e5;
-        margin-right: 0.5rem;
+        color: #6366f1; /* Updated primary color */
+        margin-right: 0.75rem;
     }
 
     /* Level buttons */
     .level-buttons {
         display: flex;
         justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
     }
     .level-btn {
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 0.5rem;
+        border-radius: 0.75rem; /* Rounded buttons */
         font-weight: 600;
         cursor: pointer;
-        background-color: #10b981; /* Match Start button color */
+        background-color: #34d399; /* Updated button color */
         color: white;
-        transition: background-color 0.2s;
+        transition: background-color 0.3s ease;
     }
     .level-btn:hover {
-        background-color: #059669; /* Darker green on hover */
+        background-color: #22c55e; /* Darker shade on hover */
     }
-    .level-btn.selected {
-        background-color: #059669;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
+    .level-btn.selected {
+        background-color: #10b981; /* Active button color */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
     .progress-bar-container {
         width: 100%;
-        height: 8px;
-        background-color: #e2e8f0;
-        border-radius: 4px;
-        margin-bottom: 1rem;
+        height: 10px; /* Slightly thicker progress bar */
+        background-color: #e5e7eb;
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
     }
 
     .progress-bar {
         height: 100%;
         width: 0;
-        background-color: #10b981;
-        border-radius: 4px;
+        background-color: #34d399;
+        border-radius: 5px;
         transition: width 0.1s linear;
     }
 
@@ -96,37 +94,46 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        border-radius: 0.5rem; /* Optional rounded corners for the screen */
+        background-color: #f9fafb; /* Light background for the text area */
+        padding: 1rem;
+        box-sizing: border-box;
     }
 
     .scroll-text {
         position: absolute;
         width: 100%;
-        padding: 0 1rem;
-        line-height: 1.6;
+        padding: 1.5rem;
+        line-height: 1.7;
         text-align: center;
         box-sizing: border-box;
         transform: translateY(100%);
+        color: #4b5563; /* Comfortable reading text color */
     }
 
     .controls {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
-        margin-top: 1rem;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
     }
 
     .control-group {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 1rem;
         font-weight: 600;
         color: #4a5568;
     }
 
+    .control-group label {
+        white-space: nowrap; /* Prevent label text wrapping */
+    }
+
     .control-group input[type="range"] {
         -webkit-appearance: none;
-        width: 150px;
+        width: 180px; /* Slightly wider slider */
         height: 8px;
         background: #d1d5db;
         border-radius: 4px;
@@ -140,6 +147,11 @@
         border-radius: 50%;
         background: #4a5568;
         cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb:hover {
+        background: #27272a;
     }
 
     .btn-group {
@@ -148,16 +160,22 @@
     }
 
     .btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
+        padding: 0.8rem 1.8rem; /* Slightly larger buttons */
+        font-size: 1.1rem;
         font-weight: 600;
         border: none;
-        border-radius: 0.75rem;
+        border-radius: 0.5rem;
         color: white;
         cursor: pointer;
+        transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
     }
 
-    .btn-start { background-color: #10b981; }
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-start { background-color: #34d399; }
     .btn-pause { background-color: #f97316; }
     .btn-reset { background-color: #ef4444; }
 
@@ -165,14 +183,15 @@
     .overlay {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.85); /* Slightly translucent overlay */
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 4rem;
+        font-size: 4.5rem; /* Slightly larger countdown */
         font-weight: 700;
         color: #1e293b;
         z-index: 10;
+        border-radius: 1rem; /* Match container border-radius */
     }
 </style>
 </head>

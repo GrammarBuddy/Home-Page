@@ -3,335 +3,335 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrammarBuddy ReadAloud</title>
+<title>GrammarBuddy Read Aloud</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f0f4f8;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        color: #334155;
-    }
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f0f4f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: #334155;
+    }
 
-    .app-container {
-        width: 90vw;
-        max-width: 800px;
-        height: 85vh;
-        background-color: #ffffff;
-        border-radius: 1.5rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        box-sizing: border-box;
-        overflow: hidden;
-    }
+    .app-container {
+        width: 90vw;
+        max-width: 800px;
+        height: 85vh;
+        background-color: #ffffff;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
 
-    /* Heading */
-    .app-header {
-        text-align: center;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 0.5rem;
-    }
-    .app-header i {
-        color: #4f46e5;
-        margin-right: 0.5rem;
-    }
+    /* Heading */
+    .app-header {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    .app-header i {
+        color: #4f46e5;
+        margin-right: 0.5rem;
+    }
 
-    /* Level buttons */
-    .level-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    .level-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: #10b981; /* Match Start button color */
-        color: white;
-        transition: background-color 0.2s;
-    }
-    .level-btn:hover {
-        background-color: #059669; /* Darker green on hover */
-    }
+    /* Level buttons */
+    .level-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .level-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: #10b981; /* Match Start button color */
+        color: white;
+        transition: background-color 0.2s;
+    }
+    .level-btn:hover {
+        background-color: #059669; /* Darker green on hover */
+    }
 
-    .progress-bar-container {
-        width: 100%;
-        height: 8px;
-        background-color: #e2e8f0;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-    }
+    .progress-bar-container {
+        width: 100%;
+        height: 8px;
+        background-color: #e2e8f0;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
 
-    .progress-bar {
-        height: 100%;
-        width: 0;
-        background-color: #10b981;
-        border-radius: 4px;
-        transition: width 0.1s linear;
-    }
+    .progress-bar {
+        height: 100%;
+        width: 0;
+        background-color: #10b981;
+        border-radius: 4px;
+        transition: width 0.1s linear;
+    }
 
-    .screen {
-        flex: 1;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+    .screen {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-    .scroll-text {
-        position: absolute;
-        width: 100%;
-        padding: 0 1rem;
-        line-height: 1.6;
-        text-align: center;
-        box-sizing: border-box;
-        transform: translateY(100%);
-    }
+    .scroll-text {
+        position: absolute;
+        width: 100%;
+        padding: 0 1rem;
+        line-height: 1.6;
+        text-align: center;
+        box-sizing: border-box;
+        transform: translateY(100%);
+    }
 
-    .controls {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
+    .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
 
-    .control-group {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        color: #4a5568;
-    }
+    .control-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #4a5568;
+    }
 
-    .control-group input[type="range"] {
-        -webkit-appearance: none;
-        width: 150px;
-        height: 8px;
-        background: #d1d5db;
-        border-radius: 4px;
-        outline: none;
-    }
+    .control-group input[type="range"] {
+        -webkit-appearance: none;
+        width: 150px;
+        height: 8px;
+        background: #d1d5db;
+        border-radius: 4px;
+        outline: none;
+    }
 
-    .control-group input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #4a5568;
-        cursor: pointer;
-    }
+    .control-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #4a5568;
+        cursor: pointer;
+    }
 
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-    }
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+    }
 
-    .btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 0.75rem;
-        color: white;
-        cursor: pointer;
-    }
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.75rem;
+        color: white;
+        cursor: pointer;
+    }
 
-    .btn-start { background-color: #10b981; }
-    .btn-pause { background-color: #f97316; }
-    .btn-reset { background-color: #ef4444; }
+    .btn-start { background-color: #10b981; }
+    .btn-pause { background-color: #f97316; }
+    .btn-reset { background-color: #ef4444; }
 
-    /* Countdown overlay */
-    .overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255,255,255,0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 4rem;
-        font-weight: 700;
-        color: #1e293b;
-        z-index: 10;
-    }
+    /* Countdown overlay */
+    .overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255,255,255,0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4rem;
+        font-weight: 700;
+        color: #1e293b;
+        z-index: 10;
+    }
 </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="app-header">
-        <i class="fas fa-graduation-cap"></i> GrammarBuddy Read Aloud
-    </div>
+    <div class="app-header">
+        <i class="fas fa-graduation-cap"></i> GrammarBuddy Read Aloud
+    </div>
 
-    <div class="level-buttons">
-        <button class="level-btn" id="easy-btn">Easy</button>
-        <button class="level-btn" id="difficult-btn">Difficult</button>
-        <button class="level-btn" id="hard-btn">Hard</button>
-    </div>
+    <div class="level-buttons">
+        <button class="level-btn" id="easy-btn">Easy</button>
+        <button class="level-btn" id="difficult-btn">Difficult</button>
+        <button class="level-btn" id="hard-btn">Hard</button>
+    </div>
 
-    <div class="progress-bar-container">
-        <div id="progress-bar" class="progress-bar"></div>
-    </div>
-    <div class="screen">
-        <div id="scroll-container" class="scroll-text">
-            <p id="main-text"></p>
-        </div>
-        <div id="overlay" class="overlay" style="display: none;"></div>
-    </div>
-    <div class="controls">
-        <div class="control-group">
-            <label for="speed-slider">Speed:</label>
-            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
-            <span id="speed-value">150 WPM</span>
-        </div>
-        <div class="btn-group">
-            <button id="start-btn" class="btn btn-start">Start</button>
-            <button id="pause-btn" class="btn btn-pause" style="display: none;">Pause</button>
-            <button id="reset-btn" class="btn btn-reset" style="display: none;">Reset</button>
-        </div>
-    </div>
+    <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div class="screen">
+        <div id="scroll-container" class="scroll-text">
+            <p id="main-text"></p>
+        </div>
+        <div id="overlay" class="overlay" style="display: none;"></div>
+    </div>
+    <div class="controls">
+        <div class="control-group">
+            <label for="speed-slider">Speed:</label>
+            <input type="range" id="speed-slider" min="50" max="300" value="150" step="10">
+            <span id="speed-value">150 WPM</span>
+        </div>
+        <div class="btn-group">
+            <button id="start-btn" class="btn btn-start">Start</button>
+            <button id="pause-btn" class="btn btn-pause" style="display: none;">Pause</button>
+            <button id="reset-btn" class="btn btn-reset" style="display: none;">Reset</button>
+        </div>
+    </div>
 </div>
 
 <script>
 window.onload = function() {
-    const startBtn = document.getElementById('start-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const scrollContainer = document.getElementById('scroll-container');
-    const mainTextElement = document.getElementById('main-text');
-    const speedSlider = document.getElementById('speed-slider');
-    const speedValueDisplay = document.getElementById('speed-value');
-    const progressBar = document.getElementById('progress-bar');
-    const overlay = document.getElementById('overlay');
+    const startBtn = document.getElementById('start-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const scrollContainer = document.getElementById('scroll-container');
+    const mainTextElement = document.getElementById('main-text');
+    const speedSlider = document.getElementById('speed-slider');
+    const speedValueDisplay = document.getElementById('speed-value');
+    const progressBar = document.getElementById('progress-bar');
+    const overlay = document.getElementById('overlay');
 
-    const textContent = `
-    The old lighthouse keeper, Elias, watched the sea with a practiced eye. 
-    For fifty years, the rhythm of the waves had been the only constant in his life. 
-    He had seen storms that painted the sky in shades of bruised purple and green, 
-    and mornings so calm the ocean looked like a sheet of hammered silver...
-    `;
+    const textContent = `
+    The old lighthouse keeper, Elias, watched the sea with a practiced eye. 
+    For fifty years, the rhythm of the waves had been the only constant in his life. 
+    He had seen storms that painted the sky in shades of bruised purple and green, 
+    and mornings so calm the ocean looked like a sheet of hammered silver...
+    `;
 
-    let animationFrameId = null;
-    let startTime = null;
-    let totalAnimationDuration = 0;
-    let isPaused = false;
+    let animationFrameId = null;
+    let startTime = null;
+    let totalAnimationDuration = 0;
+    let isPaused = false;
 
-    const wordCount = textContent.trim().split(/\s+/).length;
-    const animationName = 'scroll';
-    const styleTag = document.createElement('style');
-    document.head.appendChild(styleTag);
+    const wordCount = textContent.trim().split(/\s+/).length;
+    const animationName = 'scroll';
+    const styleTag = document.createElement('style');
+    document.head.appendChild(styleTag);
 
-    function setSpeed(wpm) {
-        const durationInSeconds = (wordCount / wpm) * 60;
-        totalAnimationDuration = durationInSeconds;
+    function setSpeed(wpm) {
+        const durationInSeconds = (wordCount / wpm) * 60;
+        totalAnimationDuration = durationInSeconds;
 
-        styleTag.innerHTML = `
-            @keyframes ${animationName} {
-                0% { transform: translateY(100%); }
-                100% { transform: translateY(-100%); }
-            }
-        `;
-    }
-    setSpeed(speedSlider.value);
+        styleTag.innerHTML = `
+            @keyframes ${animationName} {
+                0% { transform: translateY(100%); }
+                100% { transform: translateY(-100%); }
+            }
+        `;
+    }
+    setSpeed(speedSlider.value);
 
-    function updateProgressBar(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = (timestamp - startTime) / 1000;
-        const progress = (elapsed / totalAnimationDuration) * 100;
-        progressBar.style.width = `${Math.min(progress, 100)}%`;
-        if (progress < 100 && !isPaused) {
-            animationFrameId = requestAnimationFrame(updateProgressBar);
-        }
-    }
+    function updateProgressBar(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = (timestamp - startTime) / 1000;
+        const progress = (elapsed / totalAnimationDuration) * 100;
+        progressBar.style.width = `${Math.min(progress, 100)}%`;
+        if (progress < 100 && !isPaused) {
+            animationFrameId = requestAnimationFrame(updateProgressBar);
+        }
+    }
 
-    function showCountdownAndStart() {
-        overlay.style.display = 'flex';
-        let count = 3;
-        overlay.textContent = count;
-        const countdownInterval = setInterval(() => {
-            count--;
-            if (count > 0) {
-                overlay.textContent = count;
-            } else {
-                clearInterval(countdownInterval);
-                overlay.textContent = "Get Ready to Read!";
-                overlay.style.fontSize = "3rem";
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    startScroll();
-                }, 1000);
-            }
-        }, 1000);
-    }
+    function showCountdownAndStart() {
+        overlay.style.display = 'flex';
+        let count = 3;
+        overlay.textContent = count;
+        const countdownInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                overlay.textContent = count;
+            } else {
+                clearInterval(countdownInterval);
+                overlay.textContent = "Get Ready to Read!";
+                overlay.style.fontSize = "3rem";
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    startScroll();
+                }, 1000);
+            }
+        }, 1000);
+    }
 
-    function startScroll() {
-        mainTextElement.textContent = textContent.trim();
-        scrollContainer.style.animation = 'none';
-        progressBar.style.width = '0%';
-        scrollContainer.style.transform = `translateY(100%)`;
+    function startScroll() {
+        mainTextElement.textContent = textContent.trim();
+        scrollContainer.style.animation = 'none';
+        progressBar.style.width = '0%';
+        scrollContainer.style.transform = `translateY(100%)`;
 
-        setTimeout(() => {
-            scrollContainer.style.animation = `${animationName} ${totalAnimationDuration}s linear forwards`;
-            startBtn.style.display = 'none';
-            pauseBtn.style.display = 'block';
-            resetBtn.style.display = 'block';
+        setTimeout(() => {
+            scrollContainer.style.animation = `${animationName} ${totalAnimationDuration}s linear forwards`;
+            startBtn.style.display = 'none';
+            pauseBtn.style.display = 'block';
+            resetBtn.style.display = 'block';
 
-            startTime = null;
-            isPaused = false;
-            animationFrameId = requestAnimationFrame(updateProgressBar);
-        }, 10);
-    }
+            startTime = null;
+            isPaused = false;
+            animationFrameId = requestAnimationFrame(updateProgressBar);
+        }, 10);
+    }
 
-    startBtn.addEventListener('click', () => {
-        showCountdownAndStart();
-    });
+    startBtn.addEventListener('click', () => {
+        showCountdownAndStart();
+    });
 
-    pauseBtn.addEventListener('click', () => {
-        if (isPaused) {
-            scrollContainer.style.animationPlayState = 'running';
-            pauseBtn.textContent = 'Pause';
-            isPaused = false;
-            startTime = performance.now() - (totalAnimationDuration * (parseFloat(progressBar.style.width) / 100) * 1000);
-            animationFrameId = requestAnimationFrame(updateProgressBar);
-        } else {
-            scrollContainer.style.animationPlayState = 'paused';
-            pauseBtn.textContent = 'Resume';
-            isPaused = true;
-            cancelAnimationFrame(animationFrameId);
-        }
-    });
+    pauseBtn.addEventListener('click', () => {
+        if (isPaused) {
+            scrollContainer.style.animationPlayState = 'running';
+            pauseBtn.textContent = 'Pause';
+            isPaused = false;
+            startTime = performance.now() - (totalAnimationDuration * (parseFloat(progressBar.style.width) / 100) * 1000);
+            animationFrameId = requestAnimationFrame(updateProgressBar);
+        } else {
+            scrollContainer.style.animationPlayState = 'paused';
+            pauseBtn.textContent = 'Resume';
+            isPaused = true;
+            cancelAnimationFrame(animationFrameId);
+        }
+    });
 
-    resetBtn.addEventListener('click', () => {
-        scrollContainer.style.animation = 'none';
-        scrollContainer.style.transform = `translateY(100%)`;
-        mainTextElement.textContent = "";
-        startBtn.style.display = 'block';
-        pauseBtn.style.display = 'none';
-        resetBtn.style.display = 'none';
-        pauseBtn.textContent = 'Pause';
-        progressBar.style.width = '0%';
-        cancelAnimationFrame(animationFrameId);
-    });
+    resetBtn.addEventListener('click', () => {
+        scrollContainer.style.animation = 'none';
+        scrollContainer.style.transform = `translateY(100%)`;
+        mainTextElement.textContent = "";
+        startBtn.style.display = 'block';
+        pauseBtn.style.display = 'none';
+        resetBtn.style.display = 'none';
+        pauseBtn.textContent = 'Pause';
+        progressBar.style.width = '0%';
+        cancelAnimationFrame(animationFrameId);
+    });
 
-    speedSlider.addEventListener('input', (event) => {
-        const newSpeed = event.target.value;
-        speedValueDisplay.textContent = `${newSpeed} WPM`;
-        setSpeed(newSpeed);
-    });
+    speedSlider.addEventListener('input', (event) => {
+        const newSpeed = event.target.value;
+        speedValueDisplay.textContent = `${newSpeed} WPM`;
+        setSpeed(newSpeed);
+    });
 };
 </script>
 </body>

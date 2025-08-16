@@ -637,5 +637,32 @@
   }
 </script>
 
+<button id="installButton" style="display:none;">📲 Install GrammarBuddy</button>
+
+<script>
+  let deferredPrompt;
+  const installButton = document.getElementById("installButton");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    // Prevent Chrome from showing the default mini-infobar
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show your install button
+    installButton.style.display = "block";
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      console.log("User accepted the install prompt");
+    }
+    deferredPrompt = null;
+    installButton.style.display = "none";
+  });
+</script>
+
+
 </body>
 </html>

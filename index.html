@@ -11,15 +11,42 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light gray-blue background */
+        }
+
+        /* --- Color transitions for a smoother mode change --- */
+        body,
+        .bg-white,
+        .bg-purple-500,
+        .bg-amber-500,
+        .bg-green-500,
+        .bg-cyan-500,
+        .text-gray-800,
+        .text-blue-900,
+        .text-gray-600 {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- Dark Mode Styles --- */
+        .dark {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+
+        .dark .bg-white {
+            background-color: #2d3748; /* Darker card background */
         }
     </style>
 </head>
-<body class="text-gray-800">
+
+<body class="bg-[#f0f4f8] text-gray-800">
 
     <div class="flex flex-col min-h-screen justify-between p-4 sm:p-8">
 
-        <header class="text-center mb-10 mt-6">
+        <header class="text-center mb-10 mt-6 relative">
+            <button id="theme-toggle" class="absolute top-0 right-0 p-2 rounded-full text-2xl focus:outline-none">
+                <span id="sun-icon" class="hidden">☀️</span>
+                <span id="moon-icon">🌙</span>
+            </button>
             <h3 class="text-4xl sm:text-5xl font-extrabold text-blue-900 leading-tight">
                 🎓 GrammarBuddy.in
             </h3>
@@ -60,6 +87,42 @@
         </footer>
 
     </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        // Check for saved theme in local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        }
+
+        // Add event listener to the toggle button
+        themeToggle.addEventListener('click', () => {
+            // Toggle the 'dark' class on the html element
+            html.classList.toggle('dark');
+
+            // Toggle the visibility of the sun and moon icons
+            sunIcon.classList.toggle('hidden');
+            moonIcon.classList.toggle('hidden');
+
+            // Save the current theme preference to local storage
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
 
 </body>
 </html>

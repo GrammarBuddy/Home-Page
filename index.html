@@ -15,44 +15,33 @@
         }
 
         /* --- Color transitions for a smoother mode change --- */
+        /* Applying transition to all color-related properties for a smooth effect */
         body,
         .text-gray-800,
         .text-blue-900,
-        .text-gray-600 {
+        .text-gray-600,
+        .bg-purple-500,
+        .bg-amber-500,
+        .bg-green-500,
+        .bg-cyan-500 {
             transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* --- Dark Mode Styles --- */
-        /* These styles will be applied when the 'dark' class is present on the html tag */
-        .dark {
-            background-color: #1a202c; /* Dark background */
-            color: #e2e8f0; /* Light text */
-        }
-
-        .dark .text-blue-900 {
-            color: #90cdf4; /* Lighter blue for the title in dark mode */
-        }
-
-        .dark .text-gray-600 {
-            color: #a0aec0; /* Lighter gray for the subtitle */
-        }
-
-        .dark .text-gray-500 {
-            color: #718096; /* Lighter gray for the footer text */
         }
     </style>
 </head>
 
-<body class="bg-[#f0f4f8] text-gray-800">
+<!-- We've updated the body tag to use Tailwind's dark mode classes directly -->
+<!-- bg-slate-100 will be the light mode background, dark:bg-gray-900 for dark mode -->
+<body class="bg-slate-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100">
 
     <div class="flex flex-col min-h-screen justify-between p-4 sm:p-8">
 
         <!-- --- Header Section with Theme Toggle Button --- -->
         <header class="text-center mb-10 mt-6 relative">
-            <h3 class="text-4xl sm:text-5xl font-extrabold text-blue-900 leading-tight">
+            <!-- The text colors for the header now also use dark mode prefixes -->
+            <h3 class="text-4xl sm:text-5xl font-extrabold text-blue-900 leading-tight dark:text-sky-300">
                 🎓 GrammarBuddy.in
             </h3>
-            <p class="text-base sm:text-lg font-medium text-gray-600 mt-2">
+            <p class="text-base sm:text-lg font-medium text-gray-600 mt-2 dark:text-slate-300">
                 For Pre-KG to PhD Learners!
             </p>
             <!-- Theme Toggle Button -->
@@ -69,25 +58,29 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl px-4">
 
                 <!-- Card 1 -->
-                <a href="https://grammarbuddy.github.io/index1.html" class="block p-8 bg-purple-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                <!-- Added dark:bg-purple-800 for dark mode -->
+                <a href="https://grammarbuddy.github.io/index1.html" class="block p-8 bg-purple-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-purple-800">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Grammar Buddy</h3>
                     <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Master grammar, punctuation, and sentence construction.</p>
                 </a>
 
                 <!-- Card 2 -->
-                <a href="https://sites.google.com/view/gbspellbee/home" class="block p-8 bg-amber-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                <!-- Added dark:bg-amber-800 for dark mode -->
+                <a href="https://sites.google.com/view/gbspellbee/home" class="block p-8 bg-amber-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-amber-800">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Spelling Bee</h3>
                     <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Conquer every word, from basic to expert level.</p>
                 </a>
 
                 <!-- Card 3 -->
-                <a href="https://grammarbuddy.github.io/readright/" class="block p-8 bg-green-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                <!-- Added dark:bg-green-800 for dark mode -->
+                <a href="https://grammarbuddy.github.io/readright/" class="block p-8 bg-green-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-green-800">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Read Right</h3>
                     <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Unlock your potential by improving reading fluency and comprehension.</p>
                 </a>
 
                 <!-- Card 4 -->
-                <a href="https://sites.google.com/view/titatov3/home" class="block p-8 bg-cyan-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                <!-- Added dark:bg-cyan-800 for dark mode -->
+                <a href="https://sites.google.com/view/titatov3/home" class="block p-8 bg-cyan-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-cyan-800">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">TaTiTo Code</h3>
                     <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Handwritten meets hyperlink ... for teachers, parents and students.</p>
                 </a>
@@ -95,7 +88,8 @@
         </main>
 
         <!-- --- Footer Section --- -->
-        <footer class="text-center text-sm text-gray-500 mt-10 mb-4">
+        <!-- Added dark:text-gray-400 for dark mode -->
+        <footer class="text-center text-sm text-gray-500 mt-10 mb-4 dark:text-gray-400">
             <p>&copy; GrammarBuddy | All Rights Reserved</p>
             <p class="mt-1">Designed & Developed by Varun K</p>
             <p class="mt-1">Co-Developed by Yuvika Varun</p>

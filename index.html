@@ -1,144 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GrammarBuddy</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Define the font family for the whole body */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* --- Color transitions for a smoother mode change --- */
-        /* Applying transition to all color-related properties for a smooth effect */
-        body,
-        .text-gray-800,
-        .text-blue-900,
-        .text-gray-600,
-        .bg-purple-500,
-        .bg-amber-500,
-        .bg-green-500,
-        .bg-cyan-500 {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrammarBuddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray-blue background */
+        }
+    </style>
 </head>
+<body class="text-gray-800">
 
-<!-- We've updated the body tag to use Tailwind's dark mode classes directly -->
-<!-- bg-slate-100 will be the light mode background, dark:bg-gray-900 for dark mode -->
-<body class="bg-slate-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+    <div class="flex flex-col min-h-screen justify-between p-4 sm:p-8">
 
-    <div class="flex flex-col min-h-screen justify-between p-4 sm:p-8">
+        <header class="text-center mb-10 mt-6">
+            <h3 class="text-4xl sm:text-5xl font-extrabold text-blue-900 leading-tight">
+                🎓 GrammarBuddy.in
+            </h3>
+            <p class="text-base sm:text-lg font-medium text-gray-600 mt-2">
+                For Pre-KG to PhD Learners!
+            </p>
+        </header>
 
-        <!-- --- Header Section with Theme Toggle Button --- -->
-        <header class="text-center mb-10 mt-6 relative">
-            <!-- The text colors for the header now also use dark mode prefixes -->
-            <h3 class="text-4xl sm:text-5xl font-extrabold text-blue-900 leading-tight dark:text-sky-300">
-                🎓 GrammarBuddy.in
-            </h3>
-            <p class="text-base sm:text-lg font-medium text-gray-600 mt-2 dark:text-slate-300">
-                For Pre-KG to PhD Learners!
-            </p>
-            <!-- Theme Toggle Button -->
-            <!-- We're using absolute positioning to place the button in the top right corner -->
-            <button id="theme-toggle" class="absolute top-0 right-0 p-2 rounded-full text-2xl focus:outline-none">
-                <!-- Sun and Moon Emojis. Initially, the sun is hidden. -->
-                <span id="sun-icon" class="hidden">☀️</span>
-                <span id="moon-icon">🌙</span>
-            </button>
-        </header>
+        <main class="flex-grow flex items-start justify-center">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl px-4">
 
-        <!-- --- Main Content Section --- -->
-        <main class="flex-grow flex items-start justify-center">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl px-4">
+                <a href="https://grammarbuddy.github.io/index1.html" class="block p-8 bg-purple-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Grammar Buddy</h3>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Master grammar, punctuation, and sentence construction.</p>
+                </a>
 
-                <!-- Card 1 -->
-                <!-- Added dark:bg-purple-800 for dark mode -->
-                <a href="https://grammarbuddy.github.io/index1.html" class="block p-8 bg-purple-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-purple-800">
-                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Grammar Buddy</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Master grammar, punctuation, and sentence construction.</p>
-                </a>
+                <a href="https://sites.google.com/view/gbspellbee/home" class="block p-8 bg-amber-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Spelling Bee</h3>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Conquer every word, from basic to expert level.</p>
+                </a>
 
-                <!-- Card 2 -->
-                <!-- Added dark:bg-amber-800 for dark mode -->
-                <a href="https://sites.google.com/view/gbspellbee/home" class="block p-8 bg-amber-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-amber-800">
-                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Spelling Bee</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Conquer every word, from basic to expert level.</p>
-                </a>
+                <a href="https://grammarbuddy.github.io/readright/" class="block p-8 bg-green-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Read Right</h3>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Unlock your potential by improving reading fluency and comprehension.</p>
+                </a>
 
-                <!-- Card 3 -->
-                <!-- Added dark:bg-green-800 for dark mode -->
-                <a href="https://grammarbuddy.github.io/readright/" class="block p-8 bg-green-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-green-800">
-                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Read Right</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Unlock your potential by improving reading fluency and comprehension.</p>
-                </a>
+                <a href="https://sites.google.com/view/titatov3/home" class="block p-8 bg-cyan-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
+                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">TaTiTo Code</h3>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Handwritten meets hyperlink ... for teachers, parents and students.</p>
+                </a>
+            </div>
+        </main>
 
-                <!-- Card 4 -->
-                <!-- Added dark:bg-cyan-800 for dark mode -->
-                <a href="https://sites.google.com/view/titatov3/home" class="block p-8 bg-cyan-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300 dark:bg-cyan-800">
-                    <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">TaTiTo Code</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Handwritten meets hyperlink ... for teachers, parents and students.</p>
-                </a>
-            </div>
-        </main>
+        <footer class="text-center text-sm text-gray-500 mt-10 mb-4">
+            <p>&copy; GrammarBuddy | All Rights Reserved</p>
+            <p class="mt-1">Designed & Developed by Varun K</p>
+            <p class="mt-1">Co-Developed by Yuvika Varun</p>
+        </footer>
 
-        <!-- --- Footer Section --- -->
-        <!-- Added dark:text-gray-400 for dark mode -->
-        <footer class="text-center text-sm text-gray-500 mt-10 mb-4 dark:text-gray-400">
-            <p>&copy; GrammarBuddy | All Rights Reserved</p>
-            <p class="mt-1">Designed & Developed by Varun K</p>
-            <p class="mt-1">Co-Developed by Yuvika Varun</p>
-        </footer>
-
-    </div>
-
-    <!-- --- JavaScript for Theme Switching --- -->
-    <script>
-        const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        const html = document.documentElement;
-
-        // Check for saved theme in local storage or system preference
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            // If the saved theme is 'dark', or if there's no saved theme but the system prefers dark mode
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                html.classList.add('dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            } else {
-                html.classList.remove('dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            }
-        }
-
-        // Add event listener to the toggle button
-        themeToggle.addEventListener('click', () => {
-            // Toggle the 'dark' class on the html element
-            html.classList.toggle('dark');
-
-            // Toggle the visibility of the sun and moon icons
-            sunIcon.classList.toggle('hidden');
-            moonIcon.classList.toggle('hidden');
-
-            // Save the current theme preference to local storage
-            if (html.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
-        });
-
-        // Initialize the theme when the page loads
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    </script>
+    </div>
 
 </body>
 </html>

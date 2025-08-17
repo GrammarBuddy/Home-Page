@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GrammarBuddy</title>
+    <!-- Use Google Fonts for the Inter font family -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS from CDN for all styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -17,8 +19,10 @@
 </head>
 <body class="text-gray-800">
 
+    <!-- Main container for the entire page, using flexbox to space content between top and bottom -->
     <div class="flex flex-col min-h-screen justify-between p-4 sm:p-8">
 
+        <!-- Header section with the main title and tagline -->
         <header class="text-center mb-10 mt-6">
             <h3 class="text-4xl sm:text-5xl font-extrabold text-blue-900 leading-tight">
                 🎓 GrammarBuddy.in
@@ -28,31 +32,37 @@
             </p>
         </header>
 
-        <main class="flex-grow flex items-start justify-center">
+        <!-- Main content section with the 2x2 grid of features -->
+        <main class="flex-grow flex items-center justify-center py-2">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl px-4">
 
+                <!-- First Box: Grammar Buddy -->
                 <a href="https://grammarbuddy.github.io/index1.html" class="block p-8 bg-purple-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Grammar Buddy</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Master grammar, punctuation, and sentence construction.</p>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Master grammar, punctuation, sentence construction & more...</p>
                 </a>
 
+                <!-- Second Box: Spelling Bee -->
                 <a href="https://sites.google.com/view/gbspellbee/home" class="block p-8 bg-amber-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Spelling Bee</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Conquer every word, from basic to expert level.</p>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Conquer every word, from basic to expert level</p>
                 </a>
 
+                <!-- Third Box: Read Right -->
                 <a href="https://grammarbuddy.github.io/readright/" class="block p-8 bg-green-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">Read Right</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Unlock your potential by improving reading fluency and comprehension.</p>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Unlock your potential by improving reading fluency and comprehension</p>
                 </a>
 
+                <!-- Fourth Box: TaTiTo Code -->
                 <a href="https://sites.google.com/view/titatov3/home" class="block p-8 bg-cyan-500 rounded-3xl shadow-xl hover:scale-105 transition-transform duration-300">
                     <h3 class="text-2xl sm:text-4xl font-bold text-white text-center">TaTiTo Code</h3>
-                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Handwritten meets hyperlink ... for teachers, parents and students.</p>
+                    <p class="text-xs sm:text-base font-normal text-white mt-2 text-center">Handwritten meets hyperlink ... for teachers & students</p>
                 </a>
             </div>
         </main>
 
+        <!-- Footer section with copyright information -->
         <footer class="text-center text-sm text-gray-500 mt-10 mb-4">
             <p>&copy; GrammarBuddy | All Rights Reserved</p>
             <p class="mt-1">Designed & Developed by Varun K</p>

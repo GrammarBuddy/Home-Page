@@ -3,8 +3,8 @@ const urlsToCache = [
   "/",
   "/index.html",
   "/css/style.css",   // your only CSS file
-  "/icons/icon-192.png",
-  "/icons/icon-512.png"
+  "/icons/icon-192-old.png",
+  "/icons/icon-512-old.png"
 ];
 
 // Install service worker & cache files
